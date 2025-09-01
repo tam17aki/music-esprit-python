@@ -120,9 +120,11 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         music_spectrum: npt.NDArray[np.float64],
     ) -> npt.NDArray[np.float64]:
         """Find the N strongest peaks from the MUSIC spectrum."""
-        # 1. Find all "local maxima" as peak candidates without using prominence.
+        # 1. Find all "local maxima" as peak candidates.
         #    Ignores extremely small noise floor fluctuations.
-        all_peaks, _ = find_peaks(music_spectrum, height=np.mean(music_spectrum))
+        all_peaks, _ = find_peaks(music_spectrum,
+                                  height=np.median(music_spectrum),
+                                  prominence=np.std(music_spectrum) / 2.0)
         all_peaks = np.array(all_peaks, dtype=np.int64)
         if all_peaks.size < self.n_sinusoids:
             return freq_grid[all_peaks] if all_peaks.size > 0 else np.array([])
