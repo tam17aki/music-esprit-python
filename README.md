@@ -85,6 +85,8 @@ Amp Errors:   [ 0.00017094 -0.00040426 -0.0008162 ]
 Phase Errors: [ 0.00051522 -0.00230938  0.00468023] rad
 ```
 
+(Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
+
 ### Command-Line Options
 
 You can customize the experiment via command-line arguments.
