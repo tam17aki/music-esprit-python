@@ -46,6 +46,45 @@ To run a demonstration with default parameters (a signal with three sinusoids at
 python main.py
 ```
 
+#### Example Output
+Running the command above will produce an output similar to this:
+
+```
+--- Experiment Setup ---
+Sampling Frequency: 44100.0 Hz
+Signal Duration:    100 ms
+True Frequencies:   [440. 460. 480.] Hz
+True Amplitudes:    [1.41102781 1.40052413 1.44984503]
+True Phases:        [-3.04853895 -0.47321629  3.10837411] rad
+SNR:                30.0 dB
+Number of Grid Points:  8192
+
+--- Running Spectral MUSIC ---
+
+--- Estimation Results ---
+Est Frequencies: [438.79257722 460.32840923 479.17226224] Hz
+Est Amplitudes:  [1.4193478  1.40920727 1.36681428]
+Est Phases:      [-2.67745079 -0.56606888 -2.91184352] rad
+
+--- Estimation Errors ---
+Freq Errors:  [-1.20742278  0.32840923 -0.82773776] Hz
+Amp Errors:   [ 0.00832     0.00868313 -0.08303075]
+Phase Errors: [ 0.37108816 -0.09285259 -6.02021763] rad
+
+
+--- Running Root MUSIC ---
+
+--- Estimation Results ---
+Est Frequencies: [439.99865291 460.00630089 479.98387698] Hz
+Est Amplitudes:  [1.41119875 1.40011987 1.44902883]
+Est Phases:      [-3.04802373 -0.47552567  3.11305435] rad
+
+--- Estimation Errors ---
+Freq Errors:  [-0.00134709  0.00630089 -0.01612302] Hz
+Amp Errors:   [ 0.00017094 -0.00040426 -0.0008162 ]
+Phase Errors: [ 0.00051522 -0.00230938  0.00468023] rad
+```
+
 ### Command-Line Options
 
 You can customize the experiment via command-line arguments.
@@ -69,6 +108,7 @@ python main.py --help
 | `--amp_range` | The range for random amplitude generation. | 0.5 1.5|
 | `--n_grids` | Number of grid points for Spectral MUSIC. | 8192|
 | `--sep_factor` | Separation factor for Root-MUSIC. | 0.4|
+
 
 
 ## Project Structure
