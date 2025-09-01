@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """Helper functions for command line arguments and priting results.
 
-Frequencies and damping coefficients are estimated using the MUSIC algorithm,
-followed by amplitude and phase estimation via the least squares method.
-
 Copyright (C) 2025 by Akira TAMAMORI
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
