@@ -1,4 +1,4 @@
-# High-Resolution Parameter Estimation for Sinusoidal Signals using MUSIC.
+# High-Resolution Parameter Estimation for Sinusoidal Signals
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
