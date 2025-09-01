@@ -1,8 +1,8 @@
-# High-Resolution Parameter Estimation for Sinusoidal Signals
+# High-Resolution Parameter Estimation for Sinusoidal Signals with MUSIC.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository provides Python implementations of high-resolution parameter estimation algorithms for sinusoidal signals, including **MUSIC (Spectral/Root)**. The project is structured with an object-oriented approach, emphasizing code clarity, reusability, and educational value.
+This repository provides Python implementations of high-resolution parameter estimation algorithms for sinusoidal signals with **MUSIC (Spectral/Root)**. The project is structured with an object-oriented approach, emphasizing code clarity, reusability, and educational value.
 
 This work is inspired by the foundational papers in subspace-based signal processing and aims to provide a practical and understandable guide to these powerful techniques.
 
