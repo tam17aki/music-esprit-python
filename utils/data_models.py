@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A demonstration of parameter estimation for sinusoidal signals.
-
-Frequencies and damping coefficients are estimated using the MUSIC algorithm,
-followed by amplitude and phase estimation via the least squares method.
+"""Definition of SinusoidParameters and ExperimentConfig classes.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
