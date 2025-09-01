@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The definition of SpectralMusicAnalyzer class.
+"""The definition of RootMusicAnalyzer class.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
