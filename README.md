@@ -13,6 +13,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
   - **Spectral MUSIC**: Frequency estimation via spectral peak-picking.
   - **Root-MUSIC**: High-accuracy frequency estimation via polynomial rooting.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
+- **Enhanced Accuracy with Forward-Backward Averaging**: Improves estimation accuracy in low SNR or short data scenarios. This is implemented elegantly via a `ForwardBackwardMixin` class, showcasing a reusable and extensible design.
 - **Demonstration Script**: Includes a command-line interface (`main.py`) to easily run experiments and compare the performance of different algorithms.
 
 ## Installation
