@@ -8,7 +8,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
 
 ## Features
 
-- **High-Resolution Algorithms**: Implements modern spectral estimation techniques that surpass the resolution limits of the classical Fast Fourier Transform (FFT).
+- **High-Resolution Algorithms**: Implements spectral estimation techniques that surpass the resolution limits of the classical Fast Fourier Transform (FFT).
 - **Multiple Methods Implemented**:
   - **Spectral MUSIC**: Frequency estimation via spectral peak-picking.
   - **Root-MUSIC**: High-accuracy frequency estimation via polynomial rooting.
