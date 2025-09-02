@@ -30,9 +30,9 @@ import numpy.polynomial.polynomial as poly
 import numpy.typing as npt
 
 from .base import MusicAnalyzerBase
+from mixins.covariance import ForwardBackwardMixin
 
 
-@final
 class RootMusicAnalyzer(MusicAnalyzerBase):
     """MUSIC analyzer using polynomial rooting."""
 
@@ -46,7 +46,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
                 Separation factor for resolving close frequencies.
         """
         super().__init__(fs, n_sinusoids)
-        self.sep_factor = sep_factor
+        self.sep_factor: float = sep_factor
 
     @override
     def _estimate_frequencies(
@@ -170,3 +170,13 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
             if np.abs(freq - unique_freqs[-1]) > min_separation_hz:
                 unique_freqs.append(freq)
         return np.sort(np.array(unique_freqs[: self.n_sinusoids]))
+
+
+@final
+class RootMusicAnalyzerFB(ForwardBackwardMixin, RootMusicAnalyzer):
+    """Root MUSIC analyzer enhanced with Forward-Backward averaging.
+
+    Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
+    """
+
+    pass
