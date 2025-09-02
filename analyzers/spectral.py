@@ -30,13 +30,13 @@ import numpy.typing as npt
 from scipy.signal import find_peaks
 
 from .base import MusicAnalyzerBase
+from mixins.covariance import ForwardBackwardMixin
 
 
-@final
 class SpectralMusicAnalyzer(MusicAnalyzerBase):
     """MUSIC analyzer using spectral peak picking."""
 
-    def __init__(self, fs: float, n_sinusoids: int, n_grids: int) -> None:
+    def __init__(self, fs: float, n_sinusoids: int, n_grids: int):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
@@ -45,7 +45,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
             n_grids (int, optional): Number of grid points for MUSIC algorithm.
         """
         super().__init__(fs, n_sinusoids)
-        self.n_grids = n_grids
+        self.n_grids: int = n_grids
 
     @override
     def _estimate_frequencies(
@@ -127,3 +127,13 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         estimated_freqs = freq_grid[strongest_peak_indices]
 
         return np.sort(estimated_freqs)
+
+
+@final
+class SpectralMusicAnalyzerFB(ForwardBackwardMixin, SpectralMusicAnalyzer):
+    """Spectral MUSIC analyzer enhanced with Forward-Backward averaging.
+
+    Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
+    """
+
+    pass
