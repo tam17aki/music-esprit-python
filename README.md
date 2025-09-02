@@ -19,8 +19,8 @@ This work is inspired by the foundational papers in subspace-based signal proces
 
 1.  Clone this repository:
     ```bash
-    git clone https://github.com/tam17aki/music-python.git
-    cd music-python
+    git clone https://github.com/your-username/your-repository-name.git
+    cd your-repository-name
     ```
 
 2.  (Optional but recommended) Create a virtual environment:
@@ -114,17 +114,31 @@ python main.py --help
 
 
 ## Project Structure
-The project is organized into modular components for clarity and reusability:
 
-- `main.py`: The main script to run demonstrations.
-- `analyzers/`: Contains the core algorithm implementations.
-  - `base.py`: The abstract base class `MusicAnalyzerBase`.
-  - `spectral.py`: The `SpectralMusicAnalyzer` class.
-  - `root.py`: The `RootMusicAnalyzer` class.
-- `utils/`: Contains helper modules.
-  - `data_models.py`: Defines the dataclass structures for parameters and configuration.
-  - `signal_generator.py`: Functions for synthesizing test signals.
-- `cli.py`: Handles command-line argument parsing and result printing.
+This project is organized into a modular structure to promote clarity, reusability, and separation of concerns.
+
+-   **`main.py`**:
+    The main entry point to run demonstrations. It orchestrates the setup, execution, and result presentation of the analysis.
+
+-   **`analyzers/`**:
+    A package containing the core implementations of the signal processing algorithms.
+    -   `base.py`: Defines the `MusicAnalyzerBase` abstract base class, which contains the common logic for all MUSIC variants.
+    -   `spectral.py`: Implements the `SpectralMusicAnalyzer` for estimation via spectral peak-picking.
+    -   `root.py`: Implements the `RootMusicAnalyzer` for estimation via polynomial rooting.
+
+-   **`mixins/`**:
+    A package for providing optional enhancements to the analyzer classes through multiple inheritance (mixins).
+    -   `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability to any analyzer.
+
+-   **`utils/`**:
+    A package for reusable helper modules and data structures used across the project.
+    -   `data_models.py`: Defines the `dataclass` structures (`SinusoidParameters`, `ExperimentConfig`) for type-safe data handling.
+    -   `signal_generator.py`: Provides functions for synthesizing test signals with various parameters.
+
+-   **`cli.py`**:
+    A module dedicated to the Command-Line Interface. It handles argument parsing and the formatting of results for display.
+
+This modular design allows for easy extension. For example, to add a new algorithm like ESPRIT, one would simply add a new file under the `analyzers/` directory while reusing the existing components in `utils/` and `cli.py`.
 
 ## Theoretical Background
 
