@@ -26,6 +26,7 @@ import warnings
 from typing import final, override
 
 import numpy as np
+import numpy.polynomial.polynomial as poly
 import numpy.typing as npt
 
 from .base import MusicAnalyzerBase
@@ -35,7 +36,7 @@ from .base import MusicAnalyzerBase
 class RootMusicAnalyzer(MusicAnalyzerBase):
     """MUSIC analyzer using polynomial rooting."""
 
-    def __init__(self, fs: float, n_sinusoids: int, sep_factor: float = 0.4):
+    def __init__(self, fs: float, n_sinusoids: int, sep_factor: float = 0.4) -> None:
         """Initialize the analyzer with an experiment configuration.
 
         Args:
@@ -129,9 +130,8 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
             np.ndarray: An array of estimated frequencies in Hz.
         """
         # 1. Calculate the roots of a polynomial
-        # np.roots expects coefficients to be ordered from highest to lowest.
         try:
-            roots = np.roots(coefficients)
+            roots = poly.polyroots(coefficients[::-1])
         except np.linalg.LinAlgError:
             warnings.warn("Failed to find roots of the polynomial.")
             return np.array([])
