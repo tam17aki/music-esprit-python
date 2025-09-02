@@ -36,7 +36,7 @@ from .base import MusicAnalyzerBase
 class RootMusicAnalyzer(MusicAnalyzerBase):
     """MUSIC analyzer using polynomial rooting."""
 
-    def __init__(self, fs: float, n_sinusoids: int, sep_factor: float = 0.4) -> None:
+    def __init__(self, fs: float, n_sinusoids: int, sep_factor: float = 0.4):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
