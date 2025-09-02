@@ -117,30 +117,20 @@ The object-oriented design makes it easy to use any analyzer in your own project
 
 ```python
 from analyzers.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
-from analyzers.root import RootMusicAnalyzer, RootMusicAnalyzerFB
 # ...
 
-# Standard forward-only analyzer (Spectral-MUSIC)
+# Standard forward-only analyzer
 spec_analyzer = SpectralMusicAnalyzer(fs=44100, n_sinusoids=3, n_grids=8192)
 spec_analyzer.fit(my_signal)
-spec_estimated_freqs = spec_analyzer.frequencies
+estimated_freqs = spec_analyzer.frequencies
 
-# Analyzer with Forward-Backward averaging for higher accuracy (Spectral-MUSIC)
+# Analyzer with Forward-Backward averaging for higher accuracy
 spec_analyzer_fb = SpectralMusicAnalyzerFB(fs=44100, n_sinusoids=3, n_grids=8192)
 spec_analyzer_fb.fit(my_signal)
-spec_accurate_freqs = spec_analyzer_fb.frequencies
-
-# Standard forward-only analyzer (Root-MUSIC)
-root_analyzer = RootMusicAnalyzer(fs=44100, n_sinusoids=3, sep_factor=0.4)
-root_analyzer.fit(my_signal)
-root_estimated_freqs = root_analyzer.frequencies
-
-# Analyzer with Forward-Backward averaging for higher accuracy (Root-MUSIC)
-root_analyzer_fb = RootMusicAnalyzerFB(fs=44100, n_sinusoids=3, sep_factor=0.4)
-root_analyzer_fb.fit(my_signal)
-root_accurate_freqs = root_analyzer_fb.frequencies
+accurate_freqs = spec_analyzer_fb.frequencies
 ```
 
+In the same way, you can use the `RootMusicAnalyzer` and its enhanced `RootMusicAnalyzerFB`.
 
 ## Project Structure
 
