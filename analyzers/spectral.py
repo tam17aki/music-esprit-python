@@ -36,7 +36,7 @@ from .base import MusicAnalyzerBase
 class SpectralMusicAnalyzer(MusicAnalyzerBase):
     """MUSIC analyzer using spectral peak picking."""
 
-    def __init__(self, fs: float, n_sinusoids: int, n_grids: int):
+    def __init__(self, fs: float, n_sinusoids: int, n_grids: int) -> None:
         """Initialize the analyzer with an experiment configuration.
 
         Args:
@@ -94,24 +94,12 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         freq_grid: npt.NDArray[np.float64] = np.linspace(
             0, self.fs / 2, num=self.n_grids, dtype=np.float64
         )
-        music_spectrum = np.zeros(freq_grid.size)
-
-        # G*G^H only needs to be calculated once
-        projector_onto_noise = noise_subspace @ noise_subspace.conj().T
-
-        for i, f in enumerate(freq_grid):
-            omega = 2 * np.pi * f / self.fs
-
-            # Calculate a steering vector a(ω)
-            steering_vector = np.exp(-1j * omega * np.arange(subspace_dim))
-
-            # Calculate the denominator a^H * (G*G^H) * a
-            steering_vector_h = steering_vector.conj()
-            denominator = steering_vector_h @ projector_onto_noise @ steering_vector
-
-            # Add a small value to avoid division by zero
-            music_spectrum[i] = 1 / (np.abs(denominator) + 1e-12)
-
+        omegas = 2 * np.pi * freq_grid / self.fs
+        l_vector = np.arange(subspace_dim).reshape(-1, 1)
+        steering_matrix = np.exp(-1j * l_vector @ omegas.reshape(1, -1))
+        temp_matrix = noise_subspace.conj().T @ steering_matrix
+        denominator_values = np.einsum("ij,ji->i", temp_matrix.conj().T, temp_matrix)
+        music_spectrum = 1 / (np.abs(denominator_values) + 1e-12)
         return freq_grid, music_spectrum
 
     def _find_music_peaks(
