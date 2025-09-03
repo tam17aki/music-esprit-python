@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository provides Python implementations of high-resolution parameter estimation algorithms for sinusoidal signals including **MUSIC (Spectral/Root)**. The project is structured with an object-oriented approach, emphasizing code clarity, reusability, and educational value.
+This repository provides Python implementations of high-resolution parameter estimation algorithms for sinusoidal signals including **MUSIC (Spectral/Root)** and **ESPRIT**. The project is structured with an object-oriented approach, emphasizing code clarity, reusability, and educational value.
 
 This work is inspired by the foundational papers in subspace-based signal processing and aims to provide a practical and understandable guide to these powerful techniques.
 
@@ -12,6 +12,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
 - **Multiple Methods Implemented**:
   - **Spectral MUSIC**: Frequency estimation via spectral peak-picking.
   - **Root-MUSIC**: High-accuracy frequency estimation via polynomial rooting.
+  - **ESPRIT**: A computationally efficient method that estimates frequencies directly without spectral search.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Enhanced Accuracy with Forward-Backward Averaging**: Improves estimation accuracy in low SNR or short data scenarios. This is implemented elegantly via a `ForwardBackwardMixin` class, showcasing a reusable and extensible design.
 - **Demonstration Script**: Includes a command-line interface (`main.py`) to easily run experiments and compare the performance of different algorithms.
@@ -84,6 +85,19 @@ Est Phases:      [-3.04802373 -0.47552567  3.11305435] rad
 Freq Errors:  [-0.00134709  0.00630089 -0.01612302] Hz
 Amp Errors:   [ 0.00017094 -0.00040426 -0.0008162 ]
 Phase Errors: [ 0.00051522 -0.00230938  0.00468023] rad
+
+
+--- Running ESPRIT ---
+
+--- Estimation Results ---
+Est Frequencies: [440.15013961 459.96703565 480.02503654] Hz
+Est Amplitudes:  [0.41823435 1.77925791 1.00002794]
+Est Phases:      [-3.07635342 -0.69853686 -2.88152328] rad
+
+--- Estimation Errors ---
+Freq Errors:  [ 0.15013961 -0.03296435  0.02503654] Hz
+Amp Errors:   [ 0.00284486  0.01359618 -0.0128905 ]
+Phase Errors: [-0.02457284  0.00695845 -0.01390562] rad
 ```
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
@@ -110,7 +124,7 @@ python main.py --help
 | `--freqs_true`  | A list of true frequencies in Hz. | 440 460 480|
 | `--amp_range` | The range for random amplitude generation. | 0.5 1.5|
 | `--n_grids` | Number of grid points for Spectral MUSIC. | 8192|
-| `--sep_factor` | Separation factor for Root-MUSIC. | 0.4|
+| `--sep_factor` | Separation factor for Root-MUSIC and ESPRIT. | 0.4|
 
 ### Using a Specific Analyzer in Your Own Code
 The object-oriented design makes it easy to use any analyzer in your own projects. Here's how you might use the standard `SpectralMusicAnalyzer` and its enhanced `SpectralMusicAnalyzerFB` version:
@@ -142,11 +156,14 @@ This project is organized into a modular, object-oriented structure to promote c
 -   **`analyzers/`**:
     A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
     -   **`base.py`**: Defines `AnalyzerBase`, the top-level abstract base class. It contains the common logic shared by *all* subspace-based methods, such as the `fit` method template, amplitude/phase estimation, and result properties.
-    -   **`music/`**:
+    -   **`music/`**: A package dedicated to the MUSIC algorithm and its variants.
         -   **`base.py`**: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
         -   **`spectral.py`**: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
         -   **`root.py`**: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
-  
+    -   **`esprit/`**: A package dedicated to the ESPRIT algorithm and its variants.
+        -   **`base.py`**:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
+        -   **`ls.py`**: Implements `LSEspritAnalyzer`, which uses the standard Least Squares approach to solve for the rotational operator.
+        -   **`tls.py`**: Implements `TLSEspritAnalyzer`, which uses the more robust Total Least Squares approach for higher accuracy in noisy conditions.
 -   **`mixins/`**:
     A package for providing optional enhancements to the analyzer classes through multiple inheritance.
     -   **`covariance.py`**: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
