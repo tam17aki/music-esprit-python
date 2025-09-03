@@ -144,8 +144,7 @@ spec_analyzer_fb = SpectralMusicAnalyzerFB(fs=44100, n_sinusoids=3, n_grids=8192
 spec_analyzer_fb.fit(my_signal)
 accurate_freqs = spec_analyzer_fb.frequencies
 ```
-
-In the same way, you can use the `RootMusicAnalyzer` and its enhanced `RootMusicAnalyzerFB`.
+In the same way, you can use the enhanced version (`...FB`) of `RootMusicAnalyzer`, `LSEspritAnalyzer`, and `TLSEspritAnalyzer`.
 
 ## Project Structure
 
