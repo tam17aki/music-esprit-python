@@ -29,7 +29,7 @@ import numpy as np
 import numpy.typing as npt
 from scipy.signal import find_peaks
 
-from .base import MusicAnalyzerBase
+from .music import MusicAnalyzerBase
 from mixins.covariance import ForwardBackwardMixin
 
 
