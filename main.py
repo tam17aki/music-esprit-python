@@ -27,8 +27,8 @@ SOFTWARE.
 
 import numpy as np
 
-from analyzers.root import RootMusicAnalyzer
-from analyzers.spectral import SpectralMusicAnalyzer
+from analyzers.music.root import RootMusicAnalyzer
+from analyzers.music.spectral import SpectralMusicAnalyzer
 from cli import parse_args, print_experiment_setup, print_results
 from utils.data_models import ExperimentConfig
 from utils.signal_generator import create_true_parameters, generate_test_signal
