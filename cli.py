@@ -26,8 +26,8 @@ import argparse
 
 import numpy as np
 
-from analyzers.root import RootMusicAnalyzer
-from analyzers.spectral import SpectralMusicAnalyzer
+from analyzers.music.root import RootMusicAnalyzer
+from analyzers.music.spectral import SpectralMusicAnalyzer
 from utils.data_models import ExperimentConfig, SinusoidParameters
 
 
