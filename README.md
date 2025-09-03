@@ -142,10 +142,11 @@ This project is organized into a modular, object-oriented structure to promote c
 -   **`analyzers/`**:
     A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
     -   **`base.py`**: Defines `AnalyzerBase`, the top-level abstract base class. It contains the common logic shared by *all* subspace-based methods, such as the `fit` method template, amplitude/phase estimation, and result properties.
-    -   **`music.py`**: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
-    -   **`spectral.py`**: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
-    -   **`root.py`**: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
-
+    -   **`music/`**:
+        -   **`base.py`**: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
+        -   **`spectral.py`**: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
+        -   **`root.py`**: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
+  
 -   **`mixins/`**:
     A package for providing optional enhancements to the analyzer classes through multiple inheritance.
     -   **`covariance.py`**: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
