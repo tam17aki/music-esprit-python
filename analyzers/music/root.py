@@ -28,6 +28,7 @@ from typing import final, override
 import numpy as np
 import numpy.polynomial.polynomial as poly
 import numpy.typing as npt
+
 from mixins.covariance import ForwardBackwardMixin
 
 from .base import MusicAnalyzerBase
