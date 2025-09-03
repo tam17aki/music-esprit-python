@@ -29,7 +29,7 @@ import numpy as np
 import numpy.polynomial.polynomial as poly
 import numpy.typing as npt
 
-from .base import MusicAnalyzerBase
+from .music import MusicAnalyzerBase
 from mixins.covariance import ForwardBackwardMixin
 
 
