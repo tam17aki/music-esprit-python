@@ -22,7 +22,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
 
 1.  Clone this repository:
     ```bash
-    git clone https://github.com/tam17aki/music-esprit-python
+    git clone https://github.com/tam17aki/music-esprit-python.git
     cd music-esprit-python
     ```
 
