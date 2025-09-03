@@ -22,8 +22,8 @@ This work is inspired by the foundational papers in subspace-based signal proces
 
 1.  Clone this repository:
     ```bash
-    git clone https://github.com/your-username/your-repository-name.git
-    cd your-repository-name
+    git clone [https://github.com//tam17aki/music-esprit-python.git](https://github.com/tam17aki/music-esprit-python)
+    cd music-esprit-python
     ```
 
 2.  (Optional but recommended) Create a virtual environment:
