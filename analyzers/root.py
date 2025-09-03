@@ -178,5 +178,3 @@ class RootMusicAnalyzerFB(ForwardBackwardMixin, RootMusicAnalyzer):
 
     Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
     """
-
-    pass
