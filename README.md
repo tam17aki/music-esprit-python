@@ -189,7 +189,7 @@ The implemented methods are based on the principle of subspace decomposition of 
 These techniques allow for the estimation of sinusoidal frequencies at a resolution far exceeding that of traditional methods like the FFT. For a deeper dive into the theory, please refer to the papers [1-3] for spectral-MUSIC, [4] for root-MUSIC, and [5] for ESPRIT.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/tam17aki/music-esprit-python/blob/main/LICENSE) file for details.
 
 ## References
 [1] Schmidt, R. O. (1979). “Multiple emitter location and signal parameter estimation,” in Proc. RADC, Spectral Estimation Workshop, Rome, NY, pp. 243–258.
