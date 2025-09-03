@@ -176,7 +176,7 @@ This project is organized into a modular, object-oriented structure to promote c
 -   **`cli.py`**:
     A module dedicated to the Command-Line Interface. It handles argument parsing and the formatting of results for display.
 
-This layered design allows for maximum code reuse and easy extension. For instance, to add the ESPRIT algorithm, one would create an `EspritAnalyzerBase` inheriting from `AnalyzerBase`, and then implement concrete `EspritAnalyzer` classes, all while reusing the existing components.
+This layered design allows for maximum code reuse and easy extension.
 
 ## Theoretical Background
 
