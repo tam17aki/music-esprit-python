@@ -28,13 +28,13 @@ from typing import Self
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import eigh, hankel, pinv
+from scipy.linalg import hankel, pinv
 
 from utils.data_models import SinusoidParameters
 
 
-class MusicAnalyzerBase(ABC):
-    """Abstract base class for MUSIC-based parameter analyzers."""
+class AnalyzerBase(ABC):
+    """Abstract base class for parameter analyzers."""
 
     def __init__(self, fs: float, n_sinusoids: int):
         """Initialize the analyzer with an experiment configuration.
@@ -78,29 +78,6 @@ class MusicAnalyzerBase(ABC):
         _cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
         cov_matrix: npt.NDArray[np.complex128] = _cov_matrix.astype(np.complex128)
         return cov_matrix
-
-    def _estimate_noise_subspace(
-        self, signal: npt.NDArray[np.complex128], subspace_dim: int, model_order: int
-    ) -> npt.NDArray[np.complex128] | None:
-        """Estimate the signal subspace using eigenvalue decomposition."""
-        # 1. Build the covariance matrix
-        cov_matrix = self._build_covariance_matrix(signal, subspace_dim)
-
-        # 2. Eigenvalue decomposition
-        try:
-            _, eigenvectors = eigh(cov_matrix)
-        except np.linalg.LinAlgError:
-            warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
-            return None
-
-        # The noise subspace is the set of vectors corresponding to the smaller
-        # eigenvalues.
-        # Since it is in ascending order, select (subspace_dim - model_order) vectors
-        # from the beginning
-        n_noise_vectors = subspace_dim - model_order
-        _subspace = eigenvectors[:, :n_noise_vectors]
-        noise_subspace: npt.NDArray[np.complex128] = _subspace.astype(np.complex128)
-        return noise_subspace
 
     def _estimate_amplitudes_phases(
         self,
