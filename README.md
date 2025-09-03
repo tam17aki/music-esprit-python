@@ -183,7 +183,7 @@ This layered design allows for maximum code reuse and easy extension.
 The implemented methods are based on the principle of subspace decomposition of a signal's covariance matrix. By performing an eigenvalue decomposition, the observation space can be separated into a **signal subspace** and an orthogonal **noise subspace**.
 MUSIC leverages the orthogonality between the signal steering vectors and the noise subspace.
 
-These techniques allow for the estimation of sinusoidal frequencies at a resolution far exceeding that of traditional methods like the FFT. For a deeper dive into the theory, please refer to the papers [1-3] for spectral-MUSIC, [4] for root-MUSIC.
+These techniques allow for the estimation of sinusoidal frequencies at a resolution far exceeding that of traditional methods like the FFT. For a deeper dive into the theory, please refer to the papers [1-3] for spectral-MUSIC, [4] for root-MUSIC, and [5] for ESPRIT.
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
@@ -196,3 +196,5 @@ This project is licensed under the MIT License. See the LICENSE file for details
 [3] R.O. Schmidt, “Multiple emitter location and signal parameter estimation,” IEEE Trans. Antennas and Propagat., vol. AP-34, no. 3, pp. 276-280, 1986.
 
 [4] A. Barabell, "Improving the resolution performance of eigenstructure-based direction-finding algorithms," ICASSP '83. IEEE International Conference on Acoustics, Speech, and Signal Processing, Boston, MA, USA, 1983, pp. 336-339, doi: 10.1109/ICASSP.1983.1172124.
+
+[5] R. Roy and T. Kailath, "ESPRIT-estimation of signal parameters via rotational invariance techniques," in IEEE Transactions on Acoustics, Speech, and Signal Processing, vol. 37, no. 7, pp. 984-995, 1989.
