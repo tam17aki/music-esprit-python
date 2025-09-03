@@ -35,15 +35,6 @@ from .base import AnalyzerBase
 class MusicAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for MUSIC-based parameter analyzers."""
 
-    def __init__(self, fs: float, n_sinusoids: int):
-        """Initialize the analyzer with an experiment configuration.
-
-        Args:
-            fs (float): Sampling frequency in Hz.
-            n_sinusoids (int): Number of sinusoids.
-        """
-        super().__init__(fs, n_sinusoids)
-
     def _estimate_noise_subspace(
         self, signal: npt.NDArray[np.complex128], subspace_dim: int, model_order: int
     ) -> npt.NDArray[np.complex128] | None:

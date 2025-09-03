@@ -27,10 +27,10 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
+from mixins.covariance import ForwardBackwardMixin
 from scipy.signal import find_peaks
 
 from .music import MusicAnalyzerBase
-from mixins.covariance import ForwardBackwardMixin
 
 
 class SpectralMusicAnalyzer(MusicAnalyzerBase):
@@ -135,5 +135,3 @@ class SpectralMusicAnalyzerFB(ForwardBackwardMixin, SpectralMusicAnalyzer):
 
     Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
     """
-
-    pass
