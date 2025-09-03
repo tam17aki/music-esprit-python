@@ -27,8 +27,9 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
-from mixins.covariance import ForwardBackwardMixin
 from scipy.linalg import eigvals, pinv, svd
+
+from mixins.covariance import ForwardBackwardMixin
 
 from .base import EspritAnalyzerBase
 
