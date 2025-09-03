@@ -134,30 +134,31 @@ In the same way, you can use the `RootMusicAnalyzer` and its enhanced `RootMusic
 
 ## Project Structure
 
-This project is organized into a modular structure to promote clarity, reusability, and separation of concerns.
+This project is organized into a modular, object-oriented structure to promote clarity, reusability, and separation of concerns. The core logic is built upon a hierarchical class system.
 
 -   **`main.py`**:
     The main entry point to run demonstrations. It orchestrates the setup, execution, and result presentation of the analysis.
 
 -   **`analyzers/`**:
-    A package containing the core implementations of the signal processing algorithms.
-    -   `base.py`: Defines the `MusicAnalyzerBase` abstract base class, which contains the common logic for all MUSIC variants.
-    -   `spectral.py`: Implements the `SpectralMusicAnalyzer` for estimation via spectral peak-picking.
-    -   `root.py`: Implements the `RootMusicAnalyzer` for estimation via polynomial rooting.
+    A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
+    -   **`base.py`**: Defines `AnalyzerBase`, the top-level abstract base class. It contains the common logic shared by *all* subspace-based methods, such as the `fit` method template, amplitude/phase estimation, and result properties.
+    -   **`music.py`**: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
+    -   **`spectral.py`**: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
+    -   **`root.py`**: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
 
 -   **`mixins/`**:
-    A package for providing optional enhancements to the analyzer classes through multiple inheritance (mixins).
-    -   `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability to any analyzer.
+    A package for providing optional enhancements to the analyzer classes through multiple inheritance.
+    -   **`covariance.py`**: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
 
 -   **`utils/`**:
-    A package for reusable helper modules and data structures used across the project.
-    -   `data_models.py`: Defines the `dataclass` structures (`SinusoidParameters`, `ExperimentConfig`) for type-safe data handling.
-    -   `signal_generator.py`: Provides functions for synthesizing test signals with various parameters.
+    A package for reusable helper modules and data structures.
+    -   **`data_models.py`**: Defines the `dataclass` structures (`SinusoidParameters`, `ExperimentConfig`).
+    -   **`signal_generator.py`**: Provides functions for synthesizing test signals.
 
 -   **`cli.py`**:
     A module dedicated to the Command-Line Interface. It handles argument parsing and the formatting of results for display.
 
-This modular design allows for easy extension. For example, to add a new algorithm like ESPRIT, one would simply add a new file under the `analyzers/` directory while reusing the existing components in `utils/` and `cli.py`.
+This layered design allows for maximum code reuse and easy extension. For instance, to add the ESPRIT algorithm, one would create an `EspritAnalyzerBase` inheriting from `AnalyzerBase`, and then implement concrete `EspritAnalyzer` classes, all while reusing the existing components.
 
 ## Theoretical Background
 
