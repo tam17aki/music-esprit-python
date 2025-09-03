@@ -45,7 +45,7 @@ class LSEspritAnalyzer(EspritAnalyzerBase):
         try:
             rotation_operator_psi = pinv(subspace_upper) @ subspace_lower
         except np.linalg.LinAlgError:
-            warnings.warn("TLS matrix inversion failed in parameter solving.")
+            warnings.warn("Matrix inversion failed in parameter solving.")
             return np.array([])
         try:
             eigenvalues_psi = eigvals(rotation_operator_psi)
