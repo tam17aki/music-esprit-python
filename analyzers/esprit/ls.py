@@ -34,7 +34,7 @@ from .base import EspritAnalyzerBase
 
 
 class LSEspritAnalyzer(EspritAnalyzerBase):
-    """A class to solve frequencies via using Least Squares."""
+    """A class to solve frequencies via ESPRIT using Least Squares."""
 
     @override
     def _solve_params_from_subspace(
