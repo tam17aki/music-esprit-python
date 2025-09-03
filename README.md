@@ -182,7 +182,9 @@ This layered design allows for maximum code reuse and easy extension.
 ## Theoretical Background
 
 The implemented methods are based on the principle of subspace decomposition of a signal's covariance matrix. By performing an eigenvalue decomposition, the observation space can be separated into a **signal subspace** and an orthogonal **noise subspace**.
-MUSIC leverages the orthogonality between the signal steering vectors and the noise subspace.
+
+- **MUSIC** leverages the orthogonality between the signal steering vectors and the noise subspace.
+- **ESPRIT** exploits the rotational invariance property within the signal subspace itself.
 
 These techniques allow for the estimation of sinusoidal frequencies at a resolution far exceeding that of traditional methods like the FFT. For a deeper dive into the theory, please refer to the papers [1-3] for spectral-MUSIC, [4] for root-MUSIC, and [5] for ESPRIT.
 
