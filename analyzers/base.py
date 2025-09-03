@@ -29,7 +29,6 @@ from typing import Self
 import numpy as np
 import numpy.typing as npt
 from scipy.linalg import hankel, pinv
-
 from utils.data_models import SinusoidParameters
 
 
