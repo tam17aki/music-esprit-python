@@ -23,10 +23,11 @@ SOFTWARE.
 """
 
 import warnings
-from typing import override
+from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
+from mixins.covariance import ForwardBackwardMixin
 from scipy.linalg import eigvals, pinv, svd
 
 from .base import EspritAnalyzerBase
@@ -96,3 +97,11 @@ class TLSEspritAnalyzer(EspritAnalyzerBase):
         sorted_indices = np.argsort(estimated_freqs_hz[positive_freq_indices])
         freqs = estimated_freqs_hz[positive_freq_indices][sorted_indices]
         return freqs.astype(np.float64)
+
+
+@final
+class TLSEspritAnalyzerFB(ForwardBackwardMixin, TLSEspritAnalyzer):
+    """ESPRIT-TLS analyzer enhanced with Forward-Backward averaging.
+
+    Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
+    """
