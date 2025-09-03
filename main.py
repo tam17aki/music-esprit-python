@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A demonstration of parameter estimation for sinusoidal signals.
 
-Frequencies and damping coefficients are estimated using the MUSIC algorithm,
+Frequencies coefficients are estimated using the MUSIC and ESPRIT algorithm,
 followed by amplitude and phase estimation via the least squares method.
 
 Copyright (C) 2025 by Akira TAMAMORI
@@ -27,6 +27,7 @@ SOFTWARE.
 
 import numpy as np
 
+from analyzers.esprit.ls import LSEspritAnalyzer
 from analyzers.music.root import RootMusicAnalyzer
 from analyzers.music.spectral import SpectralMusicAnalyzer
 from cli import parse_args, print_experiment_setup, print_results
@@ -71,6 +72,14 @@ def main() -> None:
 
     # Print results
     print_results(root_analyzer, true_params)
+
+    # Perform parameter estimation via ESPRIT
+    print("\n--- Running ESPRIT ---")
+    esprit_analyzer = LSEspritAnalyzer(config.fs, config.n_sinusoids, config.sep_factor)
+    esprit_analyzer.fit(noisy_signal.astype(np.complex128))
+
+    # Print results
+    print_results(esprit_analyzer, true_params)
 
 
 if __name__ == "__main__":
