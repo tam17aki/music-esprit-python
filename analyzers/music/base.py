@@ -36,11 +36,21 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for MUSIC-based parameter analyzers."""
 
     def _estimate_noise_subspace(
-        self, signal: npt.NDArray[np.complex128], subspace_dim: int, model_order: int
+        self, signal: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.complex128] | None:
         """Estimate the signal subspace using eigenvalue decomposition."""
+        n_samples = signal.size
+        model_order = 2 * self.n_sinusoids
+        self.subspace_dim: int = n_samples // 3
+        if (
+            self.subspace_dim <= model_order
+            or self.subspace_dim >= n_samples - model_order
+        ):
+            warnings.warn("Invalid subspace dimension.")
+            return None
+
         # 1. Build the covariance matrix
-        cov_matrix = self._build_covariance_matrix(signal, subspace_dim)
+        cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
 
         # 2. Eigenvalue decomposition
         try:
@@ -53,7 +63,7 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         # eigenvalues.
         # Since it is in ascending order, select (subspace_dim - model_order) vectors
         # from the beginning
-        n_noise_vectors = subspace_dim - model_order
+        n_noise_vectors = self.subspace_dim - model_order
         _subspace = eigenvectors[:, :n_noise_vectors]
         noise_subspace: npt.NDArray[np.complex128] = _subspace.astype(np.complex128)
         return noise_subspace

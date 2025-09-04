@@ -63,17 +63,8 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-        n_samples = signal.size
-        subspace_dim = n_samples // 3
-        model_order = 2 * self.n_sinusoids
-        if subspace_dim <= model_order:
-            warnings.warn("Invalid subspace dimension for MUSIC.")
-            return np.array([])
-
         # 1. Estimate the noise subspace
-        noise_subspace = self._estimate_noise_subspace(
-            signal, subspace_dim, model_order
-        )
+        noise_subspace = self._estimate_noise_subspace(signal)
         if noise_subspace is None:
             warnings.warn("Failed to estimate noise subspace.")
             return np.array([])

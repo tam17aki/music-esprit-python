@@ -62,26 +62,15 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-        n_samples = signal.size
-        subspace_dim = n_samples // 3
-        model_order = 2 * self.n_sinusoids
-        if subspace_dim <= model_order:
-            warnings.warn(
-                "Invalid subspace dimension for MUSIC. Returning empty result."
-            )
-            return np.array([])
-
         # 1. Estimate the noise subspace
-        noise_subspace = self._estimate_noise_subspace(
-            signal, subspace_dim, model_order
-        )
+        noise_subspace = self._estimate_noise_subspace(signal)
         if noise_subspace is None:
             warnings.warn("Failed to estimate noise subspace. Returning empty result.")
             return np.array([])
 
-        freq_grid, music_spectrum = self._calculate_music_spectrum(
-            subspace_dim, noise_subspace
-        )
+        # 2. Calculate MUSIC pseudospectrum
+        freq_grid, music_spectrum = self._calculate_music_spectrum(noise_subspace)
+
         # 3. Detecting peaks from a spectrum
         estimated_freqs = find_peaks_from_spectrum(
             self.n_sinusoids, freq_grid, music_spectrum
@@ -90,7 +79,6 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 
     def _calculate_music_spectrum(
         self,
-        subspace_dim: int,
         noise_subspace: npt.NDArray[np.complex128],
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Calculate the MUSIC pseudospectrum over a frequency grid."""
@@ -98,7 +86,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
             0, self.fs / 2, num=self.n_grids, dtype=np.float64
         )
         omegas = 2 * np.pi * freq_grid / self.fs
-        l_vector = np.arange(subspace_dim).reshape(-1, 1)
+        l_vector = np.arange(self.subspace_dim).reshape(-1, 1)
         steering_matrix = np.exp(-1j * l_vector @ omegas.reshape(1, -1))
         temp_matrix = noise_subspace.conj().T @ steering_matrix
         denominator_values = np.einsum("ij,ji->i", temp_matrix.conj().T, temp_matrix)
