@@ -65,28 +65,15 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-        n_samples = signal.size
-        subspace_dim = n_samples // 3
-        model_order = 2 * self.n_sinusoids
-        if subspace_dim <= model_order:
-            warnings.warn("Invalid subspace dimension for MinNorm.")
-            return np.array([])
-
-        # 1. Estimate the noise subspace (reusing the base class method)
-        noise_subspace = self._estimate_noise_subspace(
-            signal, subspace_dim, model_order
-        )
-        if noise_subspace is None:
-            warnings.warn("Failed to estimate noise subspace.")
-            return np.array([])
-
-        # 2. Calculate the minimum norm vector `d` from the noise subspace
-        min_norm_vector = self._calculate_min_norm_vector(noise_subspace)
+        # 1. Calculate the minimum norm vector `d` from the noise subspace
+        min_norm_vector = self._calculate_min_norm_vector(signal)
         if min_norm_vector is None:
-            warnings.warn("Failed to compute the Min-Norm vector.")
+            warnings.warn(
+                "Failed to compute the Min-Norm vector. Returning empty result."
+            )
             return np.array([])
 
-        # 3. Estimate frequencies by finding the roots of a polynomial with
+        # 2. Estimate frequencies by finding the roots of a polynomial with
         #    coefficients `d`
         min_separation_hz = (self.fs / signal.size) * self.sep_factor
         estimated_freqs = find_freqs_from_roots(

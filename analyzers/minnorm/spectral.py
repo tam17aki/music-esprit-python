@@ -64,33 +64,20 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-        n_samples = signal.size
-        subspace_dim = n_samples // 3
-        model_order = 2 * self.n_sinusoids
-        if subspace_dim <= model_order:
-            warnings.warn("Invalid subspace dimension for Min-Norm.")
-            return np.array([])
-
-        # 1. Estimate the noise subspace (reusing the base class method)
-        noise_subspace = self._estimate_noise_subspace(
-            signal, subspace_dim, model_order
-        )
-        if noise_subspace is None:
-            warnings.warn("Failed to estimate noise subspace.")
-            return np.array([])
-
-        # 2. Calculate the minimum norm vector `d` from the noise subspace
-        min_norm_vector = self._calculate_min_norm_vector(noise_subspace)
+        # 1. Calculate the minimum norm vector `d` from the noise subspace
+        min_norm_vector = self._calculate_min_norm_vector(signal)
         if min_norm_vector is None:
-            warnings.warn("Failed to compute the Min-Norm vector.")
+            warnings.warn(
+                "Failed to compute the Min-Norm vector. Returning empty result."
+            )
             return np.array([])
 
-        # 3. Calculate Min-Norm spectrum using `d`
+        # 2. Calculate Min-Norm spectrum using `d`
         freq_grid, min_norm_spectrum = self._calculate_min_norm_spectrum(
-            subspace_dim, min_norm_vector
+            min_norm_vector
         )
 
-        # 4. Searching for peaks in the spectrum
+        # 3. Searching for peaks in the spectrum
         # estimated_freqs = self._find_peaks(freq_grid, min_norm_spectrum)
         estimated_freqs = find_peaks_from_spectrum(
             self.n_sinusoids, freq_grid, min_norm_spectrum
@@ -99,14 +86,14 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         return estimated_freqs
 
     def _calculate_min_norm_spectrum(
-        self, subspace_dim: int, min_norm_vector: npt.NDArray[np.complex128]
+        self, min_norm_vector: npt.NDArray[np.complex128]
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Calculate the Min-Norm pseudospectrum over a frequency grid."""
         freq_grid: npt.NDArray[np.float64] = np.linspace(
             0, self.fs / 2, num=self.n_grids, dtype=np.float64
         )
         omegas = 2 * np.pi * freq_grid / self.fs
-        l_vector = np.arange(subspace_dim).reshape(-1, 1)
+        l_vector = np.arange(self.subspace_dim).reshape(-1, 1)
         steering_matrix = np.exp(-1j * l_vector @ omegas.reshape(1, -1))
         denominator_values = np.abs(min_norm_vector.conj().T @ steering_matrix)
         min_norm_spectrum = 1 / (denominator_values + 1e-12)
