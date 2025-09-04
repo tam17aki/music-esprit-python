@@ -45,6 +45,7 @@ class AnalyzerBase(ABC):
         """
         self.fs: float = fs
         self.n_sinusoids: int = n_sinusoids
+        self.subspace_dim: int = -1
         self.est_params: SinusoidParameters | None = None
 
     def fit(self, signal: npt.NDArray[np.complex128]) -> Self:
