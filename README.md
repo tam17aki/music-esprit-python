@@ -11,7 +11,8 @@ This work is inspired by the foundational papers in subspace-based signal proces
 - **High-Resolution Algorithms**: Implements spectral estimation techniques that surpass the resolution limits of the classical Fast Fourier Transform (FFT).
 - **Multiple Methods Implemented**:
   - **Spectral MUSIC**: Frequency estimation via spectral peak-picking.
-  - **Root-MUSIC**: High-accuracy frequency estimation via polynomial rooting.
+  - **Root MUSIC**: High-accuracy frequency estimation via polynomial rooting.
+  - **Min-Norm**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace. Both spectral and root-based versions are implemented.
   - **ESPRIT**: A computationally efficient method that estimates frequencies directly without spectral search.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Enhanced Accuracy with Forward-Backward Averaging**: Improves estimation accuracy in low SNR or short data scenarios. This is implemented elegantly via a `ForwardBackwardMixin` class, showcasing a reusable and extensible design.
@@ -124,8 +125,8 @@ python main.py --help
 |`--snr_db` | Signal-to-Noise Ratio in dB. | 30.0|
 | `--freqs_true`  | A list of true frequencies in Hz. | 440 460 480|
 | `--amp_range` | The range for random amplitude generation. | 0.5 1.5|
-| `--n_grids` | Number of grid points for Spectral MUSIC. | 8192|
-| `--sep_factor` | Separation factor for Root-MUSIC and ESPRIT. | 0.4|
+| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral Min-Norm. | 8192|
+| `--sep_factor` | Separation factor for Root MUSIC, Root Min-Norm and ESPRIT. | 0.4|
 
 ### Using a Specific Analyzer in Your Own Code
 The object-oriented design makes it easy to use any analyzer in your own projects. Here's how you might use the standard `SpectralMusicAnalyzer` and its enhanced `SpectralMusicAnalyzerFB` version:
@@ -150,30 +151,34 @@ In the same way, you can use the enhanced version (`...FB`) of `RootMusicAnalyze
 
 This project is organized into a modular, object-oriented structure to promote clarity, reusability, and separation of concerns. The core logic is built upon a hierarchical class system.
 
--   **`main.py`**:
+-   `main.py`:
     The main entry point to run demonstrations. It orchestrates the setup, execution, and result presentation of the analysis.
 
--   **`analyzers/`**:
+-   `analyzers/`:
     A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
-    -   **`base.py`**: Defines `AnalyzerBase`, the top-level abstract base class. It contains the common logic shared by *all* subspace-based methods, such as the `fit` method template, amplitude/phase estimation, and result properties.
-    -   **`music/`**: A package dedicated to the MUSIC algorithm and its variants.
-        -   **`base.py`**: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
-        -   **`spectral.py`**: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
-        -   **`root.py`**: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
-    -   **`esprit/`**: A package dedicated to the ESPRIT algorithm and its variants.
-        -   **`base.py`**:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
-        -   **`ls.py`**: Implements `LSEspritAnalyzer` (inheriting from `EspritAnalyzerBase`), which uses the standard Least Squares approach to solve for the rotational operator.
-        -   **`tls.py`**: Implements `TLSEspritAnalyzer` (inheriting from `EspritAnalyzerBase`), which uses the more robust Total Least Squares approach for higher accuracy in noisy conditions.
--   **`mixins/`**:
+    -   `base.py`: Defines `AnalyzerBase`, the top-level abstract base class. It contains the common logic shared by *all* subspace-based methods, such as the `fit` method template, amplitude/phase estimation, and result properties.
+    -   `music/`: A sub-package dedicated to the MUSIC algorithm and its variants.
+        -   `base.py`: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
+        -   `spectral.py`: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
+        -   `root.py`: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
+    -   `esprit/`: A sub-package dedicated to the ESPRIT algorithm and its variants.
+        -   `base.py`**:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
+        -   `ls.py`: Implements `LSEspritAnalyzer` (inheriting from `EspritAnalyzerBase`), which uses the standard Least Squares approach to solve for the rotational operator.
+        -   `tls.py`: Implements `TLSEspritAnalyzer` (inheriting from `EspritAnalyzerBase`), which uses the more robust Total Least Squares approach for higher accuracy in noisy conditions.
+    -   `minnorm/`: A sub-package for Min-Norm algorithm variants.
+        -   `base.py`: Defines `MinNormAnalyzerBase`, containing the core logic for computing the minimum norm vector.
+        -   `spectral.py`: Implements `SpectralMinNormAnalyzer`, which estimates frequencies via spectral peak-picking.
+        -   `root.py`: Implements `RootMinNormAnalyzer`, which estimates frequencies via polynomial rooting.
+-   `mixins/`:
     A package for providing optional enhancements to the analyzer classes through multiple inheritance.
-    -   **`covariance.py`**: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
+    -   `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
 
--   **`utils/`**:
+-   `utils/`:
     A package for reusable helper modules and data structures.
-    -   **`data_models.py`**: Defines the `dataclass` structures (`SinusoidParameters`, `ExperimentConfig`).
-    -   **`signal_generator.py`**: Provides functions for synthesizing test signals.
+    -   `data_models.py`: Defines the `dataclass` structures (`SinusoidParameters`, `ExperimentConfig`).
+    -   `signal_generator.py`: Provides functions for synthesizing test signals.
 
--   **`cli.py`**:
+-   `cli.py`:
     A module dedicated to the Command-Line Interface. It handles argument parsing and the formatting of results for display.
 
 This layered design allows for maximum code reuse and easy extension.
