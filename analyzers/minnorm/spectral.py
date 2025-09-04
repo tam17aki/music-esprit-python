@@ -28,7 +28,6 @@ from typing import final, override
 import numpy as np
 import numpy.typing as npt
 
-# from scipy.signal import find_peaks
 from mixins.covariance import ForwardBackwardMixin
 
 from .._common import find_peaks_from_spectrum
@@ -112,27 +111,6 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         denominator_values = np.abs(min_norm_vector.conj().T @ steering_matrix)
         min_norm_spectrum = 1 / (denominator_values + 1e-12)
         return freq_grid, min_norm_spectrum
-
-    # def _find_peaks(
-    #     self, freq_grid: npt.NDArray[np.float64], vector: npt.NDArray[np.float64]
-    # ) -> npt.NDArray[np.float64]:
-    #     """Find the N strongest peaks from the vector."""
-    #     # 1. Find all "local maxima" as peak candidates.
-    #     all_peaks, _ = find_peaks(
-    #         vector, height=np.median(vector), prominence=np.std(vector) / 2.0
-    #     )
-    #     all_peaks = np.array(all_peaks, dtype=np.int64)
-    #     if all_peaks.size < self.n_sinusoids:
-    #         return freq_grid[all_peaks] if all_peaks.size > 0 else np.array([])
-
-    #     # 2. From all the peak candidates found, select N peaks
-    #     #    with the highest spectral values.
-    #     strongest_peak_indices = all_peaks[
-    #         np.argsort(vector[all_peaks])[-self.n_sinusoids :]
-    #     ]
-    #     estimated_freqs = freq_grid[strongest_peak_indices]
-
-    #     return np.sort(estimated_freqs)
 
 
 @final
