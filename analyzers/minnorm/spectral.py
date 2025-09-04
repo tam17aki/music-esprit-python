@@ -27,10 +27,11 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
-from scipy.signal import find_peaks
 
+# from scipy.signal import find_peaks
 from mixins.covariance import ForwardBackwardMixin
 
+from .._common import find_peaks_from_spectrum
 from .base import MinNormAnalyzerBase
 
 
@@ -91,7 +92,10 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         )
 
         # 4. Searching for peaks in the spectrum
-        estimated_freqs = self._find_peaks(freq_grid, min_norm_spectrum)
+        # estimated_freqs = self._find_peaks(freq_grid, min_norm_spectrum)
+        estimated_freqs = find_peaks_from_spectrum(
+            self.n_sinusoids, freq_grid, min_norm_spectrum
+        )
 
         return estimated_freqs
 
@@ -109,26 +113,26 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         min_norm_spectrum = 1 / (denominator_values + 1e-12)
         return freq_grid, min_norm_spectrum
 
-    def _find_peaks(
-        self, freq_grid: npt.NDArray[np.float64], vector: npt.NDArray[np.float64]
-    ) -> npt.NDArray[np.float64]:
-        """Find the N strongest peaks from the vector."""
-        # 1. Find all "local maxima" as peak candidates.
-        all_peaks, _ = find_peaks(
-            vector, height=np.median(vector), prominence=np.std(vector) / 2.0
-        )
-        all_peaks = np.array(all_peaks, dtype=np.int64)
-        if all_peaks.size < self.n_sinusoids:
-            return freq_grid[all_peaks] if all_peaks.size > 0 else np.array([])
+    # def _find_peaks(
+    #     self, freq_grid: npt.NDArray[np.float64], vector: npt.NDArray[np.float64]
+    # ) -> npt.NDArray[np.float64]:
+    #     """Find the N strongest peaks from the vector."""
+    #     # 1. Find all "local maxima" as peak candidates.
+    #     all_peaks, _ = find_peaks(
+    #         vector, height=np.median(vector), prominence=np.std(vector) / 2.0
+    #     )
+    #     all_peaks = np.array(all_peaks, dtype=np.int64)
+    #     if all_peaks.size < self.n_sinusoids:
+    #         return freq_grid[all_peaks] if all_peaks.size > 0 else np.array([])
 
-        # 2. From all the peak candidates found, select N peaks
-        #    with the highest spectral values.
-        strongest_peak_indices = all_peaks[
-            np.argsort(vector[all_peaks])[-self.n_sinusoids :]
-        ]
-        estimated_freqs = freq_grid[strongest_peak_indices]
+    #     # 2. From all the peak candidates found, select N peaks
+    #     #    with the highest spectral values.
+    #     strongest_peak_indices = all_peaks[
+    #         np.argsort(vector[all_peaks])[-self.n_sinusoids :]
+    #     ]
+    #     estimated_freqs = freq_grid[strongest_peak_indices]
 
-        return np.sort(estimated_freqs)
+    #     return np.sort(estimated_freqs)
 
 
 @final

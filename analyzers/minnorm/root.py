@@ -26,11 +26,11 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.polynomial.polynomial as poly
 import numpy.typing as npt
 
 from mixins.covariance import ForwardBackwardMixin
 
+from .._common import find_freqs_from_roots
 from .base import MinNormAnalyzerBase
 
 
@@ -89,47 +89,10 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
         # 3. Estimate frequencies by finding the roots of a polynomial with
         #    coefficients `d`
         min_separation_hz = (self.fs / signal.size) * self.sep_factor
-        estimated_freqs = self._find_roots_from_vector(
-            min_norm_vector, min_separation_hz
+        estimated_freqs = find_freqs_from_roots(
+            self.fs, self.n_sinusoids, min_norm_vector, min_separation_hz
         )
-
         return estimated_freqs
-
-    def _find_roots_from_vector(
-        self, vector: npt.NDArray[np.complex128], min_separation_hz: float
-    ) -> npt.NDArray[np.float64]:
-        """Find roots of the polynomial defined by the vector and estimate freqs."""
-        # 1. Calculate the roots of a polynomial
-        # The vector becomes the coefficient of the polynomial, but it is arranged from
-        # the higher order terms. To give the argument to polyroots, it is necessary
-        # to rearrange the terms from lowest order.
-        try:
-            roots = poly.polyroots(vector[::-1])
-        except np.linalg.LinAlgError:
-            warnings.warn("Failed to find roots of the polynomial.")
-            return np.array([])
-
-        # 2. Select the 2M roots that are closest to the unit circle
-        # Ideally, M candidates would be sufficient, but since some candidates may be
-        # overlooked due to noise and numerical errors, it is recommended to secure a
-        # larger number of candidates.
-        sorted_indices = np.argsort(np.abs(np.abs(roots) - 1))
-        closest_roots = roots[sorted_indices[: 2 * self.n_sinusoids]]
-
-        # 3. Estimate normalized angular frequency from the argument of the root
-        _angles = np.angle(closest_roots)
-        angles = _angles[_angles >= 0]
-
-        # 4. Convert normalized angular frequency ω [rad/sample] to physical
-        #    frequency f [Hz]
-        _uniq_freqs = np.abs(angles.astype(np.float64) * (self.fs / (2 * np.pi)))
-
-        # 5. Filter frequencies
-        unique_freqs = [_uniq_freqs[0]]
-        for freq in _uniq_freqs[1:]:
-            if np.abs(freq - unique_freqs[-1]) > min_separation_hz:
-                unique_freqs.append(freq)
-        return np.sort(np.array(unique_freqs[: self.n_sinusoids]))
 
 
 @final
