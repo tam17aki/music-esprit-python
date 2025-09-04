@@ -102,17 +102,17 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
     ) -> npt.NDArray[np.float64]:
         """Perform core ESPRIT estimation to get raw parameters without filtering."""
         n_samples = signal.size
-        subspace_dim = n_samples // 3
         model_order = 2 * self.n_sinusoids
-
-        if subspace_dim <= model_order or subspace_dim >= n_samples - model_order:
-            warnings.warn(
-                "Invalid subspace dimension for ESPRIT. Returning empty result."
-            )
+        self.subspace_dim: int = n_samples // 3
+        if (
+            self.subspace_dim <= model_order
+            or self.subspace_dim >= n_samples - model_order
+        ):
+            "Invalid subspace dimension for ESPRIT. Returning empty result."
             return np.array([])
 
         # 1. Build the covariance matrix
-        cov_matrix = self._build_covariance_matrix(signal, subspace_dim)
+        cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
 
         # 2. Estimate the signal subspace
         signal_subspace = self._estimate_signal_subspace(cov_matrix)
