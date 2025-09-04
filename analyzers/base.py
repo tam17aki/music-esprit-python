@@ -68,15 +68,14 @@ class AnalyzerBase(ABC):
         """Estimate frequencies using a specific MUSIC variant."""
         raise NotImplementedError
 
+    @staticmethod
     def _build_covariance_matrix(
-        self, signal: npt.NDArray[np.complex128]
+        signal: npt.NDArray[np.complex128], subspace_dim: int
     ) -> npt.NDArray[np.complex128]:
         """Build the covariance matrix from the input signal."""
         n_samples = signal.size
-        n_snapshots = n_samples - self.subspace_dim + 1
-        hankel_matrix = hankel(
-            signal[: self.subspace_dim], signal[self.subspace_dim - 1 :]
-        )
+        n_snapshots = n_samples - subspace_dim + 1
+        hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
         _cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
         cov_matrix: npt.NDArray[np.complex128] = _cov_matrix.astype(np.complex128)
         return cov_matrix
