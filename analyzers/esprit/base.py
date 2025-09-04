@@ -112,7 +112,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             return np.array([])
 
         # 1. Build the covariance matrix
-        cov_matrix = self._build_covariance_matrix(signal)
+        cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
 
         # 2. Estimate the signal subspace
         signal_subspace = self._estimate_signal_subspace(cov_matrix)
