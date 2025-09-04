@@ -50,7 +50,7 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
             return None
 
         # 1. Build the covariance matrix
-        cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
+        cov_matrix = self._build_covariance_matrix(signal)
 
         # 2. Eigenvalue decomposition
         try:
