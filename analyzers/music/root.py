@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines RootMusicAnalyzer class.
+"""Defines RootMusicAnalyzer class for Root MUSIC.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
