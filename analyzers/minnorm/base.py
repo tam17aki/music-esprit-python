@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines MinNormAnalyzerBase class for MinNorm-based parameter analyzers.
+"""Defines MinNormAnalyzerBase class for Min-Norm based parameter analyzers.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -30,9 +30,11 @@ import numpy.typing as npt
 
 from ..music.base import MusicAnalyzerBase
 
+ZERO_LEVEL = 1e-9
+
 
 class MinNormAnalyzerBase(MusicAnalyzerBase, ABC):
-    """Abstract base class for MinNorm-based parameter analyzers."""
+    """Abstract base class for Min-Norm based parameter analyzers."""
 
     @staticmethod
     def _calculate_min_norm_vector(
@@ -44,7 +46,7 @@ class MinNormAnalyzerBase(MusicAnalyzerBase, ABC):
 
         # If the first row vector is close to the zero vector,
         # the calculation may become unstable.
-        if np.linalg.norm(first_row_h) < 1e-9:
+        if np.linalg.norm(first_row_h) < ZERO_LEVEL:
             warnings.warn("The first row of the noise subspace is close to zero.")
             return None
 
