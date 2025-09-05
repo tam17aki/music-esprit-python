@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The abstract base class for analyzers.
+"""Defines AnalyzerBase class, the abstract base class for analyzers.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
