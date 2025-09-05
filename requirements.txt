@@ -1,15 +1,2 @@
-astroid==3.3.11
-basedpyright==1.31.3
-dill==0.4.0
-isort==6.0.1
-mccabe==0.7.0
-mypy==1.17.1
-mypy_extensions==1.1.0
-nodejs-wheel-binaries==22.18.0
 numpy==2.3.2
-pathspec==0.12.1
-platformdirs==4.4.0
-pylint==3.3.8
 scipy==1.16.1
-tomlkit==0.13.3
-typing_extensions==4.15.0
