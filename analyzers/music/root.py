@@ -86,10 +86,10 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         """Calculate the coefficients of the Root-MUSIC polynomial D(z).
 
         Args:
-            noise_subspace (np.ndarray): The noise subspace matrix E_n.
+            noise_subspace (np.ndarray): The noise subspace matrix E_n (complex128).
 
         Returns:
-            np.ndarray: A vector of polynomial coefficients.
+            np.ndarray: A vector of polynomial coefficients (float64).
         """
         # C = E_n * E_n^H
         projector_onto_noise = noise_subspace @ noise_subspace.conj().T

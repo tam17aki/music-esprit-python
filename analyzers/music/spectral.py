@@ -55,8 +55,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         """Estimate frequencies of multiple sinusoids.
 
         Args:
-            signal (np.ndarray):
-                Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -78,10 +77,18 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         return estimated_freqs
 
     def _calculate_music_spectrum(
-        self,
-        noise_subspace: npt.NDArray[np.complex128],
+        self, noise_subspace: npt.NDArray[np.complex128]
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
-        """Calculate the MUSIC pseudospectrum over a frequency grid."""
+        """Calculate the MUSIC pseudospectrum over a frequency grid.
+
+        Args:
+            noise_subspace (np.ndarray): The noise subspace matrix (complex128).
+
+        Returns:
+            tuple[np.ndarray, np.ndarray]:
+                - freq_grid (np.ndarray): Frequency grid (float64).
+                - music_spectrum (np.ndarray): MUSIC pseudospectrum (float64).
+        """
         freq_grid: npt.NDArray[np.float64] = np.linspace(
             0, self.fs / 2, num=self.n_grids, dtype=np.float64
         )

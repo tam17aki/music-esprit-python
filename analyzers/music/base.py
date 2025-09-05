@@ -38,7 +38,15 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
     def _estimate_noise_subspace(
         self, signal: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.complex128] | None:
-        """Estimate the signal subspace using eigenvalue decomposition."""
+        """Estimate the noise subspace using eigenvalue decomposition.
+
+        Args:
+            signal (np.ndarray): Input signal (complex128).
+
+        Returns:
+            np.ndarray: Estimated noise subspace (complex128).
+                Returns None if estimation fails.
+        """
         model_order = 2 * self.n_sinusoids
 
         # 1. Build the covariance matrix
