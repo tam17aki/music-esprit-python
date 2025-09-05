@@ -60,7 +60,7 @@ class AnalyzerBase(ABC):
             self.est_params = SinusoidParameters(
                 np.array([]), np.array([]), np.array([])
             )
-            warnings.warn(f"Invalid subspace dimension. Returning empty result.")
+            warnings.warn("Invalid subspace dimension. Returning empty result.")
             return self
         freqs = self._estimate_frequencies(signal)
         if freqs.size != self.n_sinusoids:
