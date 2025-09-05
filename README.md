@@ -162,7 +162,7 @@ This project is organized into a modular, object-oriented structure to promote c
         -   `spectral.py`: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
         -   `root.py`: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
     -   `esprit/`: A sub-package dedicated to the ESPRIT algorithm and its variants.
-        -   `base.py`**:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
+        -   `base.py`:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
         -   `ls.py`: Implements `LSEspritAnalyzer` (inheriting from `EspritAnalyzerBase`), which uses the standard Least Squares approach to solve for the rotational operator.
         -   `tls.py`: Implements `TLSEspritAnalyzer` (inheriting from `EspritAnalyzerBase`), which uses the more robust Total Least Squares approach for higher accuracy in noisy conditions.
     -   `minnorm/`: A sub-package for Min-Norm algorithm variants.
