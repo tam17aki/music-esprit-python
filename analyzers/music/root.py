@@ -105,6 +105,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
             diag_sum = np.sum(np.diag(projector_onto_noise, k=k))
             coefficients[k + poly_degree] = diag_sum
 
+        # Notice: The polynomial coefficients are arranged in descending order of powers
         return coefficients
 
 
