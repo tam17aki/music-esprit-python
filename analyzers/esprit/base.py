@@ -62,9 +62,6 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-        if self.n_sinusoids == 0:
-            return np.array([])
-
         # 1. Estimate raw parameters
         raw_freqs = self._estimate_raw_esprit_parameters(signal)
         if raw_freqs.size == 0:
@@ -101,16 +98,6 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         self, signal: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Perform core ESPRIT estimation to get raw parameters without filtering."""
-        n_samples = signal.size
-        model_order = 2 * self.n_sinusoids
-        self.subspace_dim: int = n_samples // 3
-        if (
-            self.subspace_dim <= model_order
-            or self.subspace_dim >= n_samples - model_order
-        ):
-            "Invalid subspace dimension for ESPRIT. Returning empty result."
-            return np.array([])
-
         # 1. Build the covariance matrix
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
 
