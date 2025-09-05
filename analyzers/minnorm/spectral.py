@@ -57,8 +57,7 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         This method overrides the abstract method in the base class.
 
         Args:
-            signal (np.ndarray):
-                Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -93,7 +92,16 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
     def _calculate_min_norm_spectrum(
         self, min_norm_vector: npt.NDArray[np.complex128]
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
-        """Calculate the Min-Norm pseudospectrum over a frequency grid."""
+        """Calculate the Min-Norm pseudospectrum over a frequency grid.
+
+        Args:
+            min_norm_vector (np.ndarray): The minimum norm vector (complex128).
+
+        Returns:
+            tuple[np.ndarray, np.ndarray]:
+                - freq_grid (np.ndarray): Frequency grid (float64).
+                - min_norm_spectrum (np.ndarray): Min-Norm pseudospectrum (float64).
+        """
         freq_grid: npt.NDArray[np.float64] = np.linspace(
             0, self.fs / 2, num=self.n_grids, dtype=np.float64
         )

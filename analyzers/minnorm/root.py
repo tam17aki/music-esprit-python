@@ -58,8 +58,7 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
         This method overrides the abstract method in the base class.
 
         Args:
-            signal (np.ndarray):
-                Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
