@@ -41,7 +41,15 @@ class TLSEspritAnalyzer(EspritAnalyzerBase):
     def _compute_rotation_operator_tls(
         signal_subspace: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.complex128] | None:
-        """Compute the rotation operator Psi using Total Least Squares (TLS)."""
+        """Compute the rotation operator Psi using Total Least Squares (TLS).
+
+        Args:
+            signal_subspace (np.ndarray): The signal subspace matrix (complex128).
+
+        Returns:
+            np.ndarray: The rotation operator matrix (complex128).
+                Returns None if estimation fails.
+        """
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
 
@@ -73,7 +81,15 @@ class TLSEspritAnalyzer(EspritAnalyzerBase):
     def _solve_params_from_subspace(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solve for frequencies from the signal subspace."""
+        """Solve for frequencies from the signal subspace.
+
+        Args:
+            signal_subspace (np.ndarray): The signal subspace matrix (complex128).
+
+        Returns:
+            np.ndarray: Estimated frequencies (float64).
+                Returns empty arrays if estimation fails.
+        """
         # 1. Compute the rotation operator Psi using TLS
         rotation_operator_psi = self._compute_rotation_operator_tls(signal_subspace)
         if rotation_operator_psi is None:

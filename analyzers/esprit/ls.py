@@ -41,7 +41,15 @@ class LSEspritAnalyzer(EspritAnalyzerBase):
     def _solve_params_from_subspace(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solve for frequencies from the signal subspace."""
+        """Solve for frequencies from the signal subspace.
+
+        Args:
+            signal_subspace (np.ndarray): The signal subspace matrix (complex128).
+
+        Returns:
+            np.ndarray: Estimated frequencies (float64).
+                Returns empty arrays if estimation fails.
+        """
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
         try:

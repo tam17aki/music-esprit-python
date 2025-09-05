@@ -55,28 +55,35 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         """Estimate frequencies of multiple sinusoids.
 
         Args:
-            signal (np.ndarray):
-                Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
         # 1. Estimate raw parameters
-        raw_freqs = self._estimate_raw_esprit_parameters(signal)
+        raw_freqs = self._estimate_raw_freqs(signal)
         if raw_freqs.size == 0:
             warnings.warn("No valid parameters estimated during raw estimation.")
             return np.array([])
 
         # 2. Filter unique components
         min_separation_hz = (self.fs / signal.size) * self.sep_factor
-        est_freqs = self._filter_unique_parameters(raw_freqs, min_separation_hz)
+        est_freqs = self._filter_unique_freqs(raw_freqs, min_separation_hz)
         return est_freqs
 
     def _estimate_signal_subspace(
         self, cov_matrix: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.complex128] | None:
-        """Estimate the signal subspace using eigenvalue decomposition."""
+        """Estimate the signal subspace using eigenvalue decomposition.
+
+        Args:
+            cov_matrix (np.ndarray): The covariance matrix (complex128).
+
+        Returns:
+            np.ndarray: Estimated signal subspace matrix (complex128).
+                Returns None if estimation fails.
+        """
         model_order = 2 * self.n_sinusoids
         try:
             _, eigenvectors = eigh(cov_matrix)
@@ -94,10 +101,17 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         """Solve for frequencies from the signal subspace."""
         raise NotImplementedError
 
-    def _estimate_raw_esprit_parameters(
+    def _estimate_raw_freqs(
         self, signal: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Perform core ESPRIT estimation to get raw parameters without filtering."""
+        """Perform core ESPRIT estimation to get raw frequencies without filtering.
+
+        Args:
+            signal (np.ndarray): Input signal (complex128).
+
+        Returns:
+            np.ndarray: Estimated raw frequencies (float64).
+        """
         # 1. Build the covariance matrix
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
 
@@ -110,12 +124,18 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         raw_freqs = self._solve_params_from_subspace(signal_subspace)
         return raw_freqs
 
-    def _filter_unique_parameters(
-        self,
-        raw_freqs: npt.NDArray[np.float64],
-        min_separation_hz: float,
+    def _filter_unique_freqs(
+        self, raw_freqs: npt.NDArray[np.float64], min_separation_hz: float
     ) -> npt.NDArray[np.float64]:
-        """Filter raw parameters to keep a specified number of unique components."""
+        """Filter raw frequencies to keep a specified number of unique components.
+
+        Args:
+            raw_freqs (np.ndarray): The estimated raw frequencies (float64).
+            min_separation_hz (float): The minimum separation interval in Hz.
+
+        Returns:
+            np.ndarray: Filtered unique frequencies (float64).
+        """
         if raw_freqs.size == 0:
             return np.array([])
 
