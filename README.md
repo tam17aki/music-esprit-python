@@ -188,9 +188,11 @@ This layered design allows for maximum code reuse and easy extension.
 The implemented methods are based on the principle of subspace decomposition of a signal's covariance matrix. By performing an eigenvalue decomposition, the observation space can be separated into a **signal subspace** and an orthogonal **noise subspace**.
 
 - **MUSIC** leverages the orthogonality between the signal steering vectors and the noise subspace.
+- **Min-Norm** also uses the noise subspace but identifies a single, optimal vector to reduce computational load and potentially spurious peaks.
 - **ESPRIT** exploits the rotational invariance property within the signal subspace itself.
 
 These techniques allow for the estimation of sinusoidal frequencies at a resolution far exceeding that of traditional methods like the FFT. For a deeper dive into the theory, please refer to the papers [1-3] for Spectral MUSIC, [4] for Root MUSIC, [5] for Min-Norm, and [6] for ESPRIT.
+The comprehensive textbook [7] provides detailed mathematical derivations and analyses of MUSIC, ESPRIT, Min-Norm, and many other advanced signal processing techniques.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/tam17aki/music-esprit-python/blob/main/LICENSE) file for details.
@@ -207,3 +209,5 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 [5]. R. Kumaresan and D. W. Tufts, "Estimating the Angles of Arrival of Multiple Plane Waves," in IEEE Transactions on Aerospace and Electronic Systems, vol. AES-19, no. 1, pp. 134-139, 1983.
 
 [6] R. Roy and T. Kailath, "ESPRIT-estimation of signal parameters via rotational invariance techniques," in IEEE Transactions on Acoustics, Speech, and Signal Processing, vol. 37, no. 7, pp. 984-995, 1989.
+
+[7] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
