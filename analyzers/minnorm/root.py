@@ -53,7 +53,7 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Estimate frequencies of multiple sinusoids using Root-MinNorm.
+        """Estimate frequencies of multiple sinusoids using Root Min-Norm.
 
         This method overrides the abstract method in the base class.
 
