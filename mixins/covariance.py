@@ -44,7 +44,7 @@ class ForwardBackwardMixin:
             signal (np.ndarray): Input signal (complex128).
             subspace_dim (int): The dimension of subspace.
 
-        Returns :
+        Returns:
             np.ndarray: The forward-backward averaged covariance matrix (complex128).
         """
         # 1. Standard forward covariance matrix
