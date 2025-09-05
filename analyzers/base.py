@@ -50,6 +50,18 @@ class AnalyzerBase(ABC):
 
     def fit(self, signal: npt.NDArray[np.complex128]) -> Self:
         """Run the full parameter estimation process."""
+        n_samples = signal.size
+        model_order = 2 * self.n_sinusoids
+        self.subspace_dim = n_samples // 3
+        if (
+            self.subspace_dim <= model_order
+            or self.subspace_dim >= n_samples - model_order
+        ):
+            self.est_params = SinusoidParameters(
+                np.array([]), np.array([]), np.array([])
+            )
+            warnings.warn(f"Invalid subspace dimension. Returning empty result.")
+            return self
         freqs = self._estimate_frequencies(signal)
         if freqs.size != self.n_sinusoids:
             self.est_params = SinusoidParameters(freqs, np.array([]), np.array([]))
