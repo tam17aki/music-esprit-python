@@ -100,10 +100,10 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         poly_degree = subspace_dim - 1
 
         coefficients = np.zeros(2 * subspace_dim - 1, dtype=np.complex128)
-        for k in range(poly_degree, -poly_degree - 1, -1):
+        for k in range(-poly_degree, poly_degree + 1):
             # Computes the sum of the k-th diagonal of matrix C
             diag_sum = np.sum(np.diag(projector_onto_noise, k=k))
-            coefficients[-k + poly_degree] = diag_sum
+            coefficients[k + poly_degree] = diag_sum
 
         return coefficients
 
