@@ -53,7 +53,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Estimate frequencies of multiple sinusoids using Root-MUSIC.
+        """Estimate frequencies of multiple sinusoids using Root MUSIC.
 
         Args:
             signal (np.ndarray):
@@ -69,7 +69,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
             warnings.warn("Failed to estimate noise subspace.")
             return np.array([])
 
-        # 2. Calculates the coefficients of the root-MUSIC polynomial
+        # 2. Calculates the coefficients of the Root MUSIC polynomial
         coefficients = self._calculate_polynomial_coefficients(noise_subspace)
 
         # 3. Find the roots and estimate the frequencies
@@ -83,7 +83,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
     def _calculate_polynomial_coefficients(
         self, noise_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.complex128]:
-        """Calculate the coefficients of the Root-MUSIC polynomial D(z).
+        """Calculate the coefficients of the Root MUSIC polynomial D(z).
 
         Args:
             noise_subspace (np.ndarray): The noise subspace matrix E_n (complex128).
