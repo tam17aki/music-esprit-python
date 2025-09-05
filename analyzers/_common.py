@@ -81,7 +81,7 @@ def find_freqs_from_roots(
     """
     # 1. Calculate the roots of a polynomial
     try:
-        roots = poly.polyroots(coefficients[::-1])
+        roots = poly.polyroots(coefficients)
     except np.linalg.LinAlgError:
         warnings.warn("Failed to find roots of the polynomial.")
         return np.array([])
