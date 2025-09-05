@@ -84,7 +84,15 @@ class AnalyzerBase(ABC):
     def _build_covariance_matrix(
         signal: npt.NDArray[np.complex128], subspace_dim: int
     ) -> npt.NDArray[np.complex128]:
-        """Build the covariance matrix from the input signal."""
+        """Build the covariance matrix from the input signal.
+
+        Args:
+            signal (np.ndarray): Input signal (complex128).
+            subspace_dim (int): The dimension of subspace.
+
+        Returns:
+            np.ndarray: The covariance matrix (complex128).
+        """
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
         hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
