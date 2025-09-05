@@ -49,7 +49,15 @@ class AnalyzerBase(ABC):
         self.est_params: SinusoidParameters | None = None
 
     def fit(self, signal: npt.NDArray[np.complex128]) -> Self:
-        """Run the full parameter estimation process."""
+        """Run the full parameter estimation process.
+
+        Args:
+            signal (np.ndarray): Input signal (complex128).
+
+        Returns:
+            Self@AnalyzerBase: The fitted object.
+                Returns empty result if estimation fails.
+        """
         n_samples = signal.size
         model_order = 2 * self.n_sinusoids
         self.subspace_dim = n_samples // 3
