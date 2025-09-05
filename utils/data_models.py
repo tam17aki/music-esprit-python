@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Definition of SinusoidParameters and ExperimentConfig classes.
+"""Defines SinusoidParameters and ExperimentConfig classes.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
