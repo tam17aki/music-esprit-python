@@ -88,14 +88,14 @@ class HOYWAnalyzer(AnalyzerBase):
 
         # 2. Construct the matrix R and vector r of the HOYW equation
         try:
-            cov_mat = self._build_autocorr_matrix(autocorr, p, m)  # m x p
-            cov_vec = self._build_autocorr_vector(autocorr, p, m)  # m x 1
+            acorr_mat = self._build_autocorr_matrix(autocorr, p, m)  # m x p
+            acorr_vec = self._build_autocorr_vector(autocorr, p, m)  # m x 1
         except ValueError as e:
             warnings.warn(f"Failed to build Yule-Walker matrices: {e}")
             return np.array([])
 
         # 3. Estimate AR coefficients by solving the reduced-rank HOYW equations
-        ar_coeffs = self._solve_hoyw_equation(cov_mat, cov_vec, model_order)
+        ar_coeffs = self._solve_hoyw_equation(acorr_mat, acorr_vec, model_order)
 
         # 4. Estimating frequency by finding roots from AR coefficients
         poly_coeffs = np.concatenate(([1], ar_coeffs))
@@ -169,17 +169,17 @@ class HOYWAnalyzer(AnalyzerBase):
 
     def _solve_hoyw_equation(
         self,
-        cov_mat: npt.NDArray[np.complex128],
-        cov_vec: npt.NDArray[np.complex128],
+        acorr_mat: npt.NDArray[np.complex128],
+        acorr_vec: npt.NDArray[np.complex128],
         model_order: int,
     ) -> npt.NDArray[np.complex128]:
         """Solve the reduced-rank HOYW equations to estimate the AR coefficients.
 
         Args:
-            cov_mat (np.ndarray):
-                The sample covariance matrix (float64); lhs of Stoica 4.4.8
-            cov_vec (np.ndarray):
-                The sample covariance vector (float64); rhs of Stoica 4.4.8
+            acorr_mat (np.ndarray):
+                The sample autocorrelation matrix (float64); lhs of Stoica 4.4.8
+            acorr_vec (np.ndarray):
+                The sample autocorrelation vector (float64); rhs of Stoica 4.4.8
             model_order (int):
                 The order of model; model_order = 2 * n_sinusoids
 
@@ -189,7 +189,7 @@ class HOYWAnalyzer(AnalyzerBase):
         """
         # Performs SVD of matrix R (Stoica 4.4.12)
         try:
-            u, s, vh = svd(cov_mat)
+            u, s, vh = svd(acorr_mat)
         except np.linalg.LinAlgError:
             warnings.warn("SVD on autocorrelation matrix failed.")
             return np.array([])
@@ -200,6 +200,6 @@ class HOYWAnalyzer(AnalyzerBase):
         u1 = u[:, :model_order]
         s1_inv = np.diag(1 / s[:model_order])
         vh1 = vh[:model_order, :]
-        ar_coeffs = -vh1.conj().T @ s1_inv @ u1.conj().T @ cov_vec
+        ar_coeffs = -vh1.conj().T @ s1_inv @ u1.conj().T @ acorr_vec
 
         return ar_coeffs
