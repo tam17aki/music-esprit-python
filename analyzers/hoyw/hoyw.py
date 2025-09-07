@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines HOYWAnalyzer class for Higher-Order Yule-Walker (HOYW) method
+"""Defines HOYWAnalyzer class for Higher-Order Yule-Walker (HOYW) method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -71,14 +71,10 @@ class HOYWAnalyzer(AnalyzerBase):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-
         model_order = 2 * self.n_sinusoids  # n in the textbook
         p = self.ar_order  # L in the textbook
         m = p  # M in the textbook
-
-        # Desired number of lags for autocorrelation
-        n_lags = p + m + 1
-
+        n_lags = p + m + 1  # Desired number of lags for autocorrelation
         if signal.size < n_lags:
             warnings.warn("Signal is too short for HOYW method.")
             return np.array([])
