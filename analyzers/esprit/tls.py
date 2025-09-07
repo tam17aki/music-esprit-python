@@ -67,8 +67,7 @@ class TLSEspritAnalyzer(EspritAnalyzerBase):
         v22 = vh[model_order:, model_order:]
 
         try:
-            _psi = -v12 @ pinv(v22)
-            rotation_operator: npt.NDArray[np.complex128] = _psi.astype(np.complex128)
+            rotation_operator = -v12 @ pinv(v22)
         except np.linalg.LinAlgError:
             warnings.warn(
                 "TLS matrix inversion failed while computing rotation operator."
