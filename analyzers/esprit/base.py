@@ -84,13 +84,12 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             np.ndarray: Estimated signal subspace matrix (complex128).
                 Returns None if estimation fails.
         """
-        model_order = 2 * self.n_sinusoids
         try:
             _, eigenvectors = eigh(cov_matrix)
         except np.linalg.LinAlgError:
             warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
             return None
-        _subspace = eigenvectors[:, -model_order:]
+        _subspace = eigenvectors[:, -2 * self.n_sinusoids :]
         signal_subspace: npt.NDArray[np.complex128] = _subspace.astype(np.complex128)
         return signal_subspace
 
