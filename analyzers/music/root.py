@@ -80,8 +80,9 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
 
         return estimated_freqs
 
+    @staticmethod
     def _calculate_polynomial_coefficients(
-        self, noise_subspace: npt.NDArray[np.complex128]
+        noise_subspace: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.complex128]:
         """Calculate the coefficients of the Root MUSIC polynomial D(z).
 
