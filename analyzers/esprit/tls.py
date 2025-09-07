@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines EspritAnalyzer class for ESPRIT using Total Least Squares.
+"""Defines TLSEspritAnalyzer class for ESPRIT using Total Least Squares.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
