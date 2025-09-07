@@ -89,9 +89,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
                 - freq_grid (np.ndarray): Frequency grid (float64).
                 - music_spectrum (np.ndarray): MUSIC pseudospectrum (float64).
         """
-        freq_grid: npt.NDArray[np.float64] = np.linspace(
-            0, self.fs / 2, num=self.n_grids, dtype=np.float64
-        )
+        freq_grid = np.linspace(0, self.fs / 2, num=self.n_grids, dtype=np.float64)
         omegas = 2 * np.pi * freq_grid / self.fs
         l_vector = np.arange(self.subspace_dim).reshape(-1, 1)
         steering_matrix = np.exp(-1j * l_vector @ omegas.reshape(1, -1))
