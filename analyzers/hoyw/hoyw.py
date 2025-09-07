@@ -105,8 +105,9 @@ class HOYWAnalyzer(AnalyzerBase):
 
         return estimated_freqs
 
+    @staticmethod
     def _calculate_autocorrelation(
-        self, signal: npt.NDArray[np.complex128], n_lags: int
+        signal: npt.NDArray[np.complex128], n_lags: int
     ) -> npt.NDArray[np.complex128]:
         """Calculate the autocorrelation of the signal.
 
@@ -124,8 +125,9 @@ class HOYWAnalyzer(AnalyzerBase):
         corr_full = correlate(signal, signal)
         return corr_full[n_samples - 1 : n_samples - 1 + n_lags] / n_samples
 
+    @staticmethod
     def _build_autocorr_matrix(
-        self, autocorr: npt.NDArray[np.complex128], p: int, m: int
+        autocorr: npt.NDArray[np.complex128], p: int, m: int
     ) -> npt.NDArray[np.complex128]:
         """Build the autocorrelation matrix R for the HOYW equations.
 
@@ -146,8 +148,9 @@ class HOYWAnalyzer(AnalyzerBase):
         row = autocorr[p:0:-1]
         return toeplitz(column, r=row)
 
+    @staticmethod
     def _build_autocorr_vector(
-        self, autocorr: npt.NDArray[np.complex128], p: int, m: int
+        autocorr: npt.NDArray[np.complex128], p: int, m: int
     ) -> npt.NDArray[np.complex128]:
         """Build the autocorrelation vector r for the HOYW equations.
 
