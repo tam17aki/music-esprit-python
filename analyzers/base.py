@@ -104,8 +104,7 @@ class AnalyzerBase(ABC):
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
         hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
-        _cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
-        cov_matrix: npt.NDArray[np.complex128] = _cov_matrix.astype(np.complex128)
+        cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
         return cov_matrix
 
     def _estimate_amplitudes_phases(
