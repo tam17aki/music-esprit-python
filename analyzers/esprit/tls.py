@@ -66,6 +66,7 @@ class TLSEspritAnalyzer(EspritAnalyzerBase):
         v12 = vh[model_order:, :model_order]
         v22 = vh[model_order:, model_order:]
 
+        # Solve the rotation operator
         try:
             rotation_operator = -v12 @ pinv(v22)
         except np.linalg.LinAlgError:
