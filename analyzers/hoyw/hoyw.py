@@ -48,6 +48,8 @@ class HOYWAnalyzer(AnalyzerBase):
         """Initialize the HOYW analyzer.
 
         Args:
+            fs (float): Sampling frequency in Hz.
+            n_sinusoids (int): Number of sinusoids.
             ar_order (int, optional): The order of the AR model.
                 Should be > 2*n_sinusoids. Defaults to 128*n_sinusoids.
             sep_factor (float, optional):
