@@ -166,8 +166,8 @@ class HOYWAnalyzer(AnalyzerBase):
         """
         return autocorr[p + 1 : p + m + 1]
 
+    @staticmethod
     def _solve_hoyw_equation(
-        self,
         acorr_mat: npt.NDArray[np.complex128],
         acorr_vec: npt.NDArray[np.complex128],
         model_order: int,
