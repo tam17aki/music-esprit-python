@@ -96,7 +96,7 @@ class HOYWAnalyzer(AnalyzerBase):
         # 3. Estimate AR coefficients by solving the reduced-rank HOYW equations
         ar_coeffs = self._solve_hoyw_equation(acorr_mat, acorr_vec, model_order)
 
-        # 4. Estimating frequency by finding roots from AR coefficients
+        # 4. Estimate frequency by finding roots from AR coefficients
         poly_coeffs = np.concatenate(([1], ar_coeffs))
         min_separation_hz = (self.fs / signal.size) * self.sep_factor
         estimated_freqs = find_freqs_from_roots(
