@@ -214,6 +214,6 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 
 [6] R. Roy and T. Kailath, "ESPRIT-estimation of signal parameters via rotational invariance techniques," in IEEE Transactions on Acoustics, Speech, and Signal Processing, vol. 37, no. 7, pp. 984-995, 1989.
 
-[7] P. Stoica, R. L. Moses, T. Soderstrom and J. Li, "Optimal high-order Yule-Walker estimation of sinusoidal frequencies," in IEEE Transactions on Signal Processing, vol. 39, no. 6, pp. 1360-1368, June 1991.
+[7] P. Stoica, T. Soderstrom and F. Ti, "Asymptotic properties of the high-order Yule-Walker estimates of sinusoidal frequencies," in IEEE Transactions on Acoustics, Speech, and Signal Processing, vol. 37, no. 11, pp. 1721-1734, 1989.
 
 [8] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
