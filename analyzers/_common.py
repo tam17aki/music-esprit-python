@@ -87,9 +87,9 @@ def find_freqs_from_roots(
         return np.array([])
 
     # 2. Select the 4M roots that are closest to the unit circle
-    # Ideally, M candidates would be sufficient, but since some candidates may be
-    # overlooked due to noise and numerical errors, it is recommended to secure a
-    # larger number of candidates.
+    # Ideally, 2M candidates would be sufficient, but since some candidates may be
+    # overlooked due to noise and numerical errors, it is recommended to secure a larger
+    # number of candidates.
     sorted_indices = np.argsort(np.abs(np.abs(roots) - 1))
     closest_roots = roots[sorted_indices[: 4 * n_sinusoids]]
 
