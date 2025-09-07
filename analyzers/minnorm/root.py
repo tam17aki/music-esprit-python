@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines RootMinNormAnalyzer class.
+"""Defines RootMinNormAnalyzer class for Root Min-Norm.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
