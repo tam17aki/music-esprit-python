@@ -49,12 +49,12 @@ class HOYWAnalyzer(AnalyzerBase):
 
         Args:
             ar_order (int, optional): The order of the AR model.
-                Should be > 2*n_sinusoids. Defaults to 256*n_sinusoids.
+                Should be > 2*n_sinusoids. Defaults to 128*n_sinusoids.
             sep_factor (float, optional):
                 Separation factor for resolving close frequencies.
         """
         super().__init__(fs, n_sinusoids)
-        self.ar_order = ar_order if ar_order is not None else 256 * self.n_sinusoids
+        self.ar_order = ar_order if ar_order is not None else 128 * self.n_sinusoids
         self.sep_factor = sep_factor
 
     @override
@@ -76,7 +76,10 @@ class HOYWAnalyzer(AnalyzerBase):
         m = p  # M in the textbook
         n_lags = p + m + 1  # Desired number of lags for autocorrelation
         if signal.size < n_lags:
-            warnings.warn("Signal is too short for HOYW method.")
+            warnings.warn(
+                "Signal is too short for HOYW method. "
+                + "The order of the AR model (ar_order) maybe too high."
+            )
             return np.array([])
 
         # 1. Calculate the autocorrelation
