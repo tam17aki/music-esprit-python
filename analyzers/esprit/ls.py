@@ -50,6 +50,7 @@ class LSEspritAnalyzer(EspritAnalyzerBase):
             np.ndarray: Estimated frequencies (float64).
                 Returns empty arrays if estimation fails.
         """
+        # 1. Compute the rotation operator Psi using LS
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
         try:
@@ -57,6 +58,8 @@ class LSEspritAnalyzer(EspritAnalyzerBase):
         except np.linalg.LinAlgError:
             warnings.warn("Matrix inversion failed in parameter solving.")
             return np.array([])
+
+        # 2. Compute eigenvalues of Psi
         try:
             eigenvalues_psi = eigvals(rotation_operator_psi)
         except np.linalg.LinAlgError:
@@ -64,10 +67,15 @@ class LSEspritAnalyzer(EspritAnalyzerBase):
                 "Eigenvalue decomposition failed while solving rotation operator."
             )
             return np.array([])
+
+        # 3. Estimate normalized angular frequencies from the eigenvalues
         angles = np.angle(eigenvalues_psi)
+
+        # 4. Convert normalized angular frequencies [rad/sample]
+        #    to physical frequencies [Hz]
         estimated_freqs_hz = angles * (self.fs / (2 * np.pi))
 
-        # Extract and sort only pairs with positive frequencies
+        # 5. Extract and sort only pairs with positive frequencies
         positive_freq_indices = np.where(estimated_freqs_hz > 0)[0]
         sorted_indices = np.argsort(estimated_freqs_hz[positive_freq_indices])
         freqs = estimated_freqs_hz[positive_freq_indices][sorted_indices]
