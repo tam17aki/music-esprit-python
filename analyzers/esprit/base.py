@@ -94,7 +94,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         return signal_subspace
 
     @abstractmethod
-    def _solve_params_from_subspace(
+    def _solve_freqs_from_subspace(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Solve for frequencies from the signal subspace."""
@@ -120,7 +120,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             return np.array([])
 
         # 3. Find frequencies from subspace
-        raw_freqs = self._solve_params_from_subspace(signal_subspace)
+        raw_freqs = self._solve_freqs_from_subspace(signal_subspace)
         return raw_freqs
 
     def _filter_unique_freqs(
