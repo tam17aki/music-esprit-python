@@ -47,8 +47,6 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
             np.ndarray: Estimated noise subspace (complex128).
                 Returns None if estimation fails.
         """
-        model_order = 2 * self.n_sinusoids
-
         # 1. Build the covariance matrix
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
 
@@ -62,8 +60,8 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         # The noise subspace is the set of vectors corresponding to the smaller
         # eigenvalues.
         # Since it is in ascending order, select (subspace_dim - model_order) vectors
-        # from the beginning
-        n_noise_vectors = self.subspace_dim - model_order
+        # from the beginning, where model_order = 2 * n_sinusoids
+        n_noise_vectors = self.subspace_dim - 2 * self.n_sinusoids
         _subspace = eigenvectors[:, :n_noise_vectors]
         noise_subspace: npt.NDArray[np.complex128] = _subspace.astype(np.complex128)
         return noise_subspace
