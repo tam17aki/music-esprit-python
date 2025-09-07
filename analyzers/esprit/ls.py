@@ -38,7 +38,7 @@ class LSEspritAnalyzer(EspritAnalyzerBase):
     """A class to solve frequencies via ESPRIT using Least Squares."""
 
     @override
-    def _solve_params_from_subspace(
+    def _solve_freqs_from_subspace(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Solve for frequencies from the signal subspace.
