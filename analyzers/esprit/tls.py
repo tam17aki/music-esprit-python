@@ -110,9 +110,9 @@ class TLSEspritAnalyzer(EspritAnalyzerBase):
 
         # Extract and sort only pairs with positive frequencies
         positive_freq_indices = np.where(estimated_freqs_hz > 0)[0]
-
         sorted_indices = np.argsort(estimated_freqs_hz[positive_freq_indices])
         freqs = estimated_freqs_hz[positive_freq_indices][sorted_indices]
+
         return freqs.astype(np.float64)
 
 
