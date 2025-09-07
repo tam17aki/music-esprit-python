@@ -14,6 +14,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
   - **Root MUSIC**: High-accuracy frequency estimation via polynomial rooting.
   - **Min-Norm**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace. Both spectral and root-based versions are implemented.
   - **ESPRIT**: A computationally efficient method that estimates frequencies directly without spectral search.
+  - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Enhanced Accuracy with Forward-Backward Averaging**: Improves estimation accuracy in low SNR or short data scenarios. This is implemented elegantly via a `ForwardBackwardMixin` class, showcasing a reusable and extensible design.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes (`SpectralMusicAnalyzer`, `RootMusicAnalyzer`, etc.), promoting clean code and extensibility.
@@ -169,6 +170,8 @@ This project is organized into a modular, object-oriented structure to promote c
         -   `base.py`: Defines `MinNormAnalyzerBase`, containing the core logic for computing the minimum norm vector.
         -   `spectral.py`: Implements `SpectralMinNormAnalyzer`, which estimates frequencies via spectral peak-picking.
         -   `root.py`: Implements `RootMinNormAnalyzer`, which estimates frequencies via polynomial rooting.
+    -   `hoyw/`: A sub-package for the Higher-Order Yule-Walker (HOYW) method.
+        -   `hoyw.py`: Implements `HOYWAnalyzer`, which directly inherits from `AnalyzerBase`. It estimates frequencies by solving the HOYW equations and subsequent finding the polynomial roots.
 -   `mixins/`:
     A package for providing optional enhancements to the analyzer classes through multiple inheritance.
     -   `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
