@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines SpectralMinNormAnalyzer class.
+"""Defines SpectralMinNormAnalyzer class for Spectral Min-Norm.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
