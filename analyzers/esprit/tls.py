@@ -78,7 +78,7 @@ class TLSEspritAnalyzer(EspritAnalyzerBase):
         return rotation_operator
 
     @override
-    def _solve_params_from_subspace(
+    def _solve_freqs_from_subspace(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Solve for frequencies from the signal subspace.
