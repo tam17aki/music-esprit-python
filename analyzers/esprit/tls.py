@@ -97,18 +97,21 @@ class TLSEspritAnalyzer(EspritAnalyzerBase):
 
         # 2. Compute eigenvalues of Psi
         try:
-            _eigvals = eigvals(rotation_operator_psi)
-            eigenvalues_psi: npt.NDArray[np.complex128] = _eigvals.astype(np.complex128)
+            eigenvalues_psi = eigvals(rotation_operator_psi)
         except np.linalg.LinAlgError:
             warnings.warn(
                 "Eigenvalue decomposition failed while solving rotation operator."
             )
             return np.array([])
 
+        # 3. Estimate normalized angular frequencies from the eigenvalues
         angles = np.angle(eigenvalues_psi)
+
+        # 4. Convert normalized angular frequencies [rad/sample]
+        #    to physical frequencies [Hz]
         estimated_freqs_hz = angles * (self.fs / (2 * np.pi))
 
-        # Extract and sort only pairs with positive frequencies
+        # 5. Extract and sort only pairs with positive frequencies
         positive_freq_indices = np.where(estimated_freqs_hz > 0)[0]
         sorted_indices = np.argsort(estimated_freqs_hz[positive_freq_indices])
         freqs = estimated_freqs_hz[positive_freq_indices][sorted_indices]
