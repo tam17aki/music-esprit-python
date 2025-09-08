@@ -41,7 +41,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
 
 ## Usage
 
-The main entry point is `main.py`, which allows you to run a comparative analysis of the implemented algorithms.
+The main entry point is `main.py`, which allows you to run a comparative analysis of MUSIC and ESPRIT.
 
 ### Basic Example
 
