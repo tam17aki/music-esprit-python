@@ -99,7 +99,7 @@ def find_freqs_from_roots(
 
     # 4. Convert normalized angular frequency ω [rad/sample] to physical
     #    frequency f [Hz]
-    _uniq_freqs = np.abs(angles.astype(np.float64) * (fs / (2 * np.pi)))
+    _uniq_freqs = angles.astype(np.float64) * (fs / (2 * np.pi))
 
     # 5. Filter frequencies
     unique_freqs = [_uniq_freqs[0]]
