@@ -73,7 +73,6 @@ class HOYWAnalyzer(AnalyzerBase):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-        model_order = 2 * self.n_sinusoids  # n in the textbook
         p = self.ar_order  # L in the textbook
         m = p  # M in the textbook
         n_lags = p + m + 1  # Desired number of lags for autocorrelation
@@ -96,7 +95,7 @@ class HOYWAnalyzer(AnalyzerBase):
             return np.array([])
 
         # 3. Estimate AR coefficients by solving the reduced-rank HOYW equations
-        ar_coeffs = self._solve_hoyw_equation(acorr_mat, acorr_vec, model_order)
+        ar_coeffs = self._solve_hoyw_equation(acorr_mat, acorr_vec)
 
         # 4. Estimate frequency by finding roots from AR coefficients
         poly_coeffs = np.concatenate(([1], ar_coeffs))
@@ -171,11 +170,10 @@ class HOYWAnalyzer(AnalyzerBase):
         """
         return autocorr[p + 1 : p + m + 1]
 
-    @staticmethod
     def _solve_hoyw_equation(
+        self,
         acorr_mat: npt.NDArray[np.complex128],
         acorr_vec: npt.NDArray[np.complex128],
-        model_order: int,
     ) -> npt.NDArray[np.complex128]:
         """Solve the reduced-rank HOYW equations to estimate the AR coefficients.
 
@@ -184,8 +182,6 @@ class HOYWAnalyzer(AnalyzerBase):
                 The sample autocorrelation matrix (float64); lhs of Stoica 4.4.8
             acorr_vec (np.ndarray):
                 The sample autocorrelation vector (float64); rhs of Stoica 4.4.8
-            model_order (int):
-                The order of model; model_order = 2 * n_sinusoids
 
         Returns:
             np.ndarray: The AR coefficients.
@@ -201,6 +197,7 @@ class HOYWAnalyzer(AnalyzerBase):
         # Estimate AR coefficients by solving reduced-rank equations
         #    b = -V1^H * S1_inv * U1^H * r (Stoica 4.4.16)
         #    V in textbook is Vh.conj().T
+        model_order = 2 * self.n_sinusoids
         u1 = u[:, :model_order]
         s1_inv = np.diag(1 / s[:model_order])
         vh1 = vh[:model_order, :]
