@@ -27,7 +27,7 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import eigh, hankel
+from scipy.linalg import LinAlgError, eigh, hankel
 
 from .base import EspritAnalyzerBase
 from .solvers import UnitaryLSEspritSolver, UnitaryTLSEspritSolver
@@ -126,7 +126,11 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
         # 3. Perform eigenvalue decomposion the Hermetial matrix in Eq. (29)
         cov_matrix = transformed_matrix @ transformed_matrix.conj().T
-        _, eigenvectors = eigh(cov_matrix)
+        try:
+            _, eigenvectors = eigh(cov_matrix)
+        except LinAlgError:
+            warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
+            return None
 
         # 4. Estimated signal subspace is the 2*M principal eigenvectors
         signal_subspace = eigenvectors[:, -2 * self.n_sinusoids :]
