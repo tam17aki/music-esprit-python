@@ -113,7 +113,7 @@ class UnitaryEspritSolverBase(ABC):  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def _get_unitary_transform_matrix(subspace_dim: int) -> npt.NDArray[np.complex128]:
-        """Constructs the unitary matrix Q for real-valued transform.
+        """Construct the unitary matrix Q for real-valued transform.
 
         Args:
            subspace_dim (int): Dimension of signal subspace.
@@ -141,7 +141,7 @@ class UnitaryEspritSolverBase(ABC):  # pylint: disable=too-few-public-methods
     def _get_real_selection_matrices(
         self, subspace_dim: int
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
-        """Constructs the real-valued selection matrices K1 and K2.
+        """Construct the real-valued selection matrices K1 and K2.
 
         Args:
            subspace_dim (int): Dimension of signal subspace.
