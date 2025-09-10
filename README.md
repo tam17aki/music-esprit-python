@@ -162,10 +162,11 @@ This project is organized into a modular, object-oriented structure to promote c
         -   `base.py`: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
         -   `spectral.py`: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
         -   `root.py`: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
-    -   `esprit/`: A sub-package dedicated to the ESPRIT algorithm and its variants.
+    -   `esprit/`: A sub-package dedicated to the ESPRIT algorithm and its variants, including the computationally efficient Unitary ESPRIT.
         -   `base.py`:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
-        -   `ls.py`: Implements `LSEspritAnalyzer` (inheriting from `EspritAnalyzerBase`), which uses the standard Least Squares approach to solve for the rotational operator.
-        -   `tls.py`: Implements `TLSEspritAnalyzer` (inheriting from `EspritAnalyzerBase`), which uses the more robust Total Least Squares approach for higher accuracy in noisy conditions.
+        -   `standard.py`: Implements `StandardEspritAnalyzer` for the classic, complex-valued ESPRIT algorithm.
+        -   `unitary.py`: Implements `UnitaryEspritAnalyzer`, which operates entirely on real-valued matrices for reduced computational load and improved accuracy.
+        -   `solvers.py`: Defines a set of solver classes that encapsulate the specific mathematical procedures for solving the ESPRIT core equations. This demonstrates the Strategy design pattern, allowing different numerical methods (LS, TLS, Unitary LS/TLS) to be flexibly injected into the analyzers.
     -   `minnorm/`: A sub-package for Min-Norm algorithm variants.
         -   `base.py`: Defines `MinNormAnalyzerBase`, containing the core logic for computing the minimum norm vector.
         -   `spectral.py`: Implements `SpectralMinNormAnalyzer`, which estimates frequencies via spectral peak-picking.
