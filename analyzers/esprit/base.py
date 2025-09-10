@@ -89,7 +89,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         sorted_indices = np.argsort(positive_freqs)
         raw_freqs = positive_freqs[sorted_indices]
 
-        # 4. Filter unique frequencies
+        # 4. Filters out closely spaced frequencies
         min_separation_hz = (self.fs / signal_length) * self.sep_factor
         est_freqs = self._filter_unique_freqs(raw_freqs, min_separation_hz)
 
