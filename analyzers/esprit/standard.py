@@ -114,8 +114,9 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         except LinAlgError:
             warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
             return None
-        _subspace = eigenvectors[:, -2 * self.n_sinusoids :]
-        signal_subspace: npt.NDArray[np.complex128] = _subspace.astype(np.complex128)
+
+        # Estimated signal subspace is the 2*M principal eigenvectors
+        signal_subspace = eigenvectors[:, -2 * self.n_sinusoids :].astype(np.complex128)
         return signal_subspace
 
 
