@@ -37,7 +37,7 @@ from .base import MusicAnalyzerBase
 class SpectralMusicAnalyzer(MusicAnalyzerBase):
     """MUSIC analyzer using spectral peak picking."""
 
-    def __init__(self, fs: float, n_sinusoids: int, n_grids: int):
+    def __init__(self, fs: float, n_sinusoids: int, n_grids: int = 8192):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
