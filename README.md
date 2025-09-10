@@ -132,21 +132,52 @@ python main.py --help
 ### Using a Specific Analyzer in Your Own Code
 The object-oriented design makes it easy to use any analyzer in your own projects. Here's how you might use the standard `SpectralMusicAnalyzer` and its enhanced `SpectralMusicAnalyzerFB` version:
 
+#### MUSIC Analyzers
+
 ```python
-from analyzers.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
-# ...
+from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
+from analyzers.music.root import RootMusicAnalyzer, RootMusicAnalyzerFB
+# ... assume 'my_signal' is a complex numpy array of your signal ...
+# ... assume 'fs' and 'n_sinusoids' are defined ...
 
-# Standard forward-only analyzer
-spec_analyzer = SpectralMusicAnalyzer(fs=44100, n_sinusoids=3, n_grids=8192)
-spec_analyzer.fit(my_signal)
-estimated_freqs = spec_analyzer.frequencies
+# Standard Root-MUSIC analyzer
+root_analyzer = RootMusicAnalyzer(fs=fs, n_sinusoids=n_sinusoids)
+root_analyzer.fit(my_signal)
+estimated_freqs = root_analyzer.frequencies
 
-# Analyzer with Forward-Backward averaging for higher accuracy
-spec_analyzer_fb = SpectralMusicAnalyzerFB(fs=44100, n_sinusoids=3, n_grids=8192)
+# Spectral MUSIC with Forward-Backward averaging for higher accuracy
+spec_analyzer_fb = SpectralMusicAnalyzerFB(fs=fs, n_sinusoids=n_sinusoids, n_grids=8192)
 spec_analyzer_fb.fit(my_signal)
 accurate_freqs = spec_analyzer_fb.frequencies
 ```
-In the same way, you can use the enhanced version (`...FB`) of `RootMusicAnalyzer`, `SpectralMinNormAnalyzer`, `RootMinNormAnalyzer`, and `StandardEspritAnalyzer`.
+
+#### ESPRIT Analyzers
+
+```python
+from analyzers.esprit.standard import StandardEspritAnalyzer
+from analyzers.esprit.unitary import UnitaryEspritAnalyzer
+from analyzers.esprit.solvers import LSEspritSolver, TLSEspritSolver, LSUnitaryEspritSolver
+
+# Standard ESPRIT with a Least Squares (LS) solver
+ls_solver = LSEspritSolver()
+ls_esprit_analyzer = StandardEspritAnalyzer(fs=fs, n_sinusoids=n_sinusoids, solver=ls_solver)
+ls_esprit_analyzer.fit(my_signal)
+ls_freqs = ls_esprit_analyzer.frequencies
+
+# Standard ESPRIT with a more robust Total Least Squares (TLS) solver
+tls_solver = TLSEspritSolver()
+tls_esprit_analyzer = StandardEspritAnalyzer(fs=fs, n_sinusoids=n_sinusoids, solver=tls_solver)
+tls_esprit_analyzer.fit(my_signal)
+tls_freqs = tls_esprit_analyzer.frequencies
+
+# Computationally efficient Unitary ESPRIT
+unitary_solver = LSUnitaryEspritSolver() # Or TLSUnitaryEspritSolver
+unitary_esprit_analyzer = UnitaryEspritAnalyzer(fs=fs, n_sinusoids=n_sinusoids, solver=unitary_solver)
+unitary_esprit_analyzer.fit(my_signal)
+unitary_freqs = unitary_esprit_analyzer.frequencies
+```
+
+(Note: The `...FB` classes for MUSIC are created within their respective modules by inheriting from the `ForwardBackwardMixin`.)
 
 ## Project Structure
 
