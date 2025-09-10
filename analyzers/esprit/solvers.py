@@ -96,9 +96,9 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
                 in radians per sample. Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
+        # Form the augmented matrix for SVD
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
-        # Form the augmented matrix for SVD
         augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
         try:
             _, _, vh = svd(augmented_subspace)
