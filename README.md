@@ -130,17 +130,22 @@ python main.py --help
 | `--sep_factor` | Separation factor for Root MUSIC, Root Min-Norm and ESPRIT. | 0.4|
 
 ### Using a Specific Analyzer in Your Own Code
-The object-oriented design makes it easy to use any analyzer in your own projects. Here's how you might use the standard `SpectralMusicAnalyzer` and its enhanced `SpectralMusicAnalyzerFB` version:
+The object-oriented design makes it easy to use any analyzer in your own projects.
 
 #### MUSIC Analyzers
 
 ```python
-from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
 from analyzers.music.root import RootMusicAnalyzer, RootMusicAnalyzerFB
+from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
 # ... assume 'my_signal' is a complex numpy array of your signal ...
 # ... assume 'fs' and 'n_sinusoids' are defined ...
 
-# Standard Root-MUSIC analyzer
+# Standard Spectral MUSIC analyzer
+spec_analyzer = SpectralMusicAnalyzer(fs=fs, n_sinusoids=n_sinusoids, n_grids=8192)
+spec_analyzer.fit(my_signal)
+estimated_freqs = spec_analyzer.frequencies
+
+# Standard Root MUSIC analyzer
 root_analyzer = RootMusicAnalyzer(fs=fs, n_sinusoids=n_sinusoids)
 root_analyzer.fit(my_signal)
 estimated_freqs = root_analyzer.frequencies
@@ -149,6 +154,11 @@ estimated_freqs = root_analyzer.frequencies
 spec_analyzer_fb = SpectralMusicAnalyzerFB(fs=fs, n_sinusoids=n_sinusoids, n_grids=8192)
 spec_analyzer_fb.fit(my_signal)
 accurate_freqs = spec_analyzer_fb.frequencies
+
+# Root MUSIC with Forward-Backward averaging for higher accuracy
+root_analyzer_fb = RootMusicAnalyzerFB(fs=fs, n_sinusoids=n_sinusoids)
+root_analyzer_fb.fit(my_signal)
+accurate_freqs = root_analyzer_fb.frequencies
 ```
 
 #### ESPRIT Analyzers
