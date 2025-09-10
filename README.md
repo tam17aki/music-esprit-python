@@ -130,7 +130,7 @@ python main.py --help
 | `--sep_factor` | Separation factor for Root MUSIC, Root Min-Norm and ESPRIT. | 0.4|
 
 ### Using a Specific Analyzer in Your Own Code
-The object-oriented design makes it easy to use any analyzer in your own projects.
+The object-oriented design makes it easy to use any analyzer in your own projects. Below are examples of how to use the different MUSIC and ESPRIT analyzers.
 
 #### MUSIC Analyzers
 
@@ -162,6 +162,8 @@ accurate_freqs = root_analyzer_fb.frequencies
 ```
 
 #### ESPRIT Analyzers
+
+The ESPRIT analyzers utilize a Strategy design pattern, where the specific numerical solver (LS, TLS, etc.) is injected during initialization.
 
 ```python
 from analyzers.esprit.solvers import (
