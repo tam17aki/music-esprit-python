@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import warnings
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -61,6 +62,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             np.ndarray: Filtered unique frequencies (float64).
         """
         if raw_freqs.size == 0:
+            warnings.warn("No raw frequencies were estimated to be filtered.")
             return np.array([])
 
         if raw_freqs.size <= self.n_sinusoids and min_separation_hz <= 0:
@@ -75,6 +77,11 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         # Limit to the number of requested sinusoids and unpack the results
         final_freqs = unique_freqs[: self.n_sinusoids]
         if not final_freqs:
+            warnings.warn(
+                f"After filtering, only {len(final_freqs)} unique frequencies "
+                + f"were found, which is less than the expected {self.n_sinusoids}. "
+                + "This might be due to closely spaced frequencies or low SNR."
+            )
             return np.array([])
 
         return np.array(final_freqs)
