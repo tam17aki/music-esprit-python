@@ -130,7 +130,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
         # 4. Estimated signal subspace is the 2*M principal eigenvectors
         signal_subspace = eigenvectors[:, -2 * self.n_sinusoids :]
-        return signal_subspace.astype(np.float64)
+        return signal_subspace
 
     @staticmethod
     def _transform_complex_to_real(
