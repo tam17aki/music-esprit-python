@@ -100,11 +100,8 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         if signal_subspace is None:
             return np.array([])
 
-        subspace_upper = signal_subspace[:-1, :]
-        subspace_lower = signal_subspace[1:, :]
-
         # 2. Solve frequencies with the stored solver
-        omegas = self.solver.solve(subspace_upper, subspace_lower)
+        omegas = self.solver.solve(signal_subspace)
 
         # 3. Convert normalized angular frequencies [rad/sample]
         #    to physical frequencies [Hz]
