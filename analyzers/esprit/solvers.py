@@ -206,7 +206,8 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
         return np.real(k1.toarray()), np.real(k2.toarray())
 
 
-class LSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):  # pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods
+class LSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):
     """A solver class for the real-valued Unitary ESPRIT problem using least squares.
 
     This solver takes a real-valued signal subspace and solves a generalized
@@ -257,7 +258,8 @@ class LSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):  #
         return omegas
 
 
-class TLSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):  # pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods
+class TLSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):
     """A solver class for the real-valued ESPRIT problem using total least squares.
 
     This solver takes a real-valued signal subspace and solves a generalized
