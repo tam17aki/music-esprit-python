@@ -37,7 +37,7 @@ from .base import MinNormAnalyzerBase
 class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
     """Parameter analyzer using the Spectral Min-Norm algorithm."""
 
-    def __init__(self, fs: float, n_sinusoids: int, n_grids: int):
+    def __init__(self, fs: float, n_sinusoids: int, n_grids: int = 8192):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
