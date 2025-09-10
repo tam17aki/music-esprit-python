@@ -28,7 +28,7 @@ from typing import override
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import eigvals, pinv, svd
+from scipy.linalg import LinAlgError, eigvals, pinv, svd
 from scipy.sparse import csc_array, csr_array
 
 
@@ -62,12 +62,12 @@ class LSEspritSolver:  # pylint: disable=too-few-public-methods
         """
         try:
             rotation_operator = pinv(subspace_upper) @ subspace_lower
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("Matrix inversion failed in parameter solving.")
             return np.array([])
         try:
             eigenvals = eigvals(rotation_operator)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn(
                 "Eigenvalue decomposition failed while solving rotation operator."
             )
@@ -108,7 +108,7 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
         augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
         try:
             _, _, vh = svd(augmented_subspace)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("SVD on augmented_subspace did not converge.")
             return np.array([])
 
@@ -120,7 +120,7 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
         # Solve the rotation operator
         try:
             rotation_operator = -v12 @ pinv(v22)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn(
                 "TLS matrix inversion failed while computing rotation operator."
             )
@@ -128,7 +128,7 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
 
         try:
             eigenvals = eigvals(rotation_operator)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn(
                 "Eigenvalue decomposition failed while solving rotation operator."
             )
@@ -245,13 +245,13 @@ class LSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few
 
         try:
             upsilon_ls = pinv(t1) @ t2
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("Least Squares problem in Unitary ESPRIT failed.")
             return np.array([])
 
         try:
             eigenvalues_y = eigvals(upsilon_ls)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("Eigenvalue decomposition of Y_LS failed.")
             return np.array([])
 
@@ -297,7 +297,7 @@ class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
 
         try:
             _, _, vh = svd(np.concatenate((t1, t2), axis=1))
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("SVD on augmented_subspace did not converge.")
             return np.array([])
 
@@ -308,7 +308,7 @@ class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
         # Solve the rotation operator upsilon_tls
         try:
             upsilon_tls = -v12 @ pinv(v22)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn(
                 "TLS matrix inversion failed while computing rotation operator."
             )
@@ -316,7 +316,7 @@ class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
 
         try:
             eigenvalues_y = eigvals(upsilon_tls)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("Eigenvalue decomposition of Y_TLS failed.")
             return np.array([])
 
