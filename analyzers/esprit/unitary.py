@@ -54,9 +54,8 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
             sep_factor (float, optional):
                 Separation factor for resolving close frequencies.
         """
-        super().__init__(fs, n_sinusoids)
+        super().__init__(fs, n_sinusoids, sep_factor)
         self.solver: UnitaryLSEspritSolver | UnitaryTLSEspritSolver = solver
-        self.sep_factor: float = sep_factor
 
     @override
     def _estimate_frequencies(
@@ -79,18 +78,8 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         # 2. Solve frequencies with the stored solver
         omegas = self.solver.solve(signal_subspace)
 
-        # 3. Convert normalized angular frequencies [rad/sample]
-        #    to physical frequencies [Hz]
-        estimated_freqs_hz = omegas * (self.fs / (2 * np.pi))
-
-        # 4. Extract and sort only pairs with positive frequencies
-        positive_freq_indices = np.where(estimated_freqs_hz > 0)[0]
-        sorted_indices = np.argsort(estimated_freqs_hz[positive_freq_indices])
-        raw_freqs = estimated_freqs_hz[positive_freq_indices][sorted_indices]
-
-        # 5. Filter unique frequencies
-        min_separation_hz = (self.fs / signal.size) * self.sep_factor
-        est_freqs = self._filter_unique_freqs(raw_freqs, min_separation_hz)
+        # 3. Post-processes raw angular frequencies to final frequency estimates
+        est_freqs = self._postprocess_omegas(omegas, signal.size)
 
         return est_freqs
 
