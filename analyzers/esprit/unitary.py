@@ -107,7 +107,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
             signal (np.ndarray): Input signal (complex128).
 
         Returns:
-            np.ndarray: Estimated signal subspace matrix (complex128).
+            np.ndarray: The real-valued signal subspace matrix (float64).
                 Returns None if estimation fails.
         """
         # 1. Construct the data matrix X (Hankel matrix)
