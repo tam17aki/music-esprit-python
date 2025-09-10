@@ -141,7 +141,7 @@ from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyze
 # ... assume 'fs' and 'n_sinusoids' are defined ...
 
 # Standard Spectral MUSIC analyzer
-spec_analyzer = SpectralMusicAnalyzer(fs=fs, n_sinusoids=n_sinusoids, n_grids=8192)
+spec_analyzer = SpectralMusicAnalyzer(fs=fs, n_sinusoids=n_sinusoids)
 spec_analyzer.fit(my_signal)
 estimated_freqs = spec_analyzer.frequencies
 
@@ -151,7 +151,7 @@ root_analyzer.fit(my_signal)
 estimated_freqs = root_analyzer.frequencies
 
 # Spectral MUSIC with Forward-Backward averaging for higher accuracy
-spec_analyzer_fb = SpectralMusicAnalyzerFB(fs=fs, n_sinusoids=n_sinusoids, n_grids=8192)
+spec_analyzer_fb = SpectralMusicAnalyzerFB(fs=fs, n_sinusoids=n_sinusoids)
 spec_analyzer_fb.fit(my_signal)
 accurate_freqs = spec_analyzer_fb.frequencies
 
