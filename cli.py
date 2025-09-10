@@ -26,7 +26,7 @@ import argparse
 
 import numpy as np
 
-from analyzers.esprit.ls import LSEspritAnalyzer
+from analyzers.esprit.standard import StandardEspritAnalyzer
 from analyzers.music.root import RootMusicAnalyzer
 from analyzers.music.spectral import SpectralMusicAnalyzer
 from utils.data_models import ExperimentConfig, SinusoidParameters
@@ -48,7 +48,7 @@ def print_experiment_setup(
 
 
 def print_results(
-    analyzer: SpectralMusicAnalyzer | RootMusicAnalyzer | LSEspritAnalyzer,
+    analyzer: SpectralMusicAnalyzer | RootMusicAnalyzer | StandardEspritAnalyzer,
     true_params: SinusoidParameters,
 ) -> None:
     """Print the results."""
