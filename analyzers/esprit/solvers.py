@@ -1,0 +1,268 @@
+# -*- coding: utf-8 -*-
+"""Defines solver classes for Starndard ESPRIT and Unitary ESPRIT.
+
+Copyright (C) 2025 by Akira TAMAMORI
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+import warnings
+from abc import ABC, abstractmethod
+from typing import override
+
+import numpy as np
+import numpy.typing as npt
+from scipy.linalg import eigvals, pinv, svd
+from scipy.sparse import csc_array, csr_array
+
+
+class LSEspritSolver:  # pylint: disable=too-few-public-methods
+    """A solver class for the ESPRIT rotational operator using the Least Squares."""
+
+    def solve(
+        self,
+        subspace_upper: npt.NDArray[np.complex128],
+        subspace_lower: npt.NDArray[np.complex128],
+    ) -> npt.NDArray[np.float64]:
+        """Solve for frequencies from the signal subspace."""
+        try:
+            rotation_operator = pinv(subspace_upper) @ subspace_lower
+        except np.linalg.LinAlgError:
+            warnings.warn("Matrix inversion failed in parameter solving.")
+            return np.array([])
+        try:
+            eigenvals = eigvals(rotation_operator)
+        except np.linalg.LinAlgError:
+            warnings.warn(
+                "Eigenvalue decomposition failed while solving rotation operator."
+            )
+            return np.array([])
+        return np.angle(eigenvals).astype(np.float64)
+
+
+class TLSEspritSolver:  # pylint: disable=too-few-public-methods
+    """A solver class for the ESPRIT rotational operator using the Total LS."""
+
+    def solve(
+        self,
+        subspace_upper: npt.NDArray[np.complex128],
+        subspace_lower: npt.NDArray[np.complex128],
+    ) -> npt.NDArray[np.float64]:
+        """Solve for frequencies from the signal subspace."""
+        # Form the augmented matrix for SVD
+        augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
+        try:
+            _, _, vh = svd(augmented_subspace)
+        except np.linalg.LinAlgError:
+            warnings.warn("SVD on augmented_subspace did not converge.")
+            return np.array([])
+
+        # Partition the Vh matrix to solve the TLS problem
+        model_order = subspace_upper.shape[1]
+        v12 = vh[model_order:, :model_order]
+        v22 = vh[model_order:, model_order:]
+
+        # Solve the rotation operator
+        try:
+            rotation_operator = -v12 @ pinv(v22)
+        except np.linalg.LinAlgError:
+            warnings.warn(
+                "TLS matrix inversion failed while computing rotation operator."
+            )
+            return np.array([])
+
+        try:
+            eigenvals = eigvals(rotation_operator)
+        except np.linalg.LinAlgError:
+            warnings.warn(
+                "Eigenvalue decomposition failed while solving rotation operator."
+            )
+            return np.array([])
+        return np.angle(eigenvals).astype(np.float64)
+
+
+class UnitaryEspritSolverBase(ABC):  # pylint: disable=too-few-public-methods
+    """A solver class for the real-valued ESPRIT problem using eigenvalue decomposition.
+
+    This solver takes a real-valued signal subspace and solves a generalized
+    eigenvalue problem to find the frequencies.
+    """
+
+    @abstractmethod
+    def solve(
+        self, signal_subspace: npt.NDArray[np.float64], subspace_dim: int
+    ) -> npt.NDArray[np.float64]:
+        """Solve for frequencies from the signal subspace."""
+        raise NotImplementedError
+
+    @staticmethod
+    def _get_unitary_transform_matrix(subspace_dim: int) -> npt.NDArray[np.complex128]:
+        """Constructs the unitary matrix Q for real-valued transform.
+
+        Args:
+           subspace_dim (int): Dimension of signal subspace.
+
+        Returns:
+           np.ndarray: Unitary matrix for the tranform.
+        """
+        p = subspace_dim // 2
+        identity = np.eye(p, dtype=np.complex128)
+        exchange = identity[:, ::-1]  # exchange matrix
+        if subspace_dim % 2 == 0:  # L is even
+            q_matrix = np.block([[identity, 1j * identity], [exchange, -1j * exchange]])
+        else:  #  L is odd
+            q_left = np.vstack(
+                [identity, np.zeros((1, p)), exchange], dtype=np.complex128
+            )
+            q_center = np.zeros((subspace_dim, 1), dtype=np.complex128)
+            q_center[p] = np.sqrt(2.0).astype(np.complex128)
+            q_right = np.vstack(
+                [1j * identity, np.zeros((1, p)), -1j * exchange], dtype=np.complex128
+            )
+            q_matrix = np.hstack([q_left, q_center, q_right])
+        return q_matrix
+
+    def _get_real_selection_matrices(
+        self, subspace_dim: int
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+        """Constructs the real-valued selection matrices K1 and K2.
+
+        Args:
+           subspace_dim (int): Dimension of signal subspace.
+
+        Returns:
+           tuple[np.ndarray, np.ndarray]: The selection matrices K1 and K2.
+        """
+        m_prime = subspace_dim - 1  # Subarray size
+
+        # 1. Build a complex selection matrix J1 (select the first m' rows)
+        j1 = np.eye(subspace_dim, dtype=np.complex128)[:m_prime, :]
+
+        # 2. Build unitary transformation matrix Q
+        q_m_prime = csc_array(self._get_unitary_transform_matrix(m_prime))
+        q_m = csr_array(self._get_unitary_transform_matrix(subspace_dim))
+
+        # 3. Calculate K1 and K2 according to equation (32).
+        # K1 = Q_m'^H * (J1 + Π_m' * J1 * Π_M) * Q_M
+        temp_array = csr_array(np.fliplr(np.flipud(j1)))
+        k1_term = csr_array(j1) + temp_array
+        k1 = q_m_prime.conj().T @ k1_term @ q_m
+
+        # K2 = Q_m'^H * j * (J1 - Π_m' * J1 * Π_M) * Q_M
+        k2_term = 1j * (csr_array(j1) - temp_array)
+        k2 = q_m_prime.conj().T @ k2_term @ q_m
+
+        return np.real(k1.toarray()), np.real(k2.toarray())
+
+
+class LSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few-public-methods
+    """A solver class for the real-valued Unitary ESPRIT problem using least squares.
+
+    This solver takes a real-valued signal subspace and solves a generalized
+    eigenvalue problem to find the frequencies based on least squares approach.
+    """
+
+    @override
+    def solve(
+        self, signal_subspace: npt.NDArray[np.float64], subspace_dim: int
+    ) -> npt.NDArray[np.float64]:
+        """Solve for frequencies from the signal subspace.
+
+        Args:
+           signal_subspace (np.ndarray): The signal subspace (float64)
+           subspace_dim (int): Dimension of signal subspace.
+
+        Returns:
+           np.ndarray: Normalized angular frequencies (float64)
+        """
+        k1, k2 = self._get_real_selection_matrices(subspace_dim)
+        t1 = k1 @ signal_subspace
+        t2 = k2 @ signal_subspace
+
+        try:
+            upsilon_ls = pinv(t1) @ t2
+        except np.linalg.LinAlgError:
+            warnings.warn("Least Squares problem in Unitary ESPRIT failed.")
+            return np.array([])
+
+        try:
+            eigenvalues_y = eigvals(upsilon_ls)
+        except np.linalg.LinAlgError:
+            warnings.warn("Eigenvalue decomposition of Y_LS failed.")
+            return np.array([])
+
+        # Recover normalized angular frequency from eigenvalues
+        _omega = 2 * np.arctan(np.real(eigenvalues_y))
+        omega: npt.NDArray[np.float64] = _omega.astype(np.float64)
+
+        return omega
+
+
+class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few-public-methods
+    """A solver class for the real-valued ESPRIT problem using total least squares.
+
+    This solver takes a real-valued signal subspace and solves a generalized
+    eigenvalue problem to find the frequencies based on total least squares approach.
+    """
+
+    @override
+    def solve(
+        self, signal_subspace: npt.NDArray[np.float64], subspace_dim: int
+    ) -> npt.NDArray[np.float64]:
+        """Solve for frequencies from the signal subspace.
+
+        Args:
+           signal_subspace (np.ndarray): The signal subspace (float64)
+           subspace_dim (int): Dimension of signal subspace.
+
+        Returns:
+           np.ndarray: Normalized angular frequencies (float64)
+        """
+        k1, k2 = self._get_real_selection_matrices(subspace_dim)
+        t1 = k1 @ signal_subspace
+        t2 = k2 @ signal_subspace
+        try:
+            _, _, vh = svd(np.concatenate((t1, t2), axis=1))
+        except np.linalg.LinAlgError:
+            warnings.warn("SVD on augmented_subspace did not converge.")
+            return np.array([])
+
+        model_order = t1.shape[1]
+        v12 = vh[model_order:, :model_order]
+        v22 = vh[model_order:, model_order:]
+
+        # Solve the rotation operator upsilon_tls
+        try:
+            upsilon_tls = -v12 @ pinv(v22)
+        except np.linalg.LinAlgError:
+            warnings.warn(
+                "TLS matrix inversion failed while computing rotation operator."
+            )
+            return np.array([])
+
+        try:
+            eigenvalues_y = eigvals(upsilon_tls)
+        except np.linalg.LinAlgError:
+            warnings.warn("Eigenvalue decomposition of Y_TLS failed.")
+            return np.array([])
+
+        # Recover normalized angular frequency from eigenvalues
+        _omega = 2 * np.arctan(np.real(eigenvalues_y))
+        omega: npt.NDArray[np.float64] = _omega.astype(np.float64)
+        return omega
