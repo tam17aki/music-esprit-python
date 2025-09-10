@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines LSEspritAnalyzer class for ESPRIT using Least Squares.
+"""Defines StandardEspritAnalyzer class to solve frequencies via ESPRIT.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
