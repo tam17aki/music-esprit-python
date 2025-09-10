@@ -27,7 +27,8 @@ SOFTWARE.
 
 import numpy as np
 
-from analyzers.esprit.ls import LSEspritAnalyzer
+from analyzers.esprit.solvers import LSEspritSolver
+from analyzers.esprit.standard import StandardEspritAnalyzer
 from analyzers.music.root import RootMusicAnalyzer
 from analyzers.music.spectral import SpectralMusicAnalyzer
 from cli import parse_args, print_experiment_setup, print_results
@@ -75,7 +76,9 @@ def main() -> None:
 
     # Perform parameter estimation via ESPRIT
     print("\n--- Running ESPRIT ---")
-    esprit_analyzer = LSEspritAnalyzer(config.fs, config.n_sinusoids, config.sep_factor)
+    esprit_analyzer = StandardEspritAnalyzer(
+        config.fs, config.n_sinusoids, LSEspritSolver(), config.sep_factor
+    )
     esprit_analyzer.fit(noisy_signal.astype(np.complex128))
 
     # Print results
