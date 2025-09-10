@@ -30,7 +30,7 @@ import numpy.typing as npt
 from scipy.linalg import eigh, hankel
 
 from .base import EspritAnalyzerBase
-from .solvers import LSUnitaryEspritSolver, TLSUnitaryEspritSolver
+from .solvers import UnitaryLSEspritSolver, UnitaryTLSEspritSolver
 
 
 @final
@@ -41,7 +41,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         self,
         fs: float,
         n_sinusoids: int,
-        solver: LSUnitaryEspritSolver | LSUnitaryEspritSolver,
+        solver: UnitaryLSEspritSolver | UnitaryTLSEspritSolver,
         sep_factor: float = 0.4,
     ):
         """Initialize the analyzer with an experiment configuration.
@@ -55,7 +55,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
                 Separation factor for resolving close frequencies.
         """
         super().__init__(fs, n_sinusoids)
-        self.solver: LSUnitaryEspritSolver | TLSUnitaryEspritSolver = solver
+        self.solver: UnitaryLSEspritSolver | UnitaryTLSEspritSolver = solver
         self.sep_factor: float = sep_factor
 
     @override
