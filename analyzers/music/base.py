@@ -27,7 +27,7 @@ from abc import ABC
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import eigh
+from scipy.linalg import LinAlgError, eigh
 
 from ..base import AnalyzerBase
 
@@ -53,7 +53,7 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         # 2. Eigenvalue decomposition
         try:
             _, eigenvectors = eigh(cov_matrix)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
             return None
 
