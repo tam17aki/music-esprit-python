@@ -36,9 +36,7 @@ class LSEspritSolver:  # pylint: disable=too-few-public-methods
     """A solver class for the ESPRIT rotational operator using the Least Squares."""
 
     def solve(
-        self,
-        subspace_upper: npt.NDArray[np.complex128],
-        subspace_lower: npt.NDArray[np.complex128],
+        self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Solves for rotational factors using the Least Squares (LS) method.
 
@@ -48,12 +46,8 @@ class LSEspritSolver:  # pylint: disable=too-few-public-methods
         the phase angles of the eigenvalues of Psi.
 
         Args:
-            subspace_upper (np.ndarray):
-                The complex-valued signal subspace with its last row removed.
-                Shape: (L-1, 2M).
-            subspace_lower (np.ndarray):
-                The complex-valued signal subspace with its first row removed.
-                Shape: (L-1, 2M).
+            signal_subspace (np.ndarray):
+                The complex-valued signal subspace `Es`. Shape: (L, 2M).
 
         Returns:
             np.ndarray:
@@ -61,6 +55,8 @@ class LSEspritSolver:  # pylint: disable=too-few-public-methods
                 in radians per sample. Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
+        subspace_upper = signal_subspace[:-1, :]
+        subspace_lower = signal_subspace[1:, :]
         try:
             rotation_operator = pinv(subspace_upper) @ subspace_lower
         except LinAlgError:
@@ -80,9 +76,7 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
     """A solver class for the ESPRIT rotational operator using the Total LS."""
 
     def solve(
-        self,
-        subspace_upper: npt.NDArray[np.complex128],
-        subspace_lower: npt.NDArray[np.complex128],
+        self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Solves for rotational factors using the Total Least Squares (TLS) method.
 
@@ -93,12 +87,8 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
         computed from the phase angles of the eigenvalues of Psi.
 
         Args:
-            subspace_upper (np.ndarray):
-                The complex-valued signal subspace with its last row removed.
-                Shape: (L-1, 2M).
-            subspace_lower (np.ndarray):
-                The complex-valued signal subspace with its first row removed.
-                Shape: (L-1, 2M).
+            signal_subspace (np.ndarray):
+                The complex-valued signal subspace `Es`. Shape: (L, 2M).
 
         Returns:
             np.ndarray:
@@ -106,6 +96,8 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
                 in radians per sample. Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
+        subspace_upper = signal_subspace[:-1, :]
+        subspace_lower = signal_subspace[1:, :]
         # Form the augmented matrix for SVD
         augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
         try:
