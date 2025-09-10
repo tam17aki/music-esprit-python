@@ -46,6 +46,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             np.ndarray: Estimated signal subspace matrix (complex128).
                 Returns None if estimation fails.
         """
+        raise NotImplementedError
 
     def _filter_unique_freqs(
         self, raw_freqs: npt.NDArray[np.float64], min_separation_hz: float
