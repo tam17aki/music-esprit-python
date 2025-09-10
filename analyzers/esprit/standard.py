@@ -69,7 +69,7 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
             signal (np.ndarray): Input signal (complex128).
 
         Returns:
-            np.ndarray: Estimated signal subspace matrix (complex128).
+            np.ndarray: The complex-valued signal subspace matrix (complex128).
                 Returns None if estimation fails.
         """
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
