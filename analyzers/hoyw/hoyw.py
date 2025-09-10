@@ -27,7 +27,7 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import svd, toeplitz
+from scipy.linalg import LinAlgError, svd, toeplitz
 from scipy.signal import correlate
 
 from .._common import find_freqs_from_roots
@@ -190,7 +190,7 @@ class HOYWAnalyzer(AnalyzerBase):
         # Performs SVD of matrix R (Stoica 4.4.12)
         try:
             u, s, vh = svd(acorr_mat)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("SVD on autocorrelation matrix failed.")
             return np.array([])
 
