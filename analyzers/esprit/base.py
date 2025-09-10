@@ -34,19 +34,13 @@ from ..base import AnalyzerBase
 class EspritAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for ESPRIT-based parameter analyzers."""
 
-    def __init__(
-        self,
-        fs: float,
-        n_sinusoids: int,
-        sep_factor: float = 0.4,
-    ):
+    def __init__(self, fs: float, n_sinusoids: int, sep_factor: float):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            sep_factor (float, optional):
-                Separation factor for resolving close frequencies.
+            sep_factor (float): Separation factor for resolving close frequencies.
         """
         super().__init__(fs, n_sinusoids)
         self.sep_factor: float = sep_factor
