@@ -154,25 +154,35 @@ accurate_freqs = spec_analyzer_fb.frequencies
 #### ESPRIT Analyzers
 
 ```python
+from analyzers.esprit.solvers import (
+    LSEspritSolver,
+    LSUnitaryEspritSolver,
+    TLSEspritSolver,
+)
 from analyzers.esprit.standard import StandardEspritAnalyzer
 from analyzers.esprit.unitary import UnitaryEspritAnalyzer
-from analyzers.esprit.solvers import LSEspritSolver, TLSEspritSolver, LSUnitaryEspritSolver
 
 # Standard ESPRIT with a Least Squares (LS) solver
 ls_solver = LSEspritSolver()
-ls_esprit_analyzer = StandardEspritAnalyzer(fs=fs, n_sinusoids=n_sinusoids, solver=ls_solver)
+ls_esprit_analyzer = StandardEspritAnalyzer(
+    fs=fs, n_sinusoids=n_sinusoids, solver=ls_solver
+)
 ls_esprit_analyzer.fit(my_signal)
 ls_freqs = ls_esprit_analyzer.frequencies
 
 # Standard ESPRIT with a more robust Total Least Squares (TLS) solver
 tls_solver = TLSEspritSolver()
-tls_esprit_analyzer = StandardEspritAnalyzer(fs=fs, n_sinusoids=n_sinusoids, solver=tls_solver)
+tls_esprit_analyzer = StandardEspritAnalyzer(
+    fs=fs, n_sinusoids=n_sinusoids, solver=tls_solver
+)
 tls_esprit_analyzer.fit(my_signal)
 tls_freqs = tls_esprit_analyzer.frequencies
 
 # Computationally efficient Unitary ESPRIT
-unitary_solver = LSUnitaryEspritSolver() # Or TLSUnitaryEspritSolver
-unitary_esprit_analyzer = UnitaryEspritAnalyzer(fs=fs, n_sinusoids=n_sinusoids, solver=unitary_solver)
+unitary_solver = LSUnitaryEspritSolver()  # Or TLSUnitaryEspritSolver
+unitary_esprit_analyzer = UnitaryEspritAnalyzer(
+    fs=fs, n_sinusoids=n_sinusoids, solver=unitary_solver
+)
 unitary_esprit_analyzer.fit(my_signal)
 unitary_freqs = unitary_esprit_analyzer.frequencies
 ```
