@@ -49,21 +49,11 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
     def _estimate_signal_subspace(
         self, signal: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64] | None:
-        """Estimate the signal subspace using eigenvalue decomposition.
-
-        Args:
-            signal (np.ndarray): Input signal (complex128).
-
-        Returns:
-            np.ndarray: Estimated signal subspace matrix (complex128).
-                Returns None if estimation fails.
-        """
+        """Estimate the signal subspace using eigenvalue decomposition."""
         raise NotImplementedError
 
     def _postprocess_omegas(
-        self,
-        raw_omegas: npt.NDArray[np.float64],
-        signal_length: int,
+        self, raw_omegas: npt.NDArray[np.float64], signal_length: int
     ) -> npt.NDArray[np.float64]:
         """Post-processes raw angular frequencies to final frequency estimates.
 
