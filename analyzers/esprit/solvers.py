@@ -59,6 +59,7 @@ class LSEspritSolver:  # pylint: disable=too-few-public-methods
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
                 in radians per sample. Shape: (2M,).
+                Returns an empty array if estimation fails.
         """
         try:
             rotation_operator = pinv(subspace_upper) @ subspace_lower
@@ -103,6 +104,7 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
                 in radians per sample. Shape: (2M,).
+                Returns an empty array if estimation fails.
         """
         # Form the augmented matrix for SVD
         augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
@@ -238,6 +240,7 @@ class LSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
                 in radians per sample. Shape: (M,).
+                Returns an empty array if estimation fails.
         """
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
         t1 = k1 @ signal_subspace
@@ -290,6 +293,7 @@ class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
                 in radians per sample. Shape: (M,).
+                Returns an empty array if estimation fails.
         """
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
         t1 = k1 @ signal_subspace
