@@ -40,7 +40,26 @@ class LSEspritSolver:  # pylint: disable=too-few-public-methods
         subspace_upper: npt.NDArray[np.complex128],
         subspace_lower: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64]:
-        """Solve for frequencies from the signal subspace."""
+        """Solves for rotational factors using the Least Squares (LS) method.
+
+        This method estimates the rotation operator Psi from the equation
+        `subspace_upper @ Psi = subspace_lower` by solving a least squares
+        problem. The normalized angular frequencies are then computed from
+        the phase angles of the eigenvalues of Psi.
+
+        Args:
+            subspace_upper (np.ndarray):
+                The complex-valued signal subspace with its last row removed.
+                Shape: (L-1, 2M).
+            subspace_lower (np.ndarray):
+                The complex-valued signal subspace with its first row removed.
+                Shape: (L-1, 2M).
+
+        Returns:
+            np.ndarray:
+                An array of estimated normalized angular frequencies (omegas)
+                in radians per sample. Shape: (2M,).
+        """
         try:
             rotation_operator = pinv(subspace_upper) @ subspace_lower
         except np.linalg.LinAlgError:
@@ -64,7 +83,27 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
         subspace_upper: npt.NDArray[np.complex128],
         subspace_lower: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64]:
-        """Solve for frequencies from the signal subspace."""
+        """Solves for rotational factors using the Total Least Squares (TLS) method.
+
+        This method formulates the problem as `[subspace_upper, subspace_lower]`
+        and solves for the rotational operator Psi via Singular Value
+        Decomposition (SVD). This approach is generally more robust in noisy
+        conditions than the LS method. The normalized angular frequencies are
+        computed from the phase angles of the eigenvalues of Psi.
+
+        Args:
+            subspace_upper (np.ndarray):
+                The complex-valued signal subspace with its last row removed.
+                Shape: (L-1, 2M).
+            subspace_lower (np.ndarray):
+                The complex-valued signal subspace with its first row removed.
+                Shape: (L-1, 2M).
+
+        Returns:
+            np.ndarray:
+                An array of estimated normalized angular frequencies (omegas)
+                in radians per sample. Shape: (2M,).
+        """
         # Form the augmented matrix for SVD
         augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
         try:
@@ -182,14 +221,23 @@ class LSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few
     def solve(
         self, signal_subspace: npt.NDArray[np.float64], subspace_dim: int
     ) -> npt.NDArray[np.float64]:
-        """Solve for frequencies from the signal subspace.
+        """Solves the real-valued Unitary ESPRIT problem using Least Squares.
+
+        This method constructs real-valued selection matrices K1 and K2,
+        and solves the system `(K1 @ Es) @ Y = (K2 @ Es)` for Y using a
+        least squares approach. The normalized angular frequencies (omegas) are
+        recovered from the eigenvalues of Y using the arctangent function.
 
         Args:
-           signal_subspace (np.ndarray): The signal subspace (float64)
-           subspace_dim (int): Dimension of signal subspace.
+            signal_subspace (np.ndarray):
+                The real-valued signal subspace `Es_real`. Shape: (L, 2M).
+            subspace_dim (int):
+                The dimension of the signal subspace, L.
 
         Returns:
-           np.ndarray: Normalized angular frequencies (float64)
+            np.ndarray:
+                An array of estimated normalized angular frequencies (omegas)
+                in radians per sample. Shape: (M,).
         """
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
         t1 = k1 @ signal_subspace
@@ -207,11 +255,10 @@ class LSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few
             warnings.warn("Eigenvalue decomposition of Y_LS failed.")
             return np.array([])
 
-        # Recover normalized angular frequency from eigenvalues
-        _omega = 2 * np.arctan(np.real(eigenvalues_y))
-        omega: npt.NDArray[np.float64] = _omega.astype(np.float64)
-
-        return omega
+        # Recover normalized angular frequencies from eigenvalues
+        _omegas = 2 * np.arctan(np.real(eigenvalues_y))
+        omegas: npt.NDArray[np.float64] = _omegas.astype(np.float64)
+        return omegas
 
 
 class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few-public-methods
@@ -225,14 +272,24 @@ class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
     def solve(
         self, signal_subspace: npt.NDArray[np.float64], subspace_dim: int
     ) -> npt.NDArray[np.float64]:
-        """Solve for frequencies from the signal subspace.
+        """Solves the real-valued Unitary ESPRIT problem using Total Least Squares.
+
+        This method constructs real-valued matrices T1 and T2 from the real
+        signal subspace, and solves the system `T1 @ Y ≈ T2` using a more
+        robust Total Least Squares approach via SVD. The normalized angular
+        frequencies (omegas) are recovered from the eigenvalues of the resulting
+        solution matrix Y_TLS using the arctangent function.
 
         Args:
-           signal_subspace (np.ndarray): The signal subspace (float64)
-           subspace_dim (int): Dimension of signal subspace.
+            signal_subspace (np.ndarray):
+                The real-valued signal subspace `Es_real`. Shape: (L, 2M).
+            subspace_dim (int):
+                The dimension of the signal subspace, L.
 
         Returns:
-           np.ndarray: Normalized angular frequencies (float64)
+            np.ndarray:
+                An array of estimated normalized angular frequencies (omegas)
+                in radians per sample. Shape: (M,).
         """
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
         t1 = k1 @ signal_subspace
@@ -262,7 +319,7 @@ class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
             warnings.warn("Eigenvalue decomposition of Y_TLS failed.")
             return np.array([])
 
-        # Recover normalized angular frequency from eigenvalues
-        _omega = 2 * np.arctan(np.real(eigenvalues_y))
-        omega: npt.NDArray[np.float64] = _omega.astype(np.float64)
-        return omega
+        # Recover normalized angular frequencies from eigenvalues
+        _omegas = 2 * np.arctan(np.real(eigenvalues_y))
+        omegas: npt.NDArray[np.float64] = _omegas.astype(np.float64)
+        return omegas
