@@ -60,29 +60,6 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         self.sep_factor: float = sep_factor
 
     @override
-    def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.complex128] | None:
-        """Estimate the signal subspace using eigenvalue decomposition.
-
-        Args:
-            signal (np.ndarray): Input signal (complex128).
-
-        Returns:
-            np.ndarray: The complex-valued signal subspace matrix (complex128).
-                Returns None if estimation fails.
-        """
-        cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
-        try:
-            _, eigenvectors = eigh(cov_matrix)
-        except LinAlgError:
-            warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
-            return None
-        _subspace = eigenvectors[:, -2 * self.n_sinusoids :]
-        signal_subspace: npt.NDArray[np.complex128] = _subspace.astype(np.complex128)
-        return signal_subspace
-
-    @override
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
@@ -117,6 +94,29 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         est_freqs = self._filter_unique_freqs(raw_freqs, min_separation_hz)
 
         return est_freqs
+
+    @override
+    def _estimate_signal_subspace(
+        self, signal: npt.NDArray[np.complex128]
+    ) -> npt.NDArray[np.complex128] | None:
+        """Estimate the signal subspace using eigenvalue decomposition.
+
+        Args:
+            signal (np.ndarray): Input signal (complex128).
+
+        Returns:
+            np.ndarray: The complex-valued signal subspace matrix (complex128).
+                Returns None if estimation fails.
+        """
+        cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
+        try:
+            _, eigenvectors = eigh(cov_matrix)
+        except LinAlgError:
+            warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
+            return None
+        _subspace = eigenvectors[:, -2 * self.n_sinusoids :]
+        signal_subspace: npt.NDArray[np.complex128] = _subspace.astype(np.complex128)
+        return signal_subspace
 
 
 @final
