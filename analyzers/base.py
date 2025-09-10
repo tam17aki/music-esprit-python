@@ -28,7 +28,7 @@ from typing import Self
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import hankel, pinv
+from scipy.linalg import LinAlgError, hankel, pinv
 
 from utils.data_models import SinusoidParameters
 
@@ -136,7 +136,7 @@ class AnalyzerBase(ABC):
         # y = V @ c  =>  c = pinv(V) @ y
         try:
             complex_amps = pinv(vandermonde_matrix) @ signal
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("Least squares estimation for amplitudes/phases failed.")
             return np.array([]), np.array([])
 
