@@ -134,22 +134,22 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
     @staticmethod
     def _transform_complex_to_real(
-        g: npt.NDArray[np.complex128],
+        g_matrix: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64]:
         """Transform a complex matrix G to a real matrix T(G) based on Eq. (7).
 
         Args:
-            g (np.ndarray): Complex matrix G (complex128).
+            g_matrix (np.ndarray): Complex matrix G (complex128).
 
         Returns:
             np.ndarray: Transformed real matrix T(G) (complex128).
         """
-        p, _ = g.shape
+        p, _ = g_matrix.shape
         p_half = p // 2  # L
 
         if p % 2 == 0:  # L is even
-            g1 = g[:p_half, :]
-            g2 = g[p_half:, :]
+            g1 = g_matrix[:p_half, :]
+            g2 = g_matrix[p_half:, :]
             pi_g2 = np.flipud(g2.conj())
             _sum = g1 + pi_g2
             _diff = g1 - pi_g2
@@ -158,9 +158,9 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
             return np.hstack([tg_left, tg_right])
 
         # L is odd
-        g1 = g[:p_half, :]
-        gt = g[p_half, :]
-        g2 = g[p_half + 1 :, :]
+        g1 = g_matrix[:p_half, :]
+        gt = g_matrix[p_half, :]
+        g2 = g_matrix[p_half + 1 :, :]
         pi_g2 = np.flipud(g2.conj())
         _sum = g1 + pi_g2
         _diff = g1 - pi_g2
