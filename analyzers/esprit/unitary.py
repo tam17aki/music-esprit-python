@@ -136,7 +136,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
     def _transform_complex_to_real(
         g: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64]:
-        """Transforms a complex matrix G to a real matrix T(G) based on Eq. (7).
+        """Transform a complex matrix G to a real matrix T(G) based on Eq. (7).
 
         Args:
             g (np.ndarray): Complex matrix G (complex128).
