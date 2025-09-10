@@ -199,7 +199,7 @@ class UnitaryEspritSolverBase(ABC):  # pylint: disable=too-few-public-methods
 
         # 3. Calculate K1 and K2 according to equation (32).
         # K1 = Q_m'^H * (J1 + Π_m' * J1 * Π_M) * Q_M
-        temp_array = csr_array(np.fliplr(np.flipud(j1)))
+        temp_array = csr_array(np.fliplr(np.flipud(j1)))  # Π_m' * J1 * Π_M
         k1_term = csr_array(j1) + temp_array
         k1 = q_m_prime.conj().T @ k1_term @ q_m
 
@@ -294,6 +294,7 @@ class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
         t1 = k1 @ signal_subspace
         t2 = k2 @ signal_subspace
+
         try:
             _, _, vh = svd(np.concatenate((t1, t2), axis=1))
         except np.linalg.LinAlgError:
