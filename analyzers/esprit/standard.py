@@ -27,7 +27,7 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import eigh
+from scipy.linalg import LinAlgError, eigh
 
 from mixins.covariance import ForwardBackwardMixin
 
@@ -75,7 +75,7 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
         try:
             _, eigenvectors = eigh(cov_matrix)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
             return None
         _subspace = eigenvectors[:, -2 * self.n_sinusoids :]
