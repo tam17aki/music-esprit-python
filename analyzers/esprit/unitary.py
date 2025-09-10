@@ -77,7 +77,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
             return np.array([])
 
         # 2. Solve frequencies with the stored solver
-        omegas = self.solver.solve(signal_subspace, self.subspace_dim)
+        omegas = self.solver.solve(signal_subspace)
 
         # 3. Convert normalized angular frequencies [rad/sample]
         #    to physical frequencies [Hz]
