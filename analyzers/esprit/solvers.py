@@ -139,7 +139,7 @@ class UnitaryEspritSolverBase(ABC):  # pylint: disable=too-few-public-methods
 
     @abstractmethod
     def solve(
-        self, signal_subspace: npt.NDArray[np.float64], subspace_dim: int
+        self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Solve for frequencies from the signal subspace."""
         raise NotImplementedError
@@ -213,7 +213,7 @@ class UnitaryLSEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few
 
     @override
     def solve(
-        self, signal_subspace: npt.NDArray[np.float64], subspace_dim: int
+        self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Solves the real-valued Unitary ESPRIT problem using Least Squares.
 
@@ -225,8 +225,6 @@ class UnitaryLSEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few
         Args:
             signal_subspace (np.ndarray):
                 The real-valued signal subspace `Es_real`. Shape: (L, 2M).
-            subspace_dim (int):
-                The dimension of the signal subspace, L.
 
         Returns:
             np.ndarray:
@@ -234,6 +232,7 @@ class UnitaryLSEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few
                 in radians per sample. Shape: (M,).
                 Returns an empty array if estimation fails.
         """
+        subspace_dim = signal_subspace.shape[0]
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
         t1 = k1 @ signal_subspace
         t2 = k2 @ signal_subspace
@@ -265,7 +264,7 @@ class UnitaryTLSEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
 
     @override
     def solve(
-        self, signal_subspace: npt.NDArray[np.float64], subspace_dim: int
+        self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Solves the real-valued Unitary ESPRIT problem using Total Least Squares.
 
@@ -278,8 +277,6 @@ class UnitaryTLSEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
         Args:
             signal_subspace (np.ndarray):
                 The real-valued signal subspace `Es_real`. Shape: (L, 2M).
-            subspace_dim (int):
-                The dimension of the signal subspace, L.
 
         Returns:
             np.ndarray:
@@ -287,6 +284,7 @@ class UnitaryTLSEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-fe
                 in radians per sample. Shape: (M,).
                 Returns an empty array if estimation fails.
         """
+        subspace_dim = signal_subspace.shape[0]
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
         t1 = k1 @ signal_subspace
         t2 = k2 @ signal_subspace
