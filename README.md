@@ -177,7 +177,7 @@ unitary_esprit_analyzer.fit(my_signal)
 unitary_freqs = unitary_esprit_analyzer.frequencies
 ```
 
-(Note: The `...FB` classes for MUSIC and starndard ESPRIT are created within their respective modules by inheriting from the `ForwardBackwardMixin`.)
+(Note: The `...FB` classes for MUSIC and standard ESPRIT are created within their respective modules by inheriting from the `ForwardBackwardMixin`.)
 
 ## Project Structure
 
