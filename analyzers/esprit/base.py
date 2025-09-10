@@ -34,6 +34,23 @@ from ..base import AnalyzerBase
 class EspritAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for ESPRIT-based parameter analyzers."""
 
+    def __init__(
+        self,
+        fs: float,
+        n_sinusoids: int,
+        sep_factor: float = 0.4,
+    ):
+        """Initialize the analyzer with an experiment configuration.
+
+        Args:
+            fs (float): Sampling frequency in Hz.
+            n_sinusoids (int): Number of sinusoids.
+            sep_factor (float, optional):
+                Separation factor for resolving close frequencies.
+        """
+        super().__init__(fs, n_sinusoids)
+        self.sep_factor: float = sep_factor
+
     @abstractmethod
     def _estimate_signal_subspace(
         self, signal: npt.NDArray[np.complex128]
@@ -48,6 +65,51 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
                 Returns None if estimation fails.
         """
         raise NotImplementedError
+
+    def _postprocess_omegas(
+        self,
+        raw_omegas: npt.NDArray[np.float64],
+        signal_length: int,
+    ) -> npt.NDArray[np.float64]:
+        """Post-processes raw angular frequencies to final frequency estimates.
+
+        This method performs a series of finalization steps:
+            1. Converts normalized angular frequencies (omegas) to
+               physical frequencies (Hz).
+            2. Takes the positive frequencies from positive/negative frequency pairs.
+            3. Sorts the frequencies in ascending order.
+            4. Filters out closely spaced frequencies to return unique components.
+
+        Args:
+            raw_omegas (np.ndarray):
+                An array of raw normalized angular frequencies in radians per sample,
+                as returned by a solver.
+            signal_length (int):
+                The length of the input signal frame (N), used to calculate
+                the frequency separation threshold.
+
+        Returns:
+            np.ndarray:
+                A sorted array of final, unique frequency estimates in Hz,
+                limited to `self.n_sinusoids`.
+        """
+        # 1. Convert normalized angular frequencies [rad/sample]
+        #    to physical frequencies [Hz]
+        estimated_freqs_hz = raw_omegas * (self.fs / (2 * np.pi))
+
+        # 2. Take only the positive frequencies from positive/negative frequency pairs
+        positive_freq_indices = np.where(estimated_freqs_hz > 0)[0]
+        positive_freqs = estimated_freqs_hz[positive_freq_indices]
+
+        # 3. Sort the frequencies in ascending order
+        sorted_indices = np.argsort(positive_freqs)
+        raw_freqs = positive_freqs[sorted_indices]
+
+        # 4. Filter unique frequencies
+        min_separation_hz = (self.fs / signal_length) * self.sep_factor
+        est_freqs = self._filter_unique_freqs(raw_freqs, min_separation_hz)
+
+        return est_freqs
 
     def _filter_unique_freqs(
         self, raw_freqs: npt.NDArray[np.float64], min_separation_hz: float
