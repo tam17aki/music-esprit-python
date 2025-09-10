@@ -30,7 +30,7 @@ import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigh, hankel
 
 from .base import EspritAnalyzerBase
-from .solvers import UnitaryLSEspritSolver, UnitaryTLSEspritSolver
+from .solvers import LSUnitaryEspritSolver, TLSUnitaryEspritSolver
 
 
 @final
@@ -41,7 +41,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         self,
         fs: float,
         n_sinusoids: int,
-        solver: UnitaryLSEspritSolver | UnitaryTLSEspritSolver,
+        solver: LSUnitaryEspritSolver | TLSUnitaryEspritSolver,
         sep_factor: float = 0.4,
     ):
         """Initialize the analyzer with an experiment configuration.
@@ -55,7 +55,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
                 Separation factor for resolving close frequencies.
         """
         super().__init__(fs, n_sinusoids, sep_factor)
-        self.solver: UnitaryLSEspritSolver | UnitaryTLSEspritSolver = solver
+        self.solver: LSUnitaryEspritSolver | TLSUnitaryEspritSolver = solver
 
     @override
     def _estimate_frequencies(
