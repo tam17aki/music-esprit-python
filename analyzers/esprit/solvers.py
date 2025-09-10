@@ -24,17 +24,29 @@ SOFTWARE.
 
 import warnings
 from abc import ABC, abstractmethod
-from typing import override
+from typing import Generic, TypeVar, override
 
 import numpy as np
 import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigvals, pinv, svd
 from scipy.sparse import csc_array, csr_array
 
+DataTypeT = TypeVar("DataTypeT", bound=np.generic)
 
-class LSEspritSolver:  # pylint: disable=too-few-public-methods
+
+class EspritSolver(Generic[DataTypeT], ABC):  # pylint: disable=too-few-public-methods
+    """A generic base class for the ESPRIT-based solvers."""
+
+    @abstractmethod
+    def solve(self, signal_subspace: npt.NDArray[DataTypeT]) -> npt.NDArray[np.float64]:
+        """Solves for rotational factors."""
+        raise NotImplementedError
+
+
+class LSEspritSolver(EspritSolver[np.complex128]):  # pylint: disable=too-few-public-methods
     """A solver class for the ESPRIT rotational operator using the Least Squares."""
 
+    @override
     def solve(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
@@ -72,9 +84,10 @@ class LSEspritSolver:  # pylint: disable=too-few-public-methods
         return np.angle(eigenvals).astype(np.float64)
 
 
-class TLSEspritSolver:  # pylint: disable=too-few-public-methods
+class TLSEspritSolver(EspritSolver[np.complex128]):  # pylint: disable=too-few-public-methods
     """A solver class for the ESPRIT rotational operator using the Total LS."""
 
+    @override
     def solve(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
@@ -130,19 +143,8 @@ class TLSEspritSolver:  # pylint: disable=too-few-public-methods
         return np.angle(eigenvals).astype(np.float64)
 
 
-class UnitaryEspritSolverBase(ABC):  # pylint: disable=too-few-public-methods
-    """A solver class for the real-valued ESPRIT problem using eigenvalue decomposition.
-
-    This solver takes a real-valued signal subspace and solves a generalized
-    eigenvalue problem to find the frequencies.
-    """
-
-    @abstractmethod
-    def solve(
-        self, signal_subspace: npt.NDArray[np.float64]
-    ) -> npt.NDArray[np.float64]:
-        """Solve for frequencies from the signal subspace."""
-        raise NotImplementedError
+class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
+    """A Mixin class to provide helper methods for Unitary ESPRIT solvers."""
 
     @staticmethod
     def _get_unitary_transform_matrix(subspace_dim: int) -> npt.NDArray[np.complex128]:
@@ -204,7 +206,7 @@ class UnitaryEspritSolverBase(ABC):  # pylint: disable=too-few-public-methods
         return np.real(k1.toarray()), np.real(k2.toarray())
 
 
-class LSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few-public-methods
+class LSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):  # pylint: disable=too-few-public-methods
     """A solver class for the real-valued Unitary ESPRIT problem using least squares.
 
     This solver takes a real-valued signal subspace and solves a generalized
@@ -255,7 +257,7 @@ class LSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few
         return omegas
 
 
-class TLSUnitaryEspritSolver(UnitaryEspritSolverBase):  # pylint: disable=too-few-public-methods
+class TLSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):  # pylint: disable=too-few-public-methods
     """A solver class for the real-valued ESPRIT problem using total least squares.
 
     This solver takes a real-valued signal subspace and solves a generalized
