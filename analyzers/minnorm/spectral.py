@@ -43,7 +43,7 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            n_grids (int, optional): Number of grid points for Spectral-MinNorm.
+            n_grids (int, optional): Number of grid points for Spectral Min-Norm.
         """
         super().__init__(fs, n_sinusoids)
         self.n_grids: int = n_grids
