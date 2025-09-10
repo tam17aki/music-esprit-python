@@ -123,7 +123,7 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
 
 
 @final
-class LSEspritAnalyzerFB(ForwardBackwardMixin, StandardEspritAnalyzer):
+class StandardEspritAnalyzerFB(ForwardBackwardMixin, StandardEspritAnalyzer):
     """ESPRIT analyzer enhanced with Forward-Backward averaging.
 
     Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
