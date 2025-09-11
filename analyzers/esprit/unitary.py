@@ -148,17 +148,18 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
             _diff = g1 - pi_g2
             tg_left = np.vstack([np.real(_sum), np.imag(_sum)])
             tg_right = np.vstack([-np.imag(_diff), np.real(_diff)])
-            return np.hstack([tg_left, tg_right])
+        else:  # L is odd
+            g1 = g_matrix[:p_half, :]
+            gt = g_matrix[p_half, :]
+            g2 = g_matrix[p_half + 1 :, :]
+            pi_g2 = np.flipud(g2.conj())
+            _sum = g1 + pi_g2
+            _diff = g1 - pi_g2
+            tg_left = np.vstack(
+                [np.real(_sum), np.sqrt(2.0) * np.real(gt), np.imag(_sum)]
+            )
+            tg_right = np.vstack(
+                [-np.imag(_diff), -np.sqrt(2.0) * np.imag(gt), np.real(_diff)]
+            )
 
-        # L is odd
-        g1 = g_matrix[:p_half, :]
-        gt = g_matrix[p_half, :]
-        g2 = g_matrix[p_half + 1 :, :]
-        pi_g2 = np.flipud(g2.conj())
-        _sum = g1 + pi_g2
-        _diff = g1 - pi_g2
-        tg_left = np.vstack([np.real(_sum), np.sqrt(2.0) * np.real(gt), np.imag(_sum)])
-        tg_right = np.vstack(
-            [-np.imag(_diff), -np.sqrt(2.0) * np.imag(gt), np.real(_diff)]
-        )
         return np.hstack([tg_left, tg_right])
