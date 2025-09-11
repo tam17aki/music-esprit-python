@@ -29,6 +29,8 @@ import numpy.polynomial.polynomial as poly
 import numpy.typing as npt
 from scipy.signal import find_peaks
 
+TOLERANCE_LEVEL = 1e-6
+
 
 def find_peaks_from_spectrum(
     n_sinusoids: int,
@@ -65,7 +67,7 @@ def find_peaks_from_spectrum(
 def find_freqs_from_roots(
     fs: float,
     n_sinusoids: int,
-    coefficients: npt.NDArray[np.complex128],
+    coefficients: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
     min_separation_hz: float,
 ) -> npt.NDArray[np.float64]:
     """Find roots of the polynomial and estimate frequencies.
@@ -102,8 +104,12 @@ def find_freqs_from_roots(
     _uniq_freqs = angles.astype(np.float64) * (fs / (2 * np.pi))
 
     # 5. Filter frequencies
-    unique_freqs = [_uniq_freqs[0]]
-    for freq in _uniq_freqs[1:]:
-        if np.abs(freq - unique_freqs[-1]) > min_separation_hz:
-            unique_freqs.append(freq)
+    unique_freqs: list[npt.NDArray[np.float64]] = []
+    for freq in _uniq_freqs:
+        if any(np.abs(freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
+            continue
+        if unique_freqs and np.abs(freq - unique_freqs[-1]) < min_separation_hz:
+            continue
+        unique_freqs.append(freq)
+
     return np.sort(np.array(unique_freqs[:n_sinusoids]))
