@@ -56,51 +56,38 @@ Running the command above will produce an output similar to this:
 
 ```
 --- Experiment Setup ---
-Sampling Frequency: 16000.0 Hz
+Sampling Frequency: 44100.0 Hz
 Signal Duration:    100 ms
 True Frequencies:   [440. 460. 480.] Hz
-True Amplitudes:    [0.7874051  0.99090936 0.77065974]
-True Phases:        [1.44434387 0.25491846 0.10556346] rad
+True Amplitudes:    [1.22912604 0.94498725 1.05554323]
+True Phases:        [-3.00626451 -1.41470502 -1.2889919 ] rad
 SNR:                30.0 dB
 Number of Grid Points:  16384
 
 --- Running Spectral MUSIC ---
 
 --- Estimation Results ---
-Est Frequencies: [439.96825978 459.989013   480.00976622] Hz
-Est Amplitudes:  [0.78513566 0.98839152 0.76930029]
-Est Phases:      [1.45409009 0.25679964 0.10130206] rad
+Est Frequencies: [441.43066406 460.2722168  479.11376953] Hz
+Est Amplitudes:  [1.19557359 0.99377398 1.05430486]
+Est Phases:      [ 2.83499486 -1.58682732 -1.05501304] rad
 
 --- Estimation Errors ---
-Freq Errors:  [-0.03174022 -0.010987    0.00976622] Hz
-Amp Errors:   [-0.00226944 -0.00251784 -0.00135945]
-Phase Errors: [ 0.00974622  0.00188118 -0.0042614 ] rad
-
-
---- Running Root MUSIC ---
-
---- Estimation Results ---
-Est Frequencies: [440.01102072 459.97378844 479.98168063] Hz
-Est Amplitudes:  [0.78551905 0.99004224 0.76868425]
-Est Phases:      [1.43895791 0.26301414 0.11107347] rad
-
---- Estimation Errors ---
-Freq Errors:  [ 0.01102072 -0.02621156 -0.01831937] Hz
-Amp Errors:   [-0.00188605 -0.00086713 -0.00197549]
-Phase Errors: [-0.00538597  0.00809568  0.00551002] rad
+Freq Errors:  [ 1.43066406  0.2722168  -0.88623047] Hz
+Amp Errors:   [-0.03355245  0.04878673 -0.00123837]
+Phase Errors: [ 5.84125937 -0.1721223   0.23397886] rad
 
 
 --- Running ESPRIT ---
 
 --- Estimation Results ---
-Est Frequencies: [440.00350401 459.98850671 479.99054932] Hz
-Est Amplitudes:  [0.78521632 0.98962922 0.76939072]
-Est Phases:      [1.44241938 0.25814555 0.10823306] rad
+Est Frequencies: [440.00119777 459.99668962 479.993247  ] Hz
+Est Amplitudes:  [1.2304059  0.94458824 1.05422213]
+Est Phases:      [-3.00528761 -1.41443859 -1.28755489] rad
 
 --- Estimation Errors ---
-Freq Errors:  [ 0.00350401 -0.01149329 -0.00945068] Hz
-Amp Errors:   [-0.00218878 -0.00128014 -0.00126902]
-Phase Errors: [-0.00192449  0.00322709  0.0026696 ] rad
+Freq Errors:  [ 0.00119777 -0.00331038 -0.006753  ] Hz
+Amp Errors:   [ 0.00127986 -0.00039902 -0.0013211 ]
+Phase Errors: [0.0009769  0.00026643 0.00143701] rad
 ```
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
@@ -121,7 +108,7 @@ python main.py --help
 
 | Argument| Description | Default |
 | :-------- | :-------- | :-------- |
-|`--fs`| Sampling frequency in Hz.| 16000.0 |
+|`--fs`| Sampling frequency in Hz.| 44100.0 |
 | `--duration` | Signal duration in seconds. | 0.1|
 |`--snr_db` | Signal-to-Noise Ratio in dB. | 30.0|
 | `--freqs_true`  | A list of true frequencies in Hz. | 440 460 480|
