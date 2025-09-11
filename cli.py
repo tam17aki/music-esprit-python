@@ -120,8 +120,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--n_grids",
         type=int,
-        default=8192,
-        help="Number of frequency grid points for MUSIC spectrum (default: 8192)",
+        default=16384,
+        help="Number of frequency grid points for MUSIC spectrum (default: 16384)",
     )
     parser.add_argument(
         "--sep_factor",
