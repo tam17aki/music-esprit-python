@@ -43,7 +43,8 @@ class EspritSolver(Generic[DataTypeT], ABC):  # pylint: disable=too-few-public-m
         raise NotImplementedError
 
 
-class LSEspritSolver(EspritSolver[np.complex128]):  # pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods
+class LSEspritSolver(EspritSolver[np.complex128]):
     """A solver class for the ESPRIT rotational operator using the Least Squares."""
 
     @override
@@ -84,7 +85,8 @@ class LSEspritSolver(EspritSolver[np.complex128]):  # pylint: disable=too-few-pu
         return np.angle(eigenvals).astype(np.float64)
 
 
-class TLSEspritSolver(EspritSolver[np.complex128]):  # pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods
+class TLSEspritSolver(EspritSolver[np.complex128]):
     """A solver class for the ESPRIT rotational operator using the Total LS."""
 
     @override
