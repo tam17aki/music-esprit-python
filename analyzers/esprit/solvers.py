@@ -198,11 +198,12 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
         # 3. Calculate K1 and K2 according to equation (32).
         # K1 = Q_m'^H * (J1 + Π_m' * J1 * Π_M) * Q_M
         temp_array = csr_array(np.fliplr(np.flipud(j1)))  # Π_m' * J1 * Π_M
-        k1_term = csr_array(j1) + temp_array
+        j1_array = csr_array(j1)
+        k1_term = j1_array + temp_array
         k1 = q_m_prime.conj().T @ k1_term @ q_m
 
         # K2 = Q_m'^H * j * (J1 - Π_m' * J1 * Π_M) * Q_M
-        k2_term = 1j * (csr_array(j1) - temp_array)
+        k2_term = 1j * (j1_array - temp_array)
         k2 = q_m_prime.conj().T @ k2_term @ q_m
 
         return np.real(k1.toarray()), np.real(k2.toarray())
