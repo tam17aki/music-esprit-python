@@ -27,6 +27,7 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
+from numpy.fft import fft, fftfreq
 
 from mixins.covariance import ForwardBackwardMixin
 
@@ -37,7 +38,7 @@ from .base import MusicAnalyzerBase
 class SpectralMusicAnalyzer(MusicAnalyzerBase):
     """MUSIC analyzer using spectral peak picking."""
 
-    def __init__(self, fs: float, n_sinusoids: int, n_grids: int = 8192):
+    def __init__(self, fs: float, n_sinusoids: int, n_grids: int = 16384):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
@@ -89,14 +90,26 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
                 - freq_grid (np.ndarray): Frequency grid (float64).
                 - music_spectrum (np.ndarray): MUSIC pseudospectrum (float64).
         """
-        freq_grid = np.linspace(0, self.fs / 2, num=self.n_grids, dtype=np.float64)
-        omegas = 2 * np.pi * freq_grid / self.fs
-        l_vector = np.arange(self.subspace_dim).reshape(-1, 1)
-        steering_matrix = np.exp(-1j * l_vector @ omegas.reshape(1, -1))
-        temp_matrix = noise_subspace.conj().T @ steering_matrix
-        denominator_values = np.einsum("ij,ji->i", temp_matrix.conj().T, temp_matrix)
-        music_spectrum = 1 / (np.abs(denominator_values) + 1e-12)
-        return freq_grid, music_spectrum
+        # 1. Calculate the FFT of each noise eigenvector
+        fft_noise_eigvec = fft(noise_subspace, n=self.n_grids, axis=0)
+
+        # 2. Calculate the power spectrum of each FFT result
+        power_spectra_noise = np.abs(fft_noise_eigvec) ** 2
+
+        # 3. Sum the power for each frequency
+        #    to get the denominator of the MUSIC psuedospectrum
+        denominator_values = np.sum(power_spectra_noise, axis=1)
+
+        # 4. Calculate the MUSIC pseudospectrum
+        music_spectrum = 1 / (denominator_values + 1e-12)
+
+        # 5. Build a frequency grid
+        freq_grid = fftfreq(self.n_grids, d=1 / self.fs).astype(np.float64)
+
+        # 6. Make a mask that only handles positive frequencies
+        positive_freq_mask = freq_grid >= 0
+
+        return freq_grid[positive_freq_mask], music_spectrum[positive_freq_mask]
 
 
 @final
