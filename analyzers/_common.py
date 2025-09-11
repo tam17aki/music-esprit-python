@@ -101,15 +101,15 @@ def find_freqs_from_roots(
 
     # 4. Convert normalized angular frequency ω [rad/sample] to physical
     #    frequency f [Hz]
-    _unique_freqs = angles.astype(np.float64) * (fs / (2 * np.pi))
+    raw_freqs = angles.astype(np.float64) * (fs / (2 * np.pi))
 
     # 5. Filter frequencies
     unique_freqs: list[npt.NDArray[np.float64]] = []
-    for freq in _unique_freqs:
-        if any(np.abs(freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
+    for raw_freq in raw_freqs:
+        if any(np.abs(raw_freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
             continue
-        if unique_freqs and np.abs(freq - unique_freqs[-1]) < min_separation_hz:
+        if unique_freqs and np.abs(raw_freq - unique_freqs[-1]) < min_separation_hz:
             continue
-        unique_freqs.append(freq)
+        unique_freqs.append(raw_freq)
 
     return np.sort(np.array(unique_freqs[:n_sinusoids]))
