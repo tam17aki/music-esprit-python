@@ -27,6 +27,7 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
+from numpy.fft import fft, fftfreq
 
 from mixins.covariance import ForwardBackwardMixin
 
@@ -37,7 +38,7 @@ from .base import MinNormAnalyzerBase
 class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
     """Parameter analyzer using the Spectral Min-Norm algorithm."""
 
-    def __init__(self, fs: float, n_sinusoids: int, n_grids: int = 8192):
+    def __init__(self, fs: float, n_sinusoids: int, n_grids: int = 16384):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
@@ -102,13 +103,22 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
                 - freq_grid (np.ndarray): Frequency grid (float64).
                 - min_norm_spectrum (np.ndarray): Min-Norm pseudospectrum (float64).
         """
-        freq_grid = np.linspace(0, self.fs / 2, num=self.n_grids, dtype=np.float64)
-        omegas = 2 * np.pi * freq_grid / self.fs
-        l_vector = np.arange(self.subspace_dim).reshape(-1, 1)
-        steering_matrix = np.exp(-1j * l_vector @ omegas.reshape(1, -1))
-        denominator_values = np.abs(min_norm_vector.conj().T @ steering_matrix)
-        min_norm_spectrum = 1 / (denominator_values + 1e-12)
-        return freq_grid, min_norm_spectrum
+        # 1. Calculate the FFT of mininum norm vector
+        fft_noise_eigvec = fft(min_norm_vector, n=self.n_grids)
+
+        # 2. Calculate the power spectrum of FFT result
+        power_spectra_noise = np.abs(fft_noise_eigvec) ** 2
+
+        # 3. Calculate the MUSIC pseudospectrum
+        music_spectrum = 1 / (power_spectra_noise + 1e-12)
+
+        # 4. Build a frequency grid
+        freq_grid = fftfreq(self.n_grids, d=1 / self.fs).astype(np.float64)
+
+        # 5. Make a mask that only handles positive frequencies
+        positive_freq_mask = freq_grid >= 0
+
+        return freq_grid[positive_freq_mask], music_spectrum[positive_freq_mask]
 
 
 @final
