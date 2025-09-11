@@ -86,8 +86,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--fs",
         type=float,
-        default=16000.0,
-        help="Sampling frequency in Hz (default: 16000.0)",
+        default=44100.0,
+        help="Sampling frequency in Hz (default: 44100.0)",
     )
     parser.add_argument(
         "--duration",
