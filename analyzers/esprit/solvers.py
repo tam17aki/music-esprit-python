@@ -31,14 +31,14 @@ import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigvals, pinv, svd
 from scipy.sparse import csc_array, csr_array
 
-DataTypeT = TypeVar("DataTypeT", bound=np.generic)
+DTypeT = TypeVar("DTypeT", bound=np.generic)
 
 
-class EspritSolver(Generic[DataTypeT], ABC):  # pylint: disable=too-few-public-methods
+class EspritSolver(Generic[DTypeT], ABC):  # pylint: disable=too-few-public-methods
     """A generic base class for the ESPRIT-based solvers."""
 
     @abstractmethod
-    def solve(self, signal_subspace: npt.NDArray[DataTypeT]) -> npt.NDArray[np.float64]:
+    def solve(self, signal_subspace: npt.NDArray[DTypeT]) -> npt.NDArray[np.float64]:
         """Solves for rotational factors."""
         raise NotImplementedError
 
