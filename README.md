@@ -56,7 +56,7 @@ Running the command above will produce an output similar to this:
 
 ```
 --- Experiment Setup ---
-Sampling Frequency: 44100.0 Hz
+Sampling Frequency: 16000.0 Hz
 Signal Duration:    100 ms
 True Frequencies:   [440. 460. 480.] Hz
 True Amplitudes:    [1.41102781 1.40052413 1.44984503]
@@ -121,7 +121,7 @@ python main.py --help
 
 | Argument| Description | Default |
 | :-------- | :-------- | :-------- |
-|`--fs`| Sampling frequency in Hz.| 44100.0 |
+|`--fs`| Sampling frequency in Hz.| 16000.0 |
 | `--duration` | Signal duration in seconds. | 0.1|
 |`--snr_db` | Signal-to-Noise Ratio in dB. | 30.0|
 | `--freqs_true`  | A list of true frequencies in Hz. | 440 460 480|
