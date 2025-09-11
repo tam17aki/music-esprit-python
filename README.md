@@ -59,48 +59,48 @@ Running the command above will produce an output similar to this:
 Sampling Frequency: 16000.0 Hz
 Signal Duration:    100 ms
 True Frequencies:   [440. 460. 480.] Hz
-True Amplitudes:    [1.41102781 1.40052413 1.44984503]
-True Phases:        [-3.04853895 -0.47321629  3.10837411] rad
+True Amplitudes:    [0.7874051  0.99090936 0.77065974]
+True Phases:        [1.44434387 0.25491846 0.10556346] rad
 SNR:                30.0 dB
-Number of Grid Points:  8192
+Number of Grid Points:  16384
 
 --- Running Spectral MUSIC ---
 
 --- Estimation Results ---
-Est Frequencies: [438.79257722 460.32840923 479.17226224] Hz
-Est Amplitudes:  [1.4193478  1.40920727 1.36681428]
-Est Phases:      [-2.67745079 -0.56606888 -2.91184352] rad
+Est Frequencies: [439.96825978 459.989013   480.00976622] Hz
+Est Amplitudes:  [0.78513566 0.98839152 0.76930029]
+Est Phases:      [1.45409009 0.25679964 0.10130206] rad
 
 --- Estimation Errors ---
-Freq Errors:  [-1.20742278  0.32840923 -0.82773776] Hz
-Amp Errors:   [ 0.00832     0.00868313 -0.08303075]
-Phase Errors: [ 0.37108816 -0.09285259 -6.02021763] rad
+Freq Errors:  [-0.03174022 -0.010987    0.00976622] Hz
+Amp Errors:   [-0.00226944 -0.00251784 -0.00135945]
+Phase Errors: [ 0.00974622  0.00188118 -0.0042614 ] rad
 
 
 --- Running Root MUSIC ---
 
 --- Estimation Results ---
-Est Frequencies: [439.99865291 460.00630089 479.98387698] Hz
-Est Amplitudes:  [1.41119875 1.40011987 1.44902883]
-Est Phases:      [-3.04802373 -0.47552567  3.11305435] rad
+Est Frequencies: [440.01102072 459.97378844 479.98168063] Hz
+Est Amplitudes:  [0.78551905 0.99004224 0.76868425]
+Est Phases:      [1.43895791 0.26301414 0.11107347] rad
 
 --- Estimation Errors ---
-Freq Errors:  [-0.00134709  0.00630089 -0.01612302] Hz
-Amp Errors:   [ 0.00017094 -0.00040426 -0.0008162 ]
-Phase Errors: [ 0.00051522 -0.00230938  0.00468023] rad
+Freq Errors:  [ 0.01102072 -0.02621156 -0.01831937] Hz
+Amp Errors:   [-0.00188605 -0.00086713 -0.00197549]
+Phase Errors: [-0.00538597  0.00809568  0.00551002] rad
 
 
 --- Running ESPRIT ---
 
 --- Estimation Results ---
-Est Frequencies: [440.15013961 459.96703565 480.02503654] Hz
-Est Amplitudes:  [0.41823435 1.77925791 1.00002794]
-Est Phases:      [-3.07635342 -0.69853686 -2.88152328] rad
+Est Frequencies: [440.00350401 459.98850671 479.99054932] Hz
+Est Amplitudes:  [0.78521632 0.98962922 0.76939072]
+Est Phases:      [1.44241938 0.25814555 0.10823306] rad
 
 --- Estimation Errors ---
-Freq Errors:  [ 0.15013961 -0.03296435  0.02503654] Hz
-Amp Errors:   [ 0.00284486  0.01359618 -0.0128905 ]
-Phase Errors: [-0.02457284  0.00695845 -0.01390562] rad
+Freq Errors:  [ 0.00350401 -0.01149329 -0.00945068] Hz
+Amp Errors:   [-0.00218878 -0.00128014 -0.00126902]
+Phase Errors: [-0.00192449  0.00322709  0.0026696 ] rad
 ```
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
@@ -126,7 +126,7 @@ python main.py --help
 |`--snr_db` | Signal-to-Noise Ratio in dB. | 30.0|
 | `--freqs_true`  | A list of true frequencies in Hz. | 440 460 480|
 | `--amp_range` | The range for random amplitude generation. | 0.5 1.5|
-| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral Min-Norm. | 8192|
+| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral Min-Norm. | 16384|
 | `--sep_factor` | Separation factor for Root MUSIC, Root Min-Norm and ESPRIT. | 0.4|
 
 ### Using a Specific Analyzer in Your Own Code
