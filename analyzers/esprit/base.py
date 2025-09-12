@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import warnings
 from abc import ABC, abstractmethod
 
 import numpy as np
 import numpy.typing as npt
 
+from .._common import filter_unique_freqs
 from ..base import AnalyzerBase
 
 
@@ -81,43 +81,6 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
 
         # 4. Filters out closely spaced frequencies
         min_separation_hz = (self.fs / signal_length) * sep_factor
-        est_freqs = self._filter_unique_freqs(raw_freqs, min_separation_hz)
+        est_freqs = filter_unique_freqs(raw_freqs, self.n_sinusoids, min_separation_hz)
 
         return est_freqs
-
-    def _filter_unique_freqs(
-        self, raw_freqs: npt.NDArray[np.float64], min_separation_hz: float
-    ) -> npt.NDArray[np.float64]:
-        """Filter raw frequencies to keep a specified number of unique components.
-
-        Args:
-            raw_freqs (np.ndarray): The estimated raw frequencies (float64).
-            min_separation_hz (float): The minimum separation interval in Hz.
-
-        Returns:
-            np.ndarray: Filtered unique frequencies (float64).
-        """
-        if raw_freqs.size == 0:
-            warnings.warn("No raw frequencies were estimated to be filtered.")
-            return np.array([])
-
-        if raw_freqs.size <= self.n_sinusoids and min_separation_hz <= 0:
-            return raw_freqs
-
-        params = sorted(raw_freqs)
-        unique_freqs = [params[0]]
-        for freq in params[1:]:
-            if np.abs(freq - unique_freqs[-1]) > min_separation_hz:
-                unique_freqs.append(freq)
-
-        # Limit to the number of requested sinusoids and unpack the results
-        final_freqs = unique_freqs[: self.n_sinusoids]
-        if not final_freqs:
-            warnings.warn(
-                f"After filtering, only {len(final_freqs)} unique frequencies "
-                + f"were found, which is less than the expected {self.n_sinusoids}. "
-                + "This might be due to closely spaced frequencies or low SNR."
-            )
-            return np.array([])
-
-        return np.array(final_freqs)
