@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This module defines common helper functions.
+"""Defines common helper functions.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
