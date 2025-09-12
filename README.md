@@ -9,16 +9,18 @@ This work is inspired by the foundational papers in subspace-based signal proces
 ## Features
 
 - **High-Resolution Algorithms**: Implements spectral estimation techniques that surpass the resolution limits of the classical Fast Fourier Transform (FFT).
-- **Multiple Methods Implemented**:
-  - **Spectral MUSIC**: Frequency estimation via spectral peak-picking.
-  - **Root MUSIC**: High-accuracy frequency estimation via polynomial rooting.
-  - **Min-Norm**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace. Both spectral and root-based versions are implemented.
-  - **ESPRIT**: A computationally efficient method that estimates frequencies directly without spectral search.
-  - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
+- **Multiple Methods Implemented**: A comprehensive suite of high-resolution algorithms is provided:
+  - **MUSIC (Spectral & Root)**: A classic high-resolution method based on the orthogonality of signal and noise subspaces.
+  - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
+  - **ESPRIT (Standard & Unitary)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
+    - The **Standard ESPRIT** (LS/TLS) provides a direct algebraic solution in the complex domain.
+    - The **Unitary ESPRIT** (LS/TLS) variant transforms the problem into the real domain, significantly reducing computational complexity while inherently incorporating forward-backward averaging for improved accuracy.
+  - **HOYW (LS & TLS)**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
-- **Enhanced Accuracy with Forward-Backward Averaging**: Improves estimation accuracy in low SNR or short data scenarios. This is implemented elegantly via a `ForwardBackwardMixin` class, showcasing a reusable and extensible design.
-- **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes (`SpectralMusicAnalyzer`, `RootMusicAnalyzer`, etc.), promoting clean code and extensibility.
-- **Demonstration Script**: Includes a command-line interface (`main.py`) to easily run experiments and compare the performance of different algorithms.
+- **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
+- **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
+- **Clean and Type-Hinted Code**: Fully type-hinted with `mypy` validation and formatted with modern tooling, ensuring code quality and maintainability.
+- **Demonstration Script**: Includes a flexible command-line interface (`main.py`) to easily run experiments and compare the performance of different algorithms and their variants.
 
 ## Installation
 
