@@ -15,7 +15,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
   - **ESPRIT (Standard & Unitary)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
     - The **Standard ESPRIT** (LS/TLS) provides a direct algebraic solution in the complex domain.
     - The **Unitary ESPRIT** (LS/TLS) variant transforms the problem into the real domain, significantly reducing computational complexity while inherently incorporating forward-backward averaging for improved accuracy.
-  - **HOYW (LS & TLS)**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
+  - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
 - **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
