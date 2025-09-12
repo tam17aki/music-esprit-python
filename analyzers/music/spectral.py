@@ -38,15 +38,23 @@ from .base import MusicAnalyzerBase
 class SpectralMusicAnalyzer(MusicAnalyzerBase):
     """MUSIC analyzer using spectral peak picking."""
 
-    def __init__(self, fs: float, n_sinusoids: int, n_grids: int = 16384):
+    def __init__(
+        self,
+        fs: float,
+        n_sinusoids: int,
+        n_grids: int = 16384,
+        subspace_ratio: float = 1 / 3,
+    ):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
             n_grids (int, optional): Number of grid points for MUSIC algorithm.
+            subspace_ratio (float, optional): The ratio of the subspace dimension
+                to the signal length. Should be between 0 and 0.5. Defaults to 1/3.
         """
-        super().__init__(fs, n_sinusoids)
+        super().__init__(fs, n_sinusoids, subspace_ratio)
         self.n_grids: int = n_grids
 
     @override
