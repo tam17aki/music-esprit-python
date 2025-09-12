@@ -82,7 +82,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 
         # 3. Detecting peaks from a spectrum
         estimated_freqs = find_peaks_from_spectrum(
-            self.n_sinusoids, freq_grid, music_spectrum
+            music_spectrum, self.n_sinusoids, freq_grid
         )
         return estimated_freqs
 
