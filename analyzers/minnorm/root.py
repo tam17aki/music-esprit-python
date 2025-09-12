@@ -41,6 +41,7 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
         self,
         fs: float,
         n_sinusoids: int,
+        *,
         sep_factor: float = 0.4,
         subspace_ratio: float = 1 / 3,
     ):
