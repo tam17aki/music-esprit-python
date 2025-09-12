@@ -31,7 +31,7 @@ from analyzers.music.root import RootMusicAnalyzer
 from analyzers.music.spectral import SpectralMusicAnalyzer
 from utils.data_models import ExperimentConfig, SinusoidParameters
 
-RATIO_UPPER = 0.5
+SUBSPACE_RATIO_UPPER_BOUND = 0.5
 
 
 def print_experiment_setup(
@@ -141,13 +141,16 @@ def parse_args() -> argparse.Namespace:
         type=float,
         default=1 / 3,
         help="The ratio of the subspace dimension to the signal length. "
-        + "(default: 1/3, , which is approximately 0.333). "
+        + "(default: 1/3, which is approximately 0.333). "
         + "This value (L/N) determines the size of the covariance matrix. "
-        + "Must be in the range (0, 0.5].",
+        + f"Must be in the range (0, {SUBSPACE_RATIO_UPPER_BOUND}].",
     )
 
     args = parser.parse_args()
-    if not 0 < args.subspace_ratio <= RATIO_UPPER:
-        parser.error("Argument --subspace_ratio must be in the range (0, 0.5].")
+    if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
+        parser.error(
+            "Argument --subspace_ratio must be in the range "
+            + f"(0, {SUBSPACE_RATIO_UPPER_BOUND}]."
+        )
 
     return args
