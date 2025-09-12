@@ -42,6 +42,7 @@ class HOYWAnalyzer(AnalyzerBase):
         self,
         fs: float,
         n_sinusoids: int,
+        *,
         ar_order: int | None = None,
         sep_factor: float = 0.4,
     ):
