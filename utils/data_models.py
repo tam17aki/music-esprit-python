@@ -48,6 +48,7 @@ class ExperimentConfig:
     amp_range: tuple[float, float]
     n_grids: int
     sep_factor: float
+    subspace_ratio: float
 
     @property
     def n_sinusoids(self) -> int:
