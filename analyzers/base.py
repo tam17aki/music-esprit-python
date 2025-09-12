@@ -32,19 +32,27 @@ from scipy.linalg import LinAlgError, hankel, pinv
 
 from utils.data_models import SinusoidParameters
 
+RATIO_UPPER = 0.5
+
 
 class AnalyzerBase(ABC):
     """Abstract base class for parameter analyzers."""
 
-    def __init__(self, fs: float, n_sinusoids: int):
+    def __init__(self, fs: float, n_sinusoids: int, subspace_ratio: float = 1 / 3):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
+            subspace_ratio (float, optional): The ratio of the subspace dimension
+                to the signal length. Should be between 0 and 0.5. Defaults to 1/3.
         """
+        if not 0 < subspace_ratio <= RATIO_UPPER:
+            raise ValueError(f"subspace_ratio must be in the range (0, {RATIO_UPPER}].")
+
         self.fs: float = fs
         self.n_sinusoids: int = n_sinusoids
+        self.subspace_ratio: float = subspace_ratio
         self.subspace_dim: int = -1
         self.est_params: SinusoidParameters | None = None
 
@@ -60,7 +68,7 @@ class AnalyzerBase(ABC):
         """
         n_samples = signal.size
         model_order = 2 * self.n_sinusoids
-        self.subspace_dim = n_samples // 3
+        self.subspace_dim = int(n_samples * self.subspace_ratio)
         if (
             self.subspace_dim <= model_order
             or self.subspace_dim >= n_samples - model_order
