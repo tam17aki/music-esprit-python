@@ -59,48 +59,50 @@ Running the command above will produce an output similar to this:
 Sampling Frequency: 44100.0 Hz
 Signal Duration:    100 ms
 True Frequencies:   [440. 460. 480.] Hz
-True Amplitudes:    [1.31802502 1.38508597 1.00142951]
-True Phases:        [-1.40176351  0.9002948   2.80044476] rad
+True Amplitudes:    [0.72742622 1.25099208 0.83873   ]
+True Phases:        [-2.16278836  0.70861533 -0.67983633] rad
 SNR:                30.0 dB
-Number of Grid Points:  16384
+# of Grid Points:   16384
+Separation Factor:  0.4
+Subspace Ratio:     0.3333333333333333
 
 --- Running Spectral MUSIC ---
 
 --- Estimation Results ---
-Est Frequencies: [441.43066406 460.2722168  479.11376953] Hz
-Est Amplitudes:  [1.28373597 1.30407063 0.96268605]
-Est Phases:      [-1.87759452  0.79331813  3.10248104] rad
+Est Frequencies: [438.73901367 460.2722168  479.11376953] Hz
+Est Amplitudes:  [0.72846313 1.29733195 0.83333331]
+Est Phases:      [-1.75219779  0.60333489 -0.35102608] rad
 
 --- Estimation Errors ---
-Freq Errors:  [ 1.43066406  0.2722168  -0.88623047] Hz
-Amp Errors:   [-0.03428905 -0.08101533 -0.03874346]
-Phase Errors: [-0.47583101 -0.10697667  0.30203628] rad
+Freq Errors:  [-1.26098633  0.2722168  -0.88623047] Hz
+Amp Errors:   [ 0.00103692  0.04633987 -0.0053967 ]
+Phase Errors: [ 0.41059056 -0.10528044  0.32881026] rad
 
 
 --- Running Root MUSIC ---
 
 --- Estimation Results ---
-Est Frequencies: [439.98713174 460.00402093 479.98515934] Hz
-Est Amplitudes:  [1.31707973 1.38595344 1.00076566]
-Est Phases:      [-1.39830296  0.90012238  2.8028277 ] rad
+Est Frequencies: [439.98580356 460.00089265 479.98525567] Hz
+Est Amplitudes:  [0.72847328 1.25100903 0.8402651 ]
+Est Phases:      [-2.15742187  0.70828123 -0.67493141] rad
 
 --- Estimation Errors ---
-Freq Errors:  [-0.01286826  0.00402093 -0.01484066] Hz
-Amp Errors:   [-0.0009453   0.00086747 -0.00066385]
-Phase Errors: [ 0.00346055 -0.00017242  0.00238294] rad
+Freq Errors:  [-0.01419644  0.00089265 -0.01474433] Hz
+Amp Errors:   [1.04706155e-03 1.69474590e-05 1.53510015e-03]
+Phase Errors: [ 0.00536648 -0.00033411  0.00490493] rad
 
 
 --- Running ESPRIT ---
 
 --- Estimation Results ---
-Est Frequencies: [439.99388513 460.00461641 479.98764575] Hz
-Est Amplitudes:  [1.31714029 1.38569662 1.00064257]
-Est Phases:      [-1.40040604  0.89961127  2.80220167] rad
+Est Frequencies: [439.99199507 460.00251308 479.98732013] Hz
+Est Amplitudes:  [0.72856102 1.25077844 0.84029501]
+Est Phases:      [-2.15945702  0.70779138 -0.6755922 ] rad
 
 --- Estimation Errors ---
-Freq Errors:  [-0.00611487  0.00461641 -0.01235425] Hz
-Amp Errors:   [-0.00088473  0.00061065 -0.00078694]
-Phase Errors: [ 0.00135748 -0.00068353  0.00175691] rad
+Freq Errors:  [-0.00800493  0.00251308 -0.01267987] Hz
+Amp Errors:   [ 0.0011348  -0.00021364  0.00156501]
+Phase Errors: [ 0.00333133 -0.00082395  0.00424413] rad
 ```
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
