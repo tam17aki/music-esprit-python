@@ -32,7 +32,7 @@ from scipy.linalg import LinAlgError, hankel, pinv
 
 from utils.data_models import SinusoidParameters
 
-RATIO_UPPER = 0.5
+SUBSPACE_RATIO_UPPER_BOUND = 0.5
 
 
 class AnalyzerBase(ABC):
@@ -47,8 +47,11 @@ class AnalyzerBase(ABC):
             subspace_ratio (float, optional): The ratio of the subspace dimension
                 to the signal length. Should be between 0 and 0.5. Defaults to 1/3.
         """
-        if not 0 < subspace_ratio <= RATIO_UPPER:
-            raise ValueError(f"subspace_ratio must be in the range (0, {RATIO_UPPER}].")
+        if not 0 < subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
+            raise ValueError(
+                "subspace_ratio must be in the range "
+                + f"(0, {SUBSPACE_RATIO_UPPER_BOUND}]."
+            )
 
         self.fs: float = fs
         self.n_sinusoids: int = n_sinusoids
