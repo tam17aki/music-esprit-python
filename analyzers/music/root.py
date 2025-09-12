@@ -78,7 +78,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
             warnings.warn("Failed to estimate noise subspace.")
             return np.array([])
 
-        # 2. Calculates the coefficients of the Root MUSIC polynomial
+        # 2. Calculate the coefficients of the Root MUSIC polynomial
         coefficients = self._calculate_polynomial_coefficients(noise_subspace)
 
         # 3. Find the roots and estimate the frequencies
@@ -112,7 +112,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         # Calculate the polynomial coefficients
         _coefficients = np.zeros(poly_degree, dtype=np.complex128)
         for k in range(1, poly_degree + 1):
-            # Computes the sum of the k-th upper diagonal of matrix C
+            # Compute the sum of the k-th upper diagonal of matrix C
             _coefficients[k - 1] = np.sum(np.diag(projector_onto_noise, k=k))
         coefficients = np.hstack(
             [_coefficients[::-1], np.sum(np.diag(projector_onto_noise)), _coefficients]
