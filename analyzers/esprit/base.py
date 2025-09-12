@@ -34,17 +34,6 @@ from ..base import AnalyzerBase
 class EspritAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for ESPRIT-based parameter analyzers."""
 
-    def __init__(self, fs: float, n_sinusoids: int, sep_factor: float):
-        """Initialize the analyzer with an experiment configuration.
-
-        Args:
-            fs (float): Sampling frequency in Hz.
-            n_sinusoids (int): Number of sinusoids.
-            sep_factor (float): Separation factor for resolving close frequencies.
-        """
-        super().__init__(fs, n_sinusoids)
-        self.sep_factor: float = sep_factor
-
     @abstractmethod
     def _estimate_signal_subspace(
         self, signal: npt.NDArray[np.complex128]
@@ -53,7 +42,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         raise NotImplementedError
 
     def _postprocess_omegas(
-        self, raw_omegas: npt.NDArray[np.float64], signal_length: int
+        self, raw_omegas: npt.NDArray[np.float64], signal_length: int, sep_factor: float
     ) -> npt.NDArray[np.float64]:
         """Post-processes raw angular frequencies to final frequency estimates.
 
@@ -71,6 +60,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             signal_length (int):
                 The length of the input signal frame (N), used to calculate
                 the frequency separation threshold.
+            sep_factor (float): Separation factor for resolving close frequencies.
 
         Returns:
             np.ndarray:
@@ -90,7 +80,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         raw_freqs = positive_freqs[sorted_indices]
 
         # 4. Filters out closely spaced frequencies
-        min_separation_hz = (self.fs / signal_length) * self.sep_factor
+        min_separation_hz = (self.fs / signal_length) * sep_factor
         est_freqs = self._filter_unique_freqs(raw_freqs, min_separation_hz)
 
         return est_freqs
