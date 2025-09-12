@@ -59,8 +59,8 @@ Running the command above will produce an output similar to this:
 Sampling Frequency: 44100.0 Hz
 Signal Duration:    100 ms
 True Frequencies:   [440. 460. 480.] Hz
-True Amplitudes:    [1.22912604 0.94498725 1.05554323]
-True Phases:        [-3.00626451 -1.41470502 -1.2889919 ] rad
+True Amplitudes:    [1.31802502 1.38508597 1.00142951]
+True Phases:        [-1.40176351  0.9002948   2.80044476] rad
 SNR:                30.0 dB
 Number of Grid Points:  16384
 
@@ -68,26 +68,39 @@ Number of Grid Points:  16384
 
 --- Estimation Results ---
 Est Frequencies: [441.43066406 460.2722168  479.11376953] Hz
-Est Amplitudes:  [1.19557359 0.99377398 1.05430486]
-Est Phases:      [ 2.83499486 -1.58682732 -1.05501304] rad
+Est Amplitudes:  [1.28373597 1.30407063 0.96268605]
+Est Phases:      [-1.87759452  0.79331813  3.10248104] rad
 
 --- Estimation Errors ---
 Freq Errors:  [ 1.43066406  0.2722168  -0.88623047] Hz
-Amp Errors:   [-0.03355245  0.04878673 -0.00123837]
-Phase Errors: [ 5.84125937 -0.1721223   0.23397886] rad
+Amp Errors:   [-0.03428905 -0.08101533 -0.03874346]
+Phase Errors: [-0.47583101 -0.10697667  0.30203628] rad
+
+
+--- Running Root MUSIC ---
+
+--- Estimation Results ---
+Est Frequencies: [439.98713174 460.00402093 479.98515934] Hz
+Est Amplitudes:  [1.31707973 1.38595344 1.00076566]
+Est Phases:      [-1.39830296  0.90012238  2.8028277 ] rad
+
+--- Estimation Errors ---
+Freq Errors:  [-0.01286826  0.00402093 -0.01484066] Hz
+Amp Errors:   [-0.0009453   0.00086747 -0.00066385]
+Phase Errors: [ 0.00346055 -0.00017242  0.00238294] rad
 
 
 --- Running ESPRIT ---
 
 --- Estimation Results ---
-Est Frequencies: [440.00119777 459.99668962 479.993247  ] Hz
-Est Amplitudes:  [1.2304059  0.94458824 1.05422213]
-Est Phases:      [-3.00528761 -1.41443859 -1.28755489] rad
+Est Frequencies: [439.99388513 460.00461641 479.98764575] Hz
+Est Amplitudes:  [1.31714029 1.38569662 1.00064257]
+Est Phases:      [-1.40040604  0.89961127  2.80220167] rad
 
 --- Estimation Errors ---
-Freq Errors:  [ 0.00119777 -0.00331038 -0.006753  ] Hz
-Amp Errors:   [ 0.00127986 -0.00039902 -0.0013211 ]
-Phase Errors: [0.0009769  0.00026643 0.00143701] rad
+Freq Errors:  [-0.00611487  0.00461641 -0.01235425] Hz
+Amp Errors:   [-0.00088473  0.00061065 -0.00078694]
+Phase Errors: [ 0.00135748 -0.00068353  0.00175691] rad
 ```
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
