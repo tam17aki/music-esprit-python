@@ -31,6 +31,8 @@ from analyzers.music.root import RootMusicAnalyzer
 from analyzers.music.spectral import SpectralMusicAnalyzer
 from utils.data_models import ExperimentConfig, SinusoidParameters
 
+RATIO_UPPER = 0.5
+
 
 def print_experiment_setup(
     config: ExperimentConfig, true_params: SinusoidParameters
@@ -44,7 +46,9 @@ def print_experiment_setup(
     print(f"True Amplitudes:    {true_params.amplitudes[sort_indices]}")
     print(f"True Phases:        {true_params.phases[sort_indices]} rad")
     print(f"SNR:                {config.snr_db} dB")
-    print(f"Number of Grid Points:  {config.n_grids}")
+    print(f"# of Grid Points:   {config.n_grids}")
+    print(f"Separation Factor:  {config.sep_factor}")
+    print(f"Subspace Ratio:     {config.subspace_ratio}")
 
 
 def print_results(
@@ -132,4 +136,18 @@ def parse_args() -> argparse.Namespace:
         + "A value < 0.5 can help separate frequencies closer than the FFT limit. "
         + "(default: 0.4)",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--subspace_ratio",
+        type=float,
+        default=1 / 3,
+        help="The ratio of the subspace dimension to the signal length. "
+        + "(default: 1/3, , which is approximately 0.333). "
+        + "This value (L/N) determines the size of the covariance matrix. "
+        + "Must be in the range (0, 0.5].",
+    )
+
+    args = parser.parse_args()
+    if not 0 < args.subspace_ratio <= RATIO_UPPER:
+        parser.error("Argument --subspace_ratio must be in the range (0, 0.5].")
+
+    return args
