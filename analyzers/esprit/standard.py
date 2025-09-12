@@ -38,12 +38,13 @@ from .solvers import LSEspritSolver, TLSEspritSolver
 class StandardEspritAnalyzer(EspritAnalyzerBase):
     """A class to solve frequencies via ESPRIT."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments, too-many-positional-arguments
         self,
         fs: float,
         n_sinusoids: int,
         solver: LSEspritSolver | TLSEspritSolver,
         sep_factor: float = 0.4,
+        subspace_ratio: float = 1 / 3,
     ):
         """Initialize the analyzer with an experiment configuration.
 
@@ -54,9 +55,12 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
                 Solver to solve frequencies with the rotation operator.
             sep_factor (float, optional):
                 Separation factor for resolving close frequencies.
+            subspace_ratio (float, optional): The ratio of the subspace dimension
+                to the signal length. Should be between 0 and 0.5. Defaults to 1/3.
         """
-        super().__init__(fs, n_sinusoids, sep_factor)
+        super().__init__(fs, n_sinusoids, subspace_ratio)
         self.solver: LSEspritSolver | TLSEspritSolver = solver
+        self.sep_factor: float = sep_factor
 
     @override
     def _estimate_frequencies(
@@ -80,7 +84,7 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         omegas = self.solver.solve(signal_subspace)
 
         # 3. Post-processes raw angular frequencies to final frequency estimates
-        est_freqs = self._postprocess_omegas(omegas, signal.size)
+        est_freqs = self._postprocess_omegas(omegas, signal.size, self.sep_factor)
 
         return est_freqs
 
