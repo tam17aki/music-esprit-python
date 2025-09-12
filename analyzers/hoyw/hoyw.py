@@ -102,7 +102,7 @@ class HOYWAnalyzer(AnalyzerBase):
         poly_coeffs = np.concatenate(([1], ar_coeffs))
         min_separation_hz = (self.fs / signal.size) * self.sep_factor
         estimated_freqs = find_freqs_from_roots(
-            self.fs, self.n_sinusoids, poly_coeffs, min_separation_hz
+            poly_coeffs, self.fs, self.n_sinusoids, min_separation_hz
         )
 
         return estimated_freqs
