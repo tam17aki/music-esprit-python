@@ -33,16 +33,16 @@ TOLERANCE_LEVEL = 1e-6
 
 
 def find_peaks_from_spectrum(
+    spectrum: npt.NDArray[np.float64],
     n_sinusoids: int,
     freq_grid: npt.NDArray[np.float64],
-    spectrum: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """Find the N strongest peaks from the spectrum.
 
     Args:
+       spectrum (np.ndarray): Pseudo spectrum (float64).
        n_sinusoids (int): Number of sinusoids.
        freq_grid (np.ndarray): Frequency grid (float64).
-       spectrum (np.ndarray): Pseudo spectrum (float64).
 
     Returns:
         np.ndarray: Strogest peaks from the spectrum.
