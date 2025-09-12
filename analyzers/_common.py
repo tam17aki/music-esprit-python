@@ -64,6 +64,37 @@ def find_peaks_from_spectrum(
     return np.sort(estimated_freqs)
 
 
+def filter_unique_freqs(
+    raw_freqs: npt.NDArray[np.float64], n_sinusoids: int, min_separation_hz: float
+) -> npt.NDArray[np.float64]:
+    """Filter raw frequencies to keep a specified number of unique components.
+
+    Args:
+        raw_freqs (np.ndarray): The estimated raw frequencies (float64).
+        n_sinusoids (int): Number of sinusoids.
+        min_separation_hz (float): The minimum separation interval in Hz.
+
+    Returns:
+        np.ndarray: Filtered unique frequencies (float64).
+    """
+    if raw_freqs.size == 0:
+        warnings.warn("No raw frequencies were estimated to be filtered.")
+        return np.array([])
+
+    if raw_freqs.size <= n_sinusoids and min_separation_hz <= 0:
+        return raw_freqs
+
+    unique_freqs: list[npt.NDArray[np.float64]] = []
+    for raw_freq in raw_freqs:
+        if any(np.abs(raw_freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
+            continue
+        if unique_freqs and np.abs(raw_freq - unique_freqs[-1]) < min_separation_hz:
+            continue
+        unique_freqs.append(raw_freq)
+
+    return np.sort(np.array(unique_freqs[:n_sinusoids]))
+
+
 def find_freqs_from_roots(
     fs: float,
     n_sinusoids: int,
@@ -104,12 +135,6 @@ def find_freqs_from_roots(
     raw_freqs = angles.astype(np.float64) * (fs / (2 * np.pi))
 
     # 5. Filter frequencies
-    unique_freqs: list[npt.NDArray[np.float64]] = []
-    for raw_freq in raw_freqs:
-        if any(np.abs(raw_freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
-            continue
-        if unique_freqs and np.abs(raw_freq - unique_freqs[-1]) < min_separation_hz:
-            continue
-        unique_freqs.append(raw_freq)
+    unique_freqs = filter_unique_freqs(raw_freqs, n_sinusoids, min_separation_hz)
 
-    return np.sort(np.array(unique_freqs[:n_sinusoids]))
+    return unique_freqs
