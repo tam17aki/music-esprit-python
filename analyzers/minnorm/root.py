@@ -91,7 +91,7 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
         #    coefficients `d`
         min_separation_hz = (self.fs / signal.size) * self.sep_factor
         estimated_freqs = find_freqs_from_roots(
-            self.fs, self.n_sinusoids, min_norm_vector, min_separation_hz
+            min_norm_vector, self.fs, self.n_sinusoids, min_separation_hz
         )
         return estimated_freqs
 
