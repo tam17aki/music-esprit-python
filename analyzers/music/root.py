@@ -84,7 +84,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         # 3. Find the roots and estimate the frequencies
         min_separation_hz = (self.fs / signal.size) * self.sep_factor
         estimated_freqs = find_freqs_from_roots(
-            self.fs, self.n_sinusoids, coefficients, min_separation_hz
+            coefficients, self.fs, self.n_sinusoids, min_separation_hz
         )
 
         return estimated_freqs
