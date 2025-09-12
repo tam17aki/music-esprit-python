@@ -38,11 +38,12 @@ from .solvers import LSEspritSolver, TLSEspritSolver
 class StandardEspritAnalyzer(EspritAnalyzerBase):
     """A class to solve frequencies via ESPRIT."""
 
-    def __init__(  # pylint: disable=too-many-arguments, too-many-positional-arguments
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         fs: float,
         n_sinusoids: int,
         solver: LSEspritSolver | TLSEspritSolver,
+        *,
         sep_factor: float = 0.4,
         subspace_ratio: float = 1 / 3,
     ):
