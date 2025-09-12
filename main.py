@@ -64,8 +64,8 @@ def main() -> None:
     spec_analyzer = SpectralMusicAnalyzer(
         config.fs,
         config.n_sinusoids,
-        config.n_grids,
-        config.subspace_ratio,
+        n_grids=config.n_grids,
+        subspace_ratio=config.subspace_ratio,
     )
     spec_analyzer.fit(noisy_signal.astype(np.complex128))
 
@@ -77,8 +77,8 @@ def main() -> None:
     root_analyzer = RootMusicAnalyzer(
         config.fs,
         config.n_sinusoids,
-        config.sep_factor,
-        config.subspace_ratio,
+        sep_factor=config.sep_factor,
+        subspace_ratio=config.subspace_ratio,
     )
     root_analyzer.fit(noisy_signal.astype(np.complex128))
 
