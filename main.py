@@ -91,8 +91,8 @@ def main() -> None:
         config.fs,
         config.n_sinusoids,
         LSEspritSolver(),
-        config.sep_factor,
-        config.subspace_ratio,
+        sep_factor=config.sep_factor,
+        subspace_ratio=config.subspace_ratio,
     )
     esprit_analyzer.fit(noisy_signal.astype(np.complex128))
 
