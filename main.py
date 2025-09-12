@@ -47,6 +47,7 @@ def main() -> None:
         amp_range=tuple(args.amp_range),
         n_grids=args.n_grids,
         sep_factor=args.sep_factor,
+        subspace_ratio=args.subspace_ratio,
     )
 
     # Generate test signals (sum of multiple sinusoids with additive noise)
@@ -60,7 +61,12 @@ def main() -> None:
 
     # Perform parameter estimation via Spectral MUSIC
     print("\n--- Running Spectral MUSIC ---")
-    spec_analyzer = SpectralMusicAnalyzer(config.fs, config.n_sinusoids, config.n_grids)
+    spec_analyzer = SpectralMusicAnalyzer(
+        config.fs,
+        config.n_sinusoids,
+        config.n_grids,
+        config.subspace_ratio,
+    )
     spec_analyzer.fit(noisy_signal.astype(np.complex128))
 
     # Print results
@@ -68,7 +74,12 @@ def main() -> None:
 
     # Perform parameter estimation via Root MUSIC
     print("\n--- Running Root MUSIC ---")
-    root_analyzer = RootMusicAnalyzer(config.fs, config.n_sinusoids, config.sep_factor)
+    root_analyzer = RootMusicAnalyzer(
+        config.fs,
+        config.n_sinusoids,
+        config.sep_factor,
+        config.subspace_ratio,
+    )
     root_analyzer.fit(noisy_signal.astype(np.complex128))
 
     # Print results
@@ -77,7 +88,11 @@ def main() -> None:
     # Perform parameter estimation via ESPRIT
     print("\n--- Running ESPRIT ---")
     esprit_analyzer = StandardEspritAnalyzer(
-        config.fs, config.n_sinusoids, LSEspritSolver(), config.sep_factor
+        config.fs,
+        config.n_sinusoids,
+        LSEspritSolver(),
+        config.sep_factor,
+        config.subspace_ratio,
     )
     esprit_analyzer.fit(noisy_signal.astype(np.complex128))
 
