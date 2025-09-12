@@ -37,11 +37,12 @@ from .solvers import LSUnitaryEspritSolver, TLSUnitaryEspritSolver
 class UnitaryEspritAnalyzer(EspritAnalyzerBase):
     """A class to solve frequencies via Unitary ESPRIT with least squares."""
 
-    def __init__(  # pylint: disable=too-many-arguments, too-many-positional-arguments
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         fs: float,
         n_sinusoids: int,
         solver: LSUnitaryEspritSolver | TLSUnitaryEspritSolver,
+        *,
         sep_factor: float = 0.4,
         subspace_ratio: float = 1 / 3,
     ):
