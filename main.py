@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """A demonstration of parameter estimation for sinusoidal signals.
 
-Frequencies coefficients are estimated using the MUSIC and ESPRIT algorithm,
-followed by amplitude and phase estimation via the least squares method.
+Frequencies are estimated using the MUSIC and ESPRIT algorithm, followed by
+amplitude and phase estimation via the least squares method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
