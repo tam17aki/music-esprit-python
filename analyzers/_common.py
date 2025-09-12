@@ -40,7 +40,7 @@ def find_peaks_from_spectrum(
     """Find the N strongest peaks from the spectrum.
 
     Args:
-       spectrum (np.ndarray): Pseudo spectrum (float64).
+       spectrum (np.ndarray): Pseudospectrum (float64).
        n_sinusoids (int): Number of sinusoids.
        freq_grid (np.ndarray): Frequency grid (float64).
 
