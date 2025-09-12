@@ -94,7 +94,7 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
 
         # 4. Searching for peaks in the spectrum
         estimated_freqs = find_peaks_from_spectrum(
-            self.n_sinusoids, freq_grid, min_norm_spectrum
+            min_norm_spectrum, self.n_sinusoids, freq_grid
         )
 
         return estimated_freqs
