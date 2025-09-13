@@ -60,12 +60,12 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128]
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies of multiple sinusoids.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128 or float64).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -86,15 +86,15 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.complex128] | None:
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64] | None:
         """Estimate the signal subspace using eigenvalue decomposition.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128 or float64).
 
         Returns:
-            np.ndarray: The complex-valued signal subspace matrix (complex128).
+            np.ndarray: The signal subspace matrix (complex128 or float64).
                 Returns None if estimation fails.
         """
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
@@ -105,8 +105,10 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
             return None
 
         # Estimated signal subspace is the 2*M principal eigenvectors
-        signal_subspace = eigenvectors[:, -2 * self.n_sinusoids :].astype(np.complex128)
-        return signal_subspace
+        signal_subspace = eigenvectors[:, -2 * self.n_sinusoids :]
+        if np.isdtype(np.float64, signal.dtype):
+            return signal_subspace.astype(np.float64)
+        return signal_subspace.astype(np.complex128)
 
 
 @final
