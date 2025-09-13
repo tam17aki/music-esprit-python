@@ -23,33 +23,19 @@ SOFTWARE.
 """
 
 import warnings
-from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, override
 
 import numpy as np
 import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigvals, pinv, svd
 from scipy.sparse import csc_array, csr_array
 
-DTypeT = TypeVar("DTypeT", bound=np.generic)
-
-
-class EspritSolver(Generic[DTypeT], ABC):  # pylint: disable=too-few-public-methods
-    """A generic base class for the ESPRIT-based solvers."""
-
-    @abstractmethod
-    def solve(self, signal_subspace: npt.NDArray[DTypeT]) -> npt.NDArray[np.float64]:
-        """Solves for rotational factors."""
-        raise NotImplementedError
-
 
 # pylint: disable=too-few-public-methods
-class LSEspritSolver(EspritSolver[np.complex128]):
+class LSEspritSolver:
     """A solver class for the ESPRIT rotational operator using the Least Squares."""
 
-    @override
     def solve(
-        self, signal_subspace: npt.NDArray[np.complex128]
+        self, signal_subspace: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Solves for rotational factors using the Least Squares (LS) method.
 
@@ -86,12 +72,11 @@ class LSEspritSolver(EspritSolver[np.complex128]):
 
 
 # pylint: disable=too-few-public-methods
-class TLSEspritSolver(EspritSolver[np.complex128]):
+class TLSEspritSolver:
     """A solver class for the ESPRIT rotational operator using the Total LS."""
 
-    @override
     def solve(
-        self, signal_subspace: npt.NDArray[np.complex128]
+        self, signal_subspace: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Solves for rotational factors using the Total Least Squares (TLS) method.
 
@@ -103,20 +88,24 @@ class TLSEspritSolver(EspritSolver[np.complex128]):
 
         Args:
             signal_subspace (np.ndarray):
-                The complex-valued signal subspace `Es`. Shape: (L, 2M).
+                The signal subspace `Es` (complex128 or float64). Shape: (L, 2M).
 
         Returns:
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
-                in radians per sample. Shape: (2M,).
+                in radians per sample (complex128 or float64). Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
         # Form the augmented matrix for SVD
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
         augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
+
         try:
-            _, _, vh = svd(augmented_subspace)
+            if np.isdtype(np.float64, signal_subspace.dtype):
+                _, _, vh = svd(augmented_subspace.astype(np.float64))
+            else:
+                _, _, vh = svd(augmented_subspace.astype(np.complex128))
         except LinAlgError:
             warnings.warn("SVD on augmented_subspace did not converge.")
             return np.array([])
@@ -156,7 +145,7 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
            subspace_dim (int): Dimension of signal subspace.
 
         Returns:
-           np.ndarray: Unitary matrix for the tranform.
+           np.ndarray: Unitary matrix for the tranform (complex128).
         """
         p = subspace_dim // 2
         identity = np.eye(p, dtype=np.complex128)
@@ -210,14 +199,13 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
 
 
 # pylint: disable=too-few-public-methods
-class LSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):
+class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
     """A solver class for the real-valued Unitary ESPRIT problem using least squares.
 
     This solver takes a real-valued signal subspace and solves a generalized
     eigenvalue problem to find the frequencies based on least squares approach.
     """
 
-    @override
     def solve(
         self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
@@ -230,12 +218,12 @@ class LSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):
 
         Args:
             signal_subspace (np.ndarray):
-                The real-valued signal subspace `Es_real`. Shape: (L, 2M).
+                The real-valued signal subspace `Es_real` (float64). Shape: (L, 2M).
 
         Returns:
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
-                in radians per sample. Shape: (M,).
+                in radians per sample (float64). Shape: (M,).
                 Returns an empty array if estimation fails.
         """
         subspace_dim = signal_subspace.shape[0]
@@ -262,14 +250,13 @@ class LSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):
 
 
 # pylint: disable=too-few-public-methods
-class TLSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):
+class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
     """A solver class for the real-valued ESPRIT problem using total least squares.
 
     This solver takes a real-valued signal subspace and solves a generalized
     eigenvalue problem to find the frequencies based on total least squares approach.
     """
 
-    @override
     def solve(
         self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
@@ -283,12 +270,12 @@ class TLSUnitaryEspritSolver(EspritSolver[np.float64], _UnitaryEspritHelpers):
 
         Args:
             signal_subspace (np.ndarray):
-                The real-valued signal subspace `Es_real`. Shape: (L, 2M).
+                The real-valued signal subspace `Es_real` (float64). Shape: (L, 2M).
 
         Returns:
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
-                in radians per sample. Shape: (M,).
+                in radians per sample (float64). Shape: (M,).
                 Returns an empty array if estimation fails.
         """
         subspace_dim = signal_subspace.shape[0]
