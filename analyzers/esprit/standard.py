@@ -53,7 +53,7 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
             solver (LSEspritSolver | TLSEspritSolver):
                 Solver to solve frequencies with the rotation operator.
             subspace_ratio (float, optional): The ratio of the subspace dimension
-                to the signal length. Should be between 0 and 0.5. Defaults to 1/3.
+                to the signal length. Must be between 0 and 0.5. Defaults to 1/3.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio)
         self.solver: LSEspritSolver | TLSEspritSolver = solver
