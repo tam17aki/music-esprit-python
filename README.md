@@ -113,7 +113,7 @@ Phase Errors: [ 0.00333133 -0.00082395  0.00424413] rad
 You can customize the experiment via command-line arguments.
 
 ```bash
-python main.py --freqs_true 440 445 450 --snr_db 25 --duration 0.8
+python main.py --freqs_true 440 445 450 --snr_db 25 --duration 0.8 --complex
 ```
 
 To see all available options, run:
