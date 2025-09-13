@@ -77,19 +77,32 @@ def create_true_parameters(
 
 
 def synthesize_sinusoids(
-    fs: float, duration: float, params: SinusoidParameters
-) -> npt.NDArray[np.float64]:
+    fs: float,
+    duration: float,
+    params: SinusoidParameters,
+    *,
+    is_complex: bool = False,
+) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
     """Generate a clean signal from multiple sinusoids.
 
     Args:
         fs (float): Sampling frequency in Hz.
         duration (float): Signal duration in seconds.
         params (SinusoidParameters): Parametes of mutiple sinusoids.
+        is_complex (bool, optional):
+            If True, generate a complex exponential signal.
+            If False, generate a real-valued cosine signal.
+            Defaults to False.
 
     Returns:
-        clean_signal (np.ndarray): Sum of multiple sinusoids (float64).
+        clean_signal (np.ndarray): Sum of multiple sinusoids (float64 or complex128).
     """
     t = np.linspace(0, duration, int(fs * duration), endpoint=False)
+    if is_complex:
+        clean_signal = np.zeros(t.size, dtype=np.complex128)
+        for f, a, p in zip(params.frequencies, params.amplitudes, params.phases):
+            clean_signal += a * np.exp(1j * (2 * np.pi * f * t + p))
+        return clean_signal
     clean_signal = np.zeros(t.size, dtype=np.float64)
     for f, a, p in zip(params.frequencies, params.amplitudes, params.phases):
         clean_signal += a * np.cos(2 * np.pi * f * t + p)
@@ -97,10 +110,10 @@ def synthesize_sinusoids(
 
 
 def add_awgn(
-    signal: npt.NDArray[np.float64],
+    signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     snr_db: float,
     rng: np.random.Generator | None = None,
-) -> npt.NDArray[np.float64]:
+) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
     """Add Additive White Gaussian Noise (AWGN) to a given signal.
 
     Args:
@@ -121,8 +134,13 @@ def add_awgn(
 
 
 def generate_test_signal(
-    fs: float, duration: float, snr_db: float, params: SinusoidParameters
-) -> npt.NDArray[np.float64]:
+    fs: float,
+    duration: float,
+    snr_db: float,
+    params: SinusoidParameters,
+    *,
+    is_complex: bool = False,
+) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
     """Generate a noisy test signal consisting of multiple sinusoids and AWGN.
 
     Args:
@@ -130,10 +148,16 @@ def generate_test_signal(
         duration (float): Signal duration in seconds.
         snr_db (float): Target signal-to-noise ratio in dB.
         params (SinusoidParameters): Parametes of mutiple sinusoids.
+        is_complex (bool, optional):
+            If True, generate a complex-valued test signal.
+            If False, generate a real-valued test signal.
+            Defaults to False.
 
     Returns:
-        noisy_signal (np.ndarray): Generated test signal (float64).
+        np.ndarray:
+            The generated test signal. The dtype of the array
+            (float64 or complex128) depends on the `is_complex` flag.
     """
-    clean_signal = synthesize_sinusoids(fs, duration, params)
+    clean_signal = synthesize_sinusoids(fs, duration, params, is_complex=is_complex)
     noisy_signal = add_awgn(clean_signal, snr_db)
     return noisy_signal
