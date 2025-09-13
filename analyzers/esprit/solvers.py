@@ -237,14 +237,14 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
         t1 = k1 @ signal_subspace
         t2 = k2 @ signal_subspace
 
-        # Solve the rotation operator upsilon_ls
+        # Solve the rotation operator
         try:
-            upsilon_ls = pinv(t1) @ t2
+            rotation_operator = pinv(t1) @ t2
         except LinAlgError:
             warnings.warn("Least Squares problem in Unitary ESPRIT failed.")
             return np.array([])
         try:
-            eigenvalues = eigvals(upsilon_ls)
+            eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
             warnings.warn("Eigenvalue decomposition of Y_LS failed.")
             return np.array([])
@@ -298,16 +298,16 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
         v12 = vh[model_order:, :model_order]
         v22 = vh[model_order:, model_order:]
 
-        # Solve the rotation operator upsilon_tls
+        # Solve the rotation operator
         try:
-            upsilon_tls = -v12 @ pinv(v22)
+            rotation_operator = -v12 @ pinv(v22)
         except LinAlgError:
             warnings.warn(
                 "TLS matrix inversion failed while computing rotation operator."
             )
             return np.array([])
         try:
-            eigenvalues = eigvals(upsilon_tls)
+            eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
             warnings.warn("Eigenvalue decomposition of Y_TLS failed.")
             return np.array([])
