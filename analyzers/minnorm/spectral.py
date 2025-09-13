@@ -42,7 +42,6 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         self,
         fs: float,
         n_sinusoids: int,
-        *,
         n_grids: int = 16384,
         subspace_ratio: float = 1 / 3,
     ):
