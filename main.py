@@ -52,7 +52,11 @@ def main() -> None:
     # Generate test signals (sum of multiple sinusoids with additive noise)
     true_params = create_true_parameters(config)
     noisy_signal = generate_test_signal(
-        config.fs, config.duration, config.snr_db, true_params
+        config.fs,
+        config.duration,
+        config.snr_db,
+        true_params,
+        is_complex=args.complex,
     )
 
     # Print the experiment setup
