@@ -245,9 +245,8 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        _omegas = 2 * np.arctan(np.real(eigenvalues_y))
-        omegas: npt.NDArray[np.float64] = _omegas.astype(np.float64)
-        return omegas
+        omegas = 2 * np.arctan(np.real(eigenvalues_y))
+        return omegas.astype(np.float64)
 
 
 # pylint: disable=too-few-public-methods
@@ -310,6 +309,5 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        _omegas = 2 * np.arctan(np.real(eigenvalues_y))
-        omegas: npt.NDArray[np.float64] = _omegas.astype(np.float64)
-        return omegas
+        omegas = 2 * np.arctan(np.real(eigenvalues_y))
+        return omegas.astype(np.float64)
