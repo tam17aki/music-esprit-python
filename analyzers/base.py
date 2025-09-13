@@ -59,11 +59,11 @@ class AnalyzerBase(ABC):
         self.subspace_dim: int = -1
         self.est_params: SinusoidParameters | None = None
 
-    def fit(self, signal: npt.NDArray[np.complex128]) -> Self:
+    def fit(self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]) -> Self:
         """Run the full parameter estimation process.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal.
 
         Returns:
             Self@AnalyzerBase: The fitted object.
@@ -94,39 +94,41 @@ class AnalyzerBase(ABC):
 
     @abstractmethod
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128]
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies using a specific MUSIC variant."""
         raise NotImplementedError
 
     @staticmethod
     def _build_covariance_matrix(
-        signal: npt.NDArray[np.complex128], subspace_dim: int
-    ) -> npt.NDArray[np.complex128]:
+        signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64], subspace_dim: int
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
         """Build the covariance matrix from the input signal.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal.
             subspace_dim (int): The dimension of subspace.
 
         Returns:
-            np.ndarray: The covariance matrix (complex128).
+            np.ndarray: The covariance matrix.
         """
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
         hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
         cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
-        return cov_matrix
+        if np.isdtype(np.float64, signal.dtype):
+            return cov_matrix.astype(np.float64)
+        return cov_matrix.astype(np.complex128)
 
     def _estimate_amplitudes_phases(
         self,
-        signal: npt.NDArray[np.complex128],
+        signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
         estimated_freqs: npt.NDArray[np.float64],
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Estimate amplitudes and phases from frequencies using least squares.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal.
             estimated_freqs (np.ndarray): Array of estimated frequencies in Hz.
 
         Returns:
@@ -155,7 +157,10 @@ class AnalyzerBase(ABC):
         # For a real-valued sinusoid A*cos(2*pi*f*t + phi), the complex amplitude
         # estimated using only the positive frequency is (A/2)*exp(j*phi).
         # Therefore, we need to multiply the magnitude by 2.
-        estimated_amps = 2 * np.abs(complex_amps).astype(np.float64)
+        if np.isdtype(np.float64, signal.dtype):
+            estimated_amps = 2 * np.abs(complex_amps).astype(np.float64)
+        else:
+            estimated_amps = np.abs(complex_amps).astype(np.float64)
         estimated_phases = np.angle(complex_amps).astype(np.float64)
 
         # Sort results according to frequency for consistent comparison
