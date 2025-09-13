@@ -100,12 +100,12 @@ def find_freqs_from_roots(
     """Find roots of the polynomial and estimate frequencies.
 
     Args:
-        coefficients (np.ndarray): The polynomial coefficients.
+        coefficients (np.ndarray): The polynomial coefficients (complex128 or float64).
         fs (float): Sampling frequency in Hz.
         n_sinusoids (int): Number of sinusoids.
 
     Returns:
-        np.ndarray: An array of estimated frequencies in Hz.
+        np.ndarray: An array of estimated frequencies in Hz (float64).
     """
     # 1. Calculate the roots of a polynomial
     try:
