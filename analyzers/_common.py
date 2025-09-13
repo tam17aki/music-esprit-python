@@ -93,12 +93,14 @@ def filter_unique_freqs(
 
 
 def find_freqs_from_roots(
-    coefficients: npt.NDArray[np.complex128], fs: float, n_sinusoids: int
+    coefficients: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
+    fs: float,
+    n_sinusoids: int,
 ) -> npt.NDArray[np.float64]:
     """Find roots of the polynomial and estimate frequencies.
 
     Args:
-        coefficients (np.ndarray): The polynomial coefficients (complex128).
+        coefficients (np.ndarray): The polynomial coefficients.
         fs (float): Sampling frequency in Hz.
         n_sinusoids (int): Number of sinusoids.
 
