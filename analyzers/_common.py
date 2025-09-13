@@ -65,14 +65,13 @@ def find_peaks_from_spectrum(
 
 
 def filter_unique_freqs(
-    raw_freqs: npt.NDArray[np.float64], n_sinusoids: int, min_separation_hz: float
+    raw_freqs: npt.NDArray[np.float64], n_sinusoids: int
 ) -> npt.NDArray[np.float64]:
     """Filter raw frequencies to keep a specified number of unique components.
 
     Args:
         raw_freqs (np.ndarray): The estimated raw frequencies (float64).
         n_sinusoids (int): Number of sinusoids.
-        min_separation_hz (float): The minimum separation interval in Hz.
 
     Returns:
         np.ndarray: Filtered unique frequencies (float64).
@@ -81,14 +80,12 @@ def filter_unique_freqs(
         warnings.warn("No raw frequencies were estimated to be filtered.")
         return np.array([])
 
-    if raw_freqs.size <= n_sinusoids and min_separation_hz <= 0:
+    if raw_freqs.size <= n_sinusoids:
         return raw_freqs
 
     unique_freqs: list[npt.NDArray[np.float64]] = []
     for raw_freq in raw_freqs:
         if any(np.abs(raw_freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
-            continue
-        if unique_freqs and np.abs(raw_freq - unique_freqs[-1]) < min_separation_hz:
             continue
         unique_freqs.append(raw_freq)
 
@@ -96,10 +93,7 @@ def filter_unique_freqs(
 
 
 def find_freqs_from_roots(
-    coefficients: npt.NDArray[np.complex128],
-    fs: float,
-    n_sinusoids: int,
-    min_separation_hz: float,
+    coefficients: npt.NDArray[np.complex128], fs: float, n_sinusoids: int
 ) -> npt.NDArray[np.float64]:
     """Find roots of the polynomial and estimate frequencies.
 
@@ -107,14 +101,13 @@ def find_freqs_from_roots(
         coefficients (np.ndarray): The polynomial coefficients (complex128).
         fs (float): Sampling frequency in Hz.
         n_sinusoids (int): Number of sinusoids.
-        min_separation_hz (float): The minimum separation distance in Hz.
 
     Returns:
         np.ndarray: An array of estimated frequencies in Hz.
     """
     # 1. Calculate the roots of a polynomial
     try:
-        roots = poly.polyroots(coefficients[::-1])
+        roots = poly.polyroots(coefficients[::-1])  # very slow
     except np.linalg.LinAlgError:
         warnings.warn("Failed to find roots of the polynomial.")
         return np.array([])
@@ -135,6 +128,6 @@ def find_freqs_from_roots(
     raw_freqs = angles.astype(np.float64) * (fs / (2 * np.pi))
 
     # 5. Filter frequencies
-    unique_freqs = filter_unique_freqs(raw_freqs, n_sinusoids, min_separation_hz)
+    unique_freqs = filter_unique_freqs(raw_freqs, n_sinusoids)
 
     return unique_freqs
