@@ -135,6 +135,12 @@ def parse_args() -> argparse.Namespace:
         + "This value (L/N) determines the size of the covariance matrix. "
         + f"Must be in the range (0, {SUBSPACE_RATIO_UPPER_BOUND}].",
     )
+    parser.add_argument(
+        "--complex",
+        action="store_true",
+        help="If specified, generate a complex-valued test signal "
+        + "instead of a real-valued one.",
+    )
 
     args = parser.parse_args()
     if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
