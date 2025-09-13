@@ -65,10 +65,7 @@ def main() -> None:
     # Perform parameter estimation via Spectral MUSIC
     print("\n--- Running Spectral MUSIC ---")
     spec_analyzer = SpectralMusicAnalyzer(
-        config.fs,
-        config.n_sinusoids,
-        n_grids=config.n_grids,
-        subspace_ratio=config.subspace_ratio,
+        config.fs, config.n_sinusoids, config.n_grids, config.subspace_ratio
     )
     spec_analyzer.fit(noisy_signal)
 
@@ -78,9 +75,7 @@ def main() -> None:
     # Perform parameter estimation via Root MUSIC
     print("\n--- Running Root MUSIC ---")
     root_analyzer = RootMusicAnalyzer(
-        config.fs,
-        config.n_sinusoids,
-        subspace_ratio=config.subspace_ratio,
+        config.fs, config.n_sinusoids, config.subspace_ratio
     )
     root_analyzer.fit(noisy_signal)
 
@@ -90,10 +85,7 @@ def main() -> None:
     # Perform parameter estimation via ESPRIT
     print("\n--- Running ESPRIT ---")
     esprit_analyzer = StandardEspritAnalyzer(
-        config.fs,
-        config.n_sinusoids,
-        LSEspritSolver(),
-        subspace_ratio=config.subspace_ratio,
+        config.fs, config.n_sinusoids, LSEspritSolver(), config.subspace_ratio
     )
     esprit_analyzer.fit(noisy_signal)
 
