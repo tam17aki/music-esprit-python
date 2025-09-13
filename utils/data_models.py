@@ -46,8 +46,8 @@ class ExperimentConfig:
     snr_db: float
     freqs_true: npt.NDArray[np.float64]
     amp_range: tuple[float, float]
-    n_grids: int
     subspace_ratio: float
+    n_grids: int
 
     @property
     def n_sinusoids(self) -> int:
