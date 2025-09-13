@@ -37,26 +37,16 @@ from .base import MinNormAnalyzerBase
 class RootMinNormAnalyzer(MinNormAnalyzerBase):
     """Parameter analyzer using the Root Min-Norm algorithm."""
 
-    def __init__(
-        self,
-        fs: float,
-        n_sinusoids: int,
-        *,
-        sep_factor: float = 0.4,
-        subspace_ratio: float = 1 / 3,
-    ):
+    def __init__(self, fs: float, n_sinusoids: int, subspace_ratio: float = 1 / 3):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            sep_factor (float, optional):
-                Separation factor for resolving close frequencies.
             subspace_ratio (float, optional): The ratio of the subspace dimension
                 to the signal length. Should be between 0 and 0.5. Defaults to 1/3.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio)
-        self.sep_factor: float = sep_factor
 
     @override
     def _estimate_frequencies(
@@ -89,9 +79,8 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
 
         # 3. Estimate frequencies by finding the roots of a polynomial with
         #    coefficients `d`
-        min_separation_hz = (self.fs / signal.size) * self.sep_factor
         estimated_freqs = find_freqs_from_roots(
-            min_norm_vector, self.fs, self.n_sinusoids, min_separation_hz
+            min_norm_vector, self.fs, self.n_sinusoids
         )
         return estimated_freqs
 
