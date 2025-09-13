@@ -71,9 +71,8 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         positive_freq_indices = np.where(estimated_freqs_hz > 0)[0]
         positive_freqs = estimated_freqs_hz[positive_freq_indices]
 
-        # 3. Sort the frequencies in ascending order
-        sorted_indices = np.argsort(positive_freqs)
-        raw_freqs = positive_freqs[sorted_indices]
+        # 3. Sort the frequencies (just flipping) to move spurious ones to the end
+        raw_freqs = positive_freqs[::-1]
 
         # 4. Filters out closely spaced frequencies
         est_freqs = filter_unique_freqs(raw_freqs, self.n_sinusoids)
