@@ -45,7 +45,7 @@ class AnalyzerBase(ABC):
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
             subspace_ratio (float, optional): The ratio of the subspace dimension
-                to the signal length. Should be between 0 and 0.5. Defaults to 1/3.
+                to the signal length. Must be between 0 and 0.5. Defaults to 1/3.
         """
         if not 0 < subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
             raise ValueError(
