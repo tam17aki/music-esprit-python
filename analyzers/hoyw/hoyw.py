@@ -199,6 +199,4 @@ class HOYWAnalyzer(AnalyzerBase):
         s1_inv = np.diag(1 / s[:model_order])
         vh1 = vh[:model_order, :]
         ar_coeffs = -vh1.conj().T @ s1_inv @ u1.conj().T @ acorr_vec
-        if np.isdtype(np.float64, ar_coeffs.dtype):
-            return ar_coeffs.astype(np.float64)
-        return ar_coeffs.astype(np.complex128)
+        return ar_coeffs
