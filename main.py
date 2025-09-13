@@ -66,7 +66,7 @@ def main() -> None:
         n_grids=config.n_grids,
         subspace_ratio=config.subspace_ratio,
     )
-    spec_analyzer.fit(noisy_signal.astype(np.complex128))
+    spec_analyzer.fit(noisy_signal)
 
     # Print results
     print_results(spec_analyzer, true_params)
@@ -78,7 +78,7 @@ def main() -> None:
         config.n_sinusoids,
         subspace_ratio=config.subspace_ratio,
     )
-    root_analyzer.fit(noisy_signal.astype(np.complex128))
+    root_analyzer.fit(noisy_signal)
 
     # Print results
     print_results(root_analyzer, true_params)
@@ -91,7 +91,7 @@ def main() -> None:
         LSEspritSolver(),
         subspace_ratio=config.subspace_ratio,
     )
-    esprit_analyzer.fit(noisy_signal.astype(np.complex128))
+    esprit_analyzer.fit(noisy_signal)
 
     # Print results
     print_results(esprit_analyzer, true_params)
