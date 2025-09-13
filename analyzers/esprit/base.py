@@ -36,7 +36,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
 
     @abstractmethod
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.complex128]
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64] | None:
         """Estimate the signal subspace using eigenvalue decomposition."""
         raise NotImplementedError
@@ -56,12 +56,12 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         Args:
             raw_omegas (np.ndarray):
                 An array of raw normalized angular frequencies in radians per sample,
-                as returned by a solver.
+                as returned by a solver (float64).
 
         Returns:
             np.ndarray:
                 A sorted array of final, unique frequency estimates in Hz,
-                limited to `self.n_sinusoids`.
+                limited to `self.n_sinusoids` (float64).
         """
         # 1. Convert normalized angular frequencies [rad/sample]
         #    to physical frequencies [Hz]
