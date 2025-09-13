@@ -83,6 +83,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         estimated_freqs = find_peaks_from_spectrum(
             music_spectrum, self.n_sinusoids, freq_grid
         )
+
         return estimated_freqs
 
     def _calculate_music_spectrum(
