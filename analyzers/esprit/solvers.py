@@ -99,13 +99,14 @@ class TLSEspritSolver:
         # Form the augmented matrix for SVD
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
-        augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
+        _augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
+        if np.isdtype(np.float64, signal_subspace.dtype):
+            augmented_subspace = _augmented_subspace.astype(np.float64)
+        else:
+            augmented_subspace = _augmented_subspace.astype(np.complex128)
 
         try:
-            if np.isdtype(np.float64, signal_subspace.dtype):
-                _, _, vh = svd(augmented_subspace.astype(np.float64))
-            else:
-                _, _, vh = svd(augmented_subspace.astype(np.complex128))
+            _, _, vh = svd(augmented_subspace)
         except LinAlgError:
             warnings.warn("SVD on augmented_subspace did not converge.")
             return np.array([])
