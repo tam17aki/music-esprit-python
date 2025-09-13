@@ -72,7 +72,8 @@ class LSEspritSolver:
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        return np.angle(eigenvalues).astype(np.float64)
+        omegas = np.angle(eigenvalues)
+        return omegas.astype(np.float64)
 
 
 # pylint: disable=too-few-public-methods
@@ -137,7 +138,8 @@ class TLSEspritSolver:
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        return np.angle(eigenvalues).astype(np.float64)
+        omegas = np.angle(eigenvalues)
+        return omegas.astype(np.float64)
 
 
 class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
