@@ -121,12 +121,6 @@ def parse_args() -> argparse.Namespace:
         help="Amplitude range for sinusoid generation (default: 0.5 1.5)",
     )
     parser.add_argument(
-        "--n_grids",
-        type=int,
-        default=16384,
-        help="Number of frequency grid points for MUSIC spectrum (default: 16384)",
-    )
-    parser.add_argument(
         "--subspace_ratio",
         type=float,
         default=1 / 3,
@@ -140,6 +134,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="If specified, generate a complex-valued test signal "
         + "instead of a real-valued one.",
+    )
+    parser.add_argument(
+        "--n_grids",
+        type=int,
+        default=16384,
+        help="Number of frequency grid points for MUSIC spectrum (default: 16384)",
     )
 
     args = parser.parse_args()
