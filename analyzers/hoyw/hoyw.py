@@ -52,16 +52,17 @@ class HOYWAnalyzer(AnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128]
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies using the rank-truncated HOYW method.
 
         Args:
             signal (np.ndarray):
-                Input signal (complex128).
+                Input signal (complex128 or float64).
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
+            np.ndarray:
+                Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
         p = self.ar_order  # L in the textbook
@@ -96,13 +97,13 @@ class HOYWAnalyzer(AnalyzerBase):
 
     @staticmethod
     def _calculate_autocorrelation(
-        signal: npt.NDArray[np.complex128], n_lags: int
-    ) -> npt.NDArray[np.complex128]:
+        signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64], n_lags: int
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
         """Calculate the autocorrelation of the signal.
 
         Args:
             signal (np.ndarray):
-                Input signal frame (complex128).
+                Input signal (complex128 or float64).
             n_lags (int):
                 The number of autocorrelation lags to compute (including lag 0).
 
@@ -112,12 +113,15 @@ class HOYWAnalyzer(AnalyzerBase):
         """
         n_samples = signal.size
         corr_full = correlate(signal, signal)
-        return corr_full[n_samples - 1 : n_samples - 1 + n_lags] / n_samples
+        autocorr = corr_full[n_samples - 1 : n_samples - 1 + n_lags] / n_samples
+        if np.isdtype(np.float64, signal.dtype):
+            return autocorr.astype(np.float64)
+        return autocorr.astype(np.complex128)
 
     @staticmethod
     def _build_autocorr_matrix(
-        autocorr: npt.NDArray[np.complex128], p: int, m: int
-    ) -> npt.NDArray[np.complex128]:
+        autocorr: npt.NDArray[np.complex128] | npt.NDArray[np.float64], p: int, m: int
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
         """Build the autocorrelation matrix R for the HOYW equations.
 
         Args:
@@ -131,16 +135,19 @@ class HOYWAnalyzer(AnalyzerBase):
 
         Returns:
             np.ndarray:
-                The (m x p) autocorrelation matrix R.
+                The (m x p) autocorrelation matrix R (complex128 or float64).
         """
         column = autocorr[p : p + m]
         row = autocorr[p:0:-1]
-        return toeplitz(column, r=row)
+        acorr_mat = toeplitz(column, r=row)
+        if np.isdtype(np.float64, autocorr.dtype):
+            return acorr_mat.astype(np.float64)
+        return acorr_mat.astype(np.complex128)
 
     @staticmethod
     def _build_autocorr_vector(
-        autocorr: npt.NDArray[np.complex128], p: int, m: int
-    ) -> npt.NDArray[np.complex128]:
+        autocorr: npt.NDArray[np.complex128] | npt.NDArray[np.float64], p: int, m: int
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
         """Build the autocorrelation vector r for the HOYW equations.
 
         Args:
@@ -154,25 +161,27 @@ class HOYWAnalyzer(AnalyzerBase):
 
         Returns:
             np.ndarray:
-                The (m x 1) autocorrelation vector r.
+                The (m x 1) autocorrelation vector r (complex128 or float64).
         """
         return autocorr[p + 1 : p + m + 1]
 
     def _solve_hoyw_equation(
         self,
-        acorr_mat: npt.NDArray[np.complex128],
-        acorr_vec: npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.complex128]:
+        acorr_mat: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
+        acorr_vec: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
         """Solve the reduced-rank HOYW equations to estimate the AR coefficients.
 
         Args:
             acorr_mat (np.ndarray):
-                The sample autocorrelation matrix (float64); lhs of Stoica 4.4.8
+                The sample autocorrelation matrix (complex128 or float64);
+                lhs of Stoica 4.4.8
             acorr_vec (np.ndarray):
-                The sample autocorrelation vector (float64); rhs of Stoica 4.4.8
+                The sample autocorrelation vector (complex128 or float64);
+                rhs of Stoica 4.4.8
 
         Returns:
-            np.ndarray: The AR coefficients.
+            np.ndarray: The AR coefficients (complex128 or float64).
                 Returns empty arrays if estimation fails.
         """
         # Performs SVD of matrix R (Stoica 4.4.12)
@@ -190,5 +199,6 @@ class HOYWAnalyzer(AnalyzerBase):
         s1_inv = np.diag(1 / s[:model_order])
         vh1 = vh[:model_order, :]
         ar_coeffs = -vh1.conj().T @ s1_inv @ u1.conj().T @ acorr_vec
-
-        return ar_coeffs
+        if np.isdtype(np.float64, acorr_mat.dtype):
+            return ar_coeffs.astype(np.float64)
+        return ar_coeffs.astype(np.complex128)
