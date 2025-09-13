@@ -63,7 +63,7 @@ class AnalyzerBase(ABC):
         """Run the full parameter estimation process.
 
         Args:
-            signal (np.ndarray): Input signal.
+            signal (np.ndarray): Input signal (complex128 or float64).
 
         Returns:
             Self@AnalyzerBase: The fitted object.
@@ -106,11 +106,11 @@ class AnalyzerBase(ABC):
         """Build the covariance matrix from the input signal.
 
         Args:
-            signal (np.ndarray): Input signal.
+            signal (np.ndarray): Input signal (complex128 or float64).
             subspace_dim (int): The dimension of subspace.
 
         Returns:
-            np.ndarray: The covariance matrix.
+            np.ndarray: The covariance matrix (complex128 or float64).
         """
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
@@ -128,7 +128,7 @@ class AnalyzerBase(ABC):
         """Estimate amplitudes and phases from frequencies using least squares.
 
         Args:
-            signal (np.ndarray): Input signal.
+            signal (np.ndarray): Input signal (complex128 or float64).
             estimated_freqs (np.ndarray): Array of estimated frequencies in Hz.
 
         Returns:
