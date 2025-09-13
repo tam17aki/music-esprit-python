@@ -81,7 +81,7 @@ def filter_unique_freqs(
         return np.array([])
 
     if raw_freqs.size <= n_sinusoids:
-        return raw_freqs
+        return np.sort(raw_freqs)
 
     unique_freqs: list[npt.NDArray[np.float64]] = []
     for raw_freq in raw_freqs:
