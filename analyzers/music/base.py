@@ -36,15 +36,15 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for MUSIC-based parameter analyzers."""
 
     def _estimate_noise_subspace(
-        self, signal: npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.complex128] | None:
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64] | None:
         """Estimate the noise subspace using eigenvalue decomposition.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128 or float64).
 
         Returns:
-            np.ndarray: Estimated noise subspace (complex128).
+            np.ndarray: Estimated noise subspace (complex128 or float64).
                 Returns None if estimation fails.
         """
         # 1. Build the covariance matrix
@@ -62,6 +62,7 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         # Since it is in ascending order, select (subspace_dim - model_order) vectors
         # from the beginning, where model_order = 2 * n_sinusoids
         n_noise_vectors = self.subspace_dim - 2 * self.n_sinusoids
-        _subspace = eigenvectors[:, :n_noise_vectors]
-        noise_subspace: npt.NDArray[np.complex128] = _subspace.astype(np.complex128)
-        return noise_subspace
+        noise_subspace = eigenvectors[:, :n_noise_vectors]
+        if np.isdtype(np.float64, noise_subspace.dtype):
+            return noise_subspace.astype(np.float64)
+        return noise_subspace.astype(np.complex128)
