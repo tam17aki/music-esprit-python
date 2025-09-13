@@ -118,12 +118,12 @@ class TLSEspritSolver:
 
         # Partition the Vh matrix to solve the TLS problem
         model_order = subspace_upper.shape[1]
-        v12 = vh[model_order:, :model_order]
-        v22 = vh[model_order:, model_order:]
+        v11 = vh[:model_order, :model_order]
+        v12 = vh[:model_order, model_order:]
 
         # Solve the rotation operator
         try:
-            rotation_operator = -v12 @ pinv(v22)
+            rotation_operator = pinv(v11) @ v12
         except LinAlgError:
             warnings.warn(
                 "TLS matrix inversion failed while computing rotation operator."
