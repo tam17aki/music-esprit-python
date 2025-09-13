@@ -131,7 +131,6 @@ python main.py --help
 | `--freqs_true`  | A list of true frequencies in Hz. | 440 460 480|
 | `--amp_range` | The range for random amplitude generation. | 0.5 1.5|
 | `--n_grids` | Number of grid points for Spectral MUSIC and Spectral Min-Norm. | 16384|
-| `--sep_factor` | Separation factor for Root MUSIC, Root Min-Norm and ESPRIT. | 0.4|
 | `--subspace_ratio` | The ratio of the subspace dimension to the signal length. | 1/3|
 
 ### Using a Specific Analyzer in Your Own Code
