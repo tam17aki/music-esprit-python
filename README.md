@@ -65,7 +65,6 @@ True Amplitudes:    [0.72742622 1.25099208 0.83873   ]
 True Phases:        [-2.16278836  0.70861533 -0.67983633] rad
 SNR:                30.0 dB
 # of Grid Points:   16384
-Separation Factor:  0.4
 Subspace Ratio:     0.3333333333333333
 
 --- Running Spectral MUSIC ---
