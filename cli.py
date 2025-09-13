@@ -47,7 +47,6 @@ def print_experiment_setup(
     print(f"True Phases:        {true_params.phases[sort_indices]} rad")
     print(f"SNR:                {config.snr_db} dB")
     print(f"# of Grid Points:   {config.n_grids}")
-    print(f"Separation Factor:  {config.sep_factor}")
     print(f"Subspace Ratio:     {config.subspace_ratio}")
 
 
@@ -126,15 +125,6 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=16384,
         help="Number of frequency grid points for MUSIC spectrum (default: 16384)",
-    )
-    parser.add_argument(
-        "--sep_factor",
-        type=float,
-        default=0.4,
-        help="Separation factor for resolving close frequencies, "
-        + "relative to FFT resolution (fs / n_samples). "
-        + "A value < 0.5 can help separate frequencies closer than the FFT limit. "
-        + "(default: 0.4)",
     )
     parser.add_argument(
         "--subspace_ratio",
