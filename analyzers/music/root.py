@@ -50,13 +50,12 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128]
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies of multiple sinusoids using Root MUSIC.
 
         Args:
-            signal (np.ndarray):
-                Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128 or float64).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -78,12 +77,12 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
 
     @staticmethod
     def _calculate_polynomial_coefficients(
-        noise_subspace: npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.complex128]:
+        noise_subspace: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
         """Calculate the coefficients of the Root MUSIC polynomial D(z).
 
         Args:
-            noise_subspace (np.ndarray): The noise subspace matrix E_n (complex128).
+            noise_subspace (np.ndarray): The noise subspace matrix E_n.
 
         Returns:
             np.ndarray: A vector of polynomial coefficients (float64).
@@ -97,7 +96,10 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         poly_degree = subspace_dim - 1
 
         # Calculate the polynomial coefficients
-        _coefficients = np.zeros(poly_degree, dtype=np.complex128)
+        if np.isdtype(np.float64, noise_subspace.dtype):
+            _coefficients = np.zeros(poly_degree, dtype=np.float64)
+        else:
+            _coefficients = np.zeros(poly_degree, dtype=np.complex128)
         for k in range(1, poly_degree + 1):
             # Calculate the sum of the k-th upper diagonal of matrix C
             _coefficients[k - 1] = np.sum(np.diag(projector_onto_noise, k=k))
@@ -106,7 +108,9 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         )
 
         # Notice: The polynomial coefficients are arranged in descending order of powers
-        return coefficients
+        if np.isdtype(np.float64, noise_subspace.dtype):
+            return coefficients.astype(np.float64)
+        return coefficients.astype(np.complex128)
 
 
 @final
