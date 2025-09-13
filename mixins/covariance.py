@@ -36,16 +36,16 @@ class ForwardBackwardMixin:
 
     @staticmethod
     def _build_covariance_matrix(
-        signal: npt.NDArray[np.complex128], subspace_dim: int
-    ) -> npt.NDArray[np.complex128]:
+        signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64], subspace_dim: int
+    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
         """Build the forward-backward averaged covariance matrix.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal.
             subspace_dim (int): The dimension of subspace.
 
         Returns:
-            np.ndarray: The forward-backward averaged covariance matrix (complex128).
+            np.ndarray: The forward-backward averaged covariance matrix.
         """
         # 1. Standard forward covariance matrix
         n_samples = signal.size
@@ -59,5 +59,6 @@ class ForwardBackwardMixin:
 
         # 3. Averaged covariance matrix
         cov_matrix_fb = (cov_matrix_f + cov_matrix_b) / 2.0
-
+        if np.isdtype(np.float64, signal.dtype):
+            return cov_matrix_fb.astype(np.float64)
         return cov_matrix_fb.astype(np.complex128)
