@@ -141,7 +141,6 @@ def parse_args() -> argparse.Namespace:
         default=16384,
         help="Number of frequency grid points for MUSIC spectrum (default: 16384)",
     )
-
     args = parser.parse_args()
     if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
         parser.error(
