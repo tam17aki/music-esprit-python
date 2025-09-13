@@ -59,14 +59,14 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128]
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies of multiple sinusoids using Spectral Min-Norm.
 
         This method overrides the abstract method in the base class.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128 or float64).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -99,12 +99,12 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         return estimated_freqs
 
     def _calculate_min_norm_spectrum(
-        self, min_norm_vector: npt.NDArray[np.complex128]
+        self, min_norm_vector: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Calculate the Min-Norm pseudospectrum over a frequency grid.
 
         Args:
-            min_norm_vector (np.ndarray): The minimum norm vector (complex128).
+            min_norm_vector (np.ndarray): The minimum norm vector (complex128 or float64).
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
