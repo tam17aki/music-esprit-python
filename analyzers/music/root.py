@@ -97,16 +97,11 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         poly_degree = subspace_dim - 1
 
         # Calculate the polynomial coefficients
-        if np.isdtype(np.float64, noise_subspace.dtype):
-            _coefficients = np.zeros(poly_degree, dtype=np.float64)
-        else:
-            _coefficients = np.zeros(poly_degree, dtype=np.complex128)
+        _coefficients = [np.sum(np.diag(projector_onto_noise))]
         for k in range(1, poly_degree + 1):
-            # Calculate the sum of the k-th upper diagonal of matrix C
-            _coefficients[k - 1] = np.sum(np.diag(projector_onto_noise, k=k))
-        coefficients = np.hstack(
-            [_coefficients[::-1], np.sum(np.diag(projector_onto_noise)), _coefficients]
-        )
+            _coefficients.append(np.sum(np.diag(projector_onto_noise, k=k)))
+        coefficients = np.array(_coefficients)
+        coefficients = np.concatenate([coefficients[::-1], coefficients[1:]])
 
         # Notice: The polynomial coefficients are arranged in descending order of powers
         if np.isdtype(np.float64, noise_subspace.dtype):
