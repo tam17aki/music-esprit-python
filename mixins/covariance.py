@@ -41,11 +41,12 @@ class ForwardBackwardMixin:
         """Build the forward-backward averaged covariance matrix.
 
         Args:
-            signal (np.ndarray): Input signal.
+            signal (np.ndarray): Input signal (complex128 or float64).
             subspace_dim (int): The dimension of subspace.
 
         Returns:
-            np.ndarray: The forward-backward averaged covariance matrix.
+            np.ndarray:
+                The forward-backward averaged covariance matrix (complex128 or float64).
         """
         # 1. Standard forward covariance matrix
         n_samples = signal.size
