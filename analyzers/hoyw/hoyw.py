@@ -38,14 +38,7 @@ from ..base import AnalyzerBase
 class HOYWAnalyzer(AnalyzerBase):
     """Parameter analyzer using the Higher-Order Yule-Walker (HOYW) method."""
 
-    def __init__(
-        self,
-        fs: float,
-        n_sinusoids: int,
-        *,
-        ar_order: int | None = None,
-        sep_factor: float = 0.4,
-    ):
+    def __init__(self, fs: float, n_sinusoids: int, ar_order: int | None = None):
         """Initialize the HOYW analyzer.
 
         Args:
@@ -53,12 +46,9 @@ class HOYWAnalyzer(AnalyzerBase):
             n_sinusoids (int): Number of sinusoids.
             ar_order (int, optional): The order of the AR model.
                 Should be > 2*n_sinusoids. Defaults to 128*n_sinusoids.
-            sep_factor (float, optional):
-                Separation factor for resolving close frequencies.
         """
         super().__init__(fs, n_sinusoids)
         self.ar_order = ar_order if ar_order is not None else 128 * self.n_sinusoids
-        self.sep_factor = sep_factor
 
     @override
     def _estimate_frequencies(
@@ -100,10 +90,7 @@ class HOYWAnalyzer(AnalyzerBase):
 
         # 4. Estimate frequency by finding roots from AR coefficients
         poly_coeffs = np.concatenate(([1], ar_coeffs))
-        min_separation_hz = (self.fs / signal.size) * self.sep_factor
-        estimated_freqs = find_freqs_from_roots(
-            poly_coeffs, self.fs, self.n_sinusoids, min_separation_hz
-        )
+        estimated_freqs = find_freqs_from_roots(poly_coeffs, self.fs, self.n_sinusoids)
 
         return estimated_freqs
 
