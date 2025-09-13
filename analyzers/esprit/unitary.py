@@ -104,10 +104,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         _data_matrix = hankel(
             signal[: self.subspace_dim], signal[self.subspace_dim - 1 :]
         )
-        if np.isdtype(np.float64, _data_matrix.dtype):
-            data_matrix = _data_matrix.astype(np.float64)
-        else:
-            data_matrix = _data_matrix.astype(np.complex128)
+        data_matrix = _data_matrix.astype(np.complex128)
 
         # 2. Convert complex matrix X to real matrix T(X) (based on Eq. (7))
         #    The size of T(X) is (L, 2*N)
@@ -132,7 +129,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
     @staticmethod
     def _transform_complex_to_real(
-        g_matrix: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
+        g_matrix: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64]:
         """Transform a complex matrix G to a real matrix T(G) based on Eq. (7).
 
