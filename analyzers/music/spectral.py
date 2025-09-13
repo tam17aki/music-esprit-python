@@ -42,7 +42,6 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         self,
         fs: float,
         n_sinusoids: int,
-        *,
         n_grids: int = 16384,
         subspace_ratio: float = 1 / 3,
     ):
