@@ -59,12 +59,12 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128]
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies of multiple sinusoids.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal.
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -85,7 +85,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.complex128]
+        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64] | None:
         """Estimate the real-valued signal subspace using the covariance approach.
 
@@ -93,7 +93,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         which involves a real-valued SVD of a transformed data matrix.
 
         Args:
-            signal (np.ndarray): Input signal (complex128).
+            signal (np.ndarray): Input signal (complex128 or float64).
 
         Returns:
             np.ndarray: The real-valued signal subspace matrix (float64).
@@ -108,7 +108,14 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         # 2. Convert complex matrix X to real matrix T(X) (based on Eq. (7))
         #    The size of T(X) is (L, 2*N)
         try:
-            transformed_matrix = self._transform_complex_to_real(data_matrix)
+            if np.isdtype(np.float64, data_matrix.dtype):
+                transformed_matrix = self._transform_complex_to_real(
+                    data_matrix.astype(np.float64)
+                )
+            else:
+                transformed_matrix = self._transform_complex_to_real(
+                    data_matrix.astype(np.complex128)
+                )
         except ValueError:
             warnings.warn("Failed to transform complex data matrix to real matrix.")
             return None
@@ -127,15 +134,15 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
     @staticmethod
     def _transform_complex_to_real(
-        g_matrix: npt.NDArray[np.complex128],
+        g_matrix: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
     ) -> npt.NDArray[np.float64]:
         """Transform a complex matrix G to a real matrix T(G) based on Eq. (7).
 
         Args:
-            g_matrix (np.ndarray): Complex matrix G (complex128).
+            g_matrix (np.ndarray): Complex matrix G.
 
         Returns:
-            np.ndarray: Transformed real matrix T(G) (complex128).
+            np.ndarray: Transformed real matrix T(G) (float64).
         """
         p, _ = g_matrix.shape
         p_half = p // 2  # L
@@ -162,4 +169,4 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
                 [-np.imag(_diff), -np.sqrt(2.0) * np.imag(gt), np.real(_diff)]
             )
 
-        return np.hstack([tg_left, tg_right])
+        return np.hstack([tg_left, tg_right]).astype(np.float64)
