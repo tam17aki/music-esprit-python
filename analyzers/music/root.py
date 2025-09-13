@@ -86,7 +86,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
                 The noise subspace matrix E_n (complex128 or float64).
 
         Returns:
-            np.ndarray: A vector of polynomial coefficients (float64).
+            np.ndarray: A vector of polynomial coefficients (complex128 or float64).
         """
         # C = E_n * E_n^H
         projector_onto_noise = noise_subspace @ noise_subspace.conj().T
