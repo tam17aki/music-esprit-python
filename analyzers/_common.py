@@ -29,7 +29,7 @@ import numpy.polynomial.polynomial as poly
 import numpy.typing as npt
 from scipy.signal import find_peaks
 
-TOLERANCE_LEVEL = 1e-6
+TOLERANCE_LEVEL = 1e-4
 
 
 def find_peaks_from_spectrum(
