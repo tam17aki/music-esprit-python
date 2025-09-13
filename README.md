@@ -129,8 +129,8 @@ python main.py --help
 |`--snr_db` | Signal-to-Noise Ratio in dB. | 30.0|
 | `--freqs_true`  | A list of true frequencies in Hz. | 440 460 480|
 | `--amp_range` | The range for random amplitude generation. | 0.5 1.5|
-| `--subspace_ratio` | The ratio of the subspace dimension to the signal length. Must be in (0, 0.5].| 1/3|
-| `--complex` | If specified, generate a complex-valued signal instead of a real-valued one.| False (Flag)|
+| `--subspace_ratio` | The ratio of the subspace dimension to the signal length.<br> Must be in (0, 0.5].| 1/3|
+| `--complex` | If specified, generate a complex-valued signal instead of <br> a real-valued one.| False (Flag)|
 | `--n_grids` | Number of grid points for Spectral MUSIC and Spectral Min-Norm. | 16384|
 
 
