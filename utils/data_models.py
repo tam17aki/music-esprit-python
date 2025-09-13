@@ -47,7 +47,6 @@ class ExperimentConfig:
     freqs_true: npt.NDArray[np.float64]
     amp_range: tuple[float, float]
     n_grids: int
-    sep_factor: float
     subspace_ratio: float
 
     @property
