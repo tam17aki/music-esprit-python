@@ -42,7 +42,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         raise NotImplementedError
 
     def _postprocess_omegas(
-        self, raw_omegas: npt.NDArray[np.float64], signal_length: int, sep_factor: float
+        self, raw_omegas: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
         """Post-processes raw angular frequencies to final frequency estimates.
 
@@ -57,10 +57,6 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             raw_omegas (np.ndarray):
                 An array of raw normalized angular frequencies in radians per sample,
                 as returned by a solver.
-            signal_length (int):
-                The length of the input signal frame (N), used to calculate
-                the frequency separation threshold.
-            sep_factor (float): Separation factor for resolving close frequencies.
 
         Returns:
             np.ndarray:
@@ -80,7 +76,6 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         raw_freqs = positive_freqs[sorted_indices]
 
         # 4. Filters out closely spaced frequencies
-        min_separation_hz = (self.fs / signal_length) * sep_factor
-        est_freqs = filter_unique_freqs(raw_freqs, self.n_sinusoids, min_separation_hz)
+        est_freqs = filter_unique_freqs(raw_freqs, self.n_sinusoids)
 
         return est_freqs
