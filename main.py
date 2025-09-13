@@ -46,7 +46,6 @@ def main() -> None:
         freqs_true=np.array(args.freqs_true, dtype=np.float64),
         amp_range=tuple(args.amp_range),
         n_grids=args.n_grids,
-        sep_factor=args.sep_factor,
         subspace_ratio=args.subspace_ratio,
     )
 
@@ -77,7 +76,6 @@ def main() -> None:
     root_analyzer = RootMusicAnalyzer(
         config.fs,
         config.n_sinusoids,
-        sep_factor=config.sep_factor,
         subspace_ratio=config.subspace_ratio,
     )
     root_analyzer.fit(noisy_signal.astype(np.complex128))
@@ -91,7 +89,6 @@ def main() -> None:
         config.fs,
         config.n_sinusoids,
         LSEspritSolver(),
-        sep_factor=config.sep_factor,
         subspace_ratio=config.subspace_ratio,
     )
     esprit_analyzer.fit(noisy_signal.astype(np.complex128))
