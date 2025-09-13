@@ -45,8 +45,8 @@ def main() -> None:
         snr_db=args.snr_db,
         freqs_true=np.array(args.freqs_true, dtype=np.float64),
         amp_range=tuple(args.amp_range),
-        n_grids=args.n_grids,
         subspace_ratio=args.subspace_ratio,
+        n_grids=args.n_grids,
     )
 
     # Generate test signals (sum of multiple sinusoids with additive noise)
