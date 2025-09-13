@@ -101,21 +101,18 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         """
         # 1. Construct the data matrix X (Hankel matrix)
         #    size: (L, N) = (subspace_dim, n_snapshots)
-        data_matrix = hankel(
+        _data_matrix = hankel(
             signal[: self.subspace_dim], signal[self.subspace_dim - 1 :]
         )
+        if np.isdtype(np.float64, _data_matrix.dtype):
+            data_matrix = _data_matrix.astype(np.float64)
+        else:
+            data_matrix = _data_matrix.astype(np.complex128)
 
         # 2. Convert complex matrix X to real matrix T(X) (based on Eq. (7))
         #    The size of T(X) is (L, 2*N)
         try:
-            if np.isdtype(np.float64, data_matrix.dtype):
-                transformed_matrix = self._transform_complex_to_real(
-                    data_matrix.astype(np.float64)
-                )
-            else:
-                transformed_matrix = self._transform_complex_to_real(
-                    data_matrix.astype(np.complex128)
-                )
+            transformed_matrix = self._transform_complex_to_real(data_matrix)
         except ValueError:
             warnings.warn("Failed to transform complex data matrix to real matrix.")
             return None
