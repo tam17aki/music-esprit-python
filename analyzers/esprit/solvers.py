@@ -56,19 +56,23 @@ class LSEspritSolver:
         """
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
+
+        # Solve the rotation operator
         try:
             rotation_operator = pinv(subspace_upper) @ subspace_lower
         except LinAlgError:
             warnings.warn("Matrix inversion failed in parameter solving.")
             return np.array([])
         try:
-            eigenvals = eigvals(rotation_operator)
+            eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
             warnings.warn(
                 "Eigenvalue decomposition failed while solving rotation operator."
             )
             return np.array([])
-        return np.angle(eigenvals).astype(np.float64)
+
+        # Recover normalized angular frequencies from eigenvalues
+        return np.angle(eigenvalues).astype(np.float64)
 
 
 # pylint: disable=too-few-public-methods
@@ -124,15 +128,16 @@ class TLSEspritSolver:
                 "TLS matrix inversion failed while computing rotation operator."
             )
             return np.array([])
-
         try:
-            eigenvals = eigvals(rotation_operator)
+            eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
             warnings.warn(
                 "Eigenvalue decomposition failed while solving rotation operator."
             )
             return np.array([])
-        return np.angle(eigenvals).astype(np.float64)
+
+        # Recover normalized angular frequencies from eigenvalues
+        return np.angle(eigenvalues).astype(np.float64)
 
 
 class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
@@ -232,20 +237,20 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
         t1 = k1 @ signal_subspace
         t2 = k2 @ signal_subspace
 
+        # Solve the rotation operator upsilon_ls
         try:
             upsilon_ls = pinv(t1) @ t2
         except LinAlgError:
             warnings.warn("Least Squares problem in Unitary ESPRIT failed.")
             return np.array([])
-
         try:
-            eigenvalues_y = eigvals(upsilon_ls)
+            eigenvalues = eigvals(upsilon_ls)
         except LinAlgError:
             warnings.warn("Eigenvalue decomposition of Y_LS failed.")
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        omegas = 2 * np.arctan(np.real(eigenvalues_y))
+        omegas = 2 * np.arctan(np.real(eigenvalues))
         return omegas.astype(np.float64)
 
 
@@ -301,13 +306,12 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
                 "TLS matrix inversion failed while computing rotation operator."
             )
             return np.array([])
-
         try:
-            eigenvalues_y = eigvals(upsilon_tls)
+            eigenvalues = eigvals(upsilon_tls)
         except LinAlgError:
             warnings.warn("Eigenvalue decomposition of Y_TLS failed.")
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        omegas = 2 * np.arctan(np.real(eigenvalues_y))
+        omegas = 2 * np.arctan(np.real(eigenvalues))
         return omegas.astype(np.float64)
