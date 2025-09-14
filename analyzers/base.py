@@ -38,7 +38,9 @@ SUBSPACE_RATIO_UPPER_BOUND = 0.5
 class AnalyzerBase(ABC):
     """Abstract base class for parameter analyzers."""
 
-    def __init__(self, fs: float, n_sinusoids: int, subspace_ratio: float = 1 / 3):
+    def __init__(
+        self, fs: float, n_sinusoids: int, subspace_ratio: float = 1 / 3
+    ) -> None:
         """Initialize the analyzer with an experiment configuration.
 
         Args:
