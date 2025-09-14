@@ -44,7 +44,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         solver: LSUnitaryEspritSolver | TLSUnitaryEspritSolver,
         *,
         subspace_ratio: float = 1 / 3,
-    ):
+    ) -> None:
         """Initialize the analyzer with an experiment configuration.
 
         Args:
