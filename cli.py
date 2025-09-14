@@ -90,27 +90,27 @@ def parse_args() -> argparse.Namespace:
         "--fs",
         type=float,
         default=44100.0,
-        help="Sampling frequency in Hz (default: 44100.0)",
+        help="Sampling frequency in Hz (default: 44100.0).",
     )
     parser.add_argument(
         "--duration",
         type=float,
         default=0.1,
-        help="Signal duration in seconds (default: 0.1)",
+        help="Signal duration in seconds (default: 0.1).",
     )
     parser.add_argument(
         "--snr_db",
         type=float,
         default=30.0,
-        help="Signal-to-noise ratio in dB (default: 30.0)",
+        help="Signal-to-noise ratio in dB (default: 30.0).",
     )
     parser.add_argument(
         "--freqs_true",
         type=float,
         nargs="+",
         default=[440.0, 460.0, 480.0],
-        help="List of true frequencies in Hz (space separated). "
-        + "Default: 440.0 460.0 480.0",
+        help="List of true frequencies in Hz (space separated) "
+        + "(default: 440.0 460.0 480.0).",
     )
     parser.add_argument(
         "--amp_range",
@@ -118,13 +118,13 @@ def parse_args() -> argparse.Namespace:
         nargs=2,
         default=[0.5, 1.5],
         metavar=("AMP_MIN", "AMP_MAX"),
-        help="Amplitude range for sinusoid generation (default: 0.5 1.5)",
+        help="Amplitude range for sinusoid generation (default: 0.5 1.5).",
     )
     parser.add_argument(
         "--subspace_ratio",
         type=float,
         default=1 / 3,
-        help="The ratio of the subspace dimension to the signal length. "
+        help="The ratio of the subspace dimension to the signal length "
         + "(default: 1/3, which is approximately 0.333). "
         + "This value (L/N) determines the size of the covariance matrix. "
         + f"Must be in the range (0, {SUBSPACE_RATIO_UPPER_BOUND}].",
@@ -139,7 +139,7 @@ def parse_args() -> argparse.Namespace:
         "--n_grids",
         type=int,
         default=16384,
-        help="Number of frequency grid points for MUSIC spectrum (default: 16384)",
+        help="Number of frequency grid points for MUSIC spectrum (default: 16384).",
     )
     args = parser.parse_args()
     if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
