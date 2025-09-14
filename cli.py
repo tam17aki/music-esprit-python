@@ -42,12 +42,12 @@ def print_experiment_setup(
     print("--- Experiment Setup ---")
     print(f"Sampling Frequency: {config.fs} Hz")
     print(f"Signal Duration:    {config.duration * 1000:.0f} ms")
+    print(f"SNR:                {config.snr_db} dB")
+    print(f"Subspace Ratio:     {config.subspace_ratio}")
+    print(f"# of Grid Points:   {config.n_grids}")
     print(f"True Frequencies:   {true_params.frequencies[sort_indices]} Hz")
     print(f"True Amplitudes:    {true_params.amplitudes[sort_indices]}")
     print(f"True Phases:        {true_params.phases[sort_indices]} rad")
-    print(f"SNR:                {config.snr_db} dB")
-    print(f"# of Grid Points:   {config.n_grids}")
-    print(f"Subspace Ratio:     {config.subspace_ratio}")
 
 
 def print_results(
