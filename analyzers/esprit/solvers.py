@@ -35,7 +35,7 @@ class LSEspritSolver:
     """A solver class for the ESPRIT rotational operator using the Least Squares."""
 
     def solve(
-        self, signal_subspace: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+        self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Solves for rotational factors using the Least Squares (LS) method.
 
@@ -51,7 +51,7 @@ class LSEspritSolver:
         Returns:
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
-                in radians per sample. Shape: (2M,).
+                in radians per sample (float64 or complex128). Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
         subspace_upper = signal_subspace[:-1, :]
@@ -81,7 +81,7 @@ class TLSEspritSolver:
     """A solver class for the ESPRIT rotational operator using the Total LS."""
 
     def solve(
-        self, signal_subspace: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+        self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Solves for rotational factors using the Total Least Squares (TLS) method.
 
@@ -93,12 +93,12 @@ class TLSEspritSolver:
 
         Args:
             signal_subspace (np.ndarray):
-                The signal subspace `Es` (complex128 or float64). Shape: (L, 2M).
+                The signal subspace `Es` (float64 or complex128). Shape: (L, 2M).
 
         Returns:
             np.ndarray:
                 An array of estimated normalized angular frequencies (omegas)
-                in radians per sample (complex128 or float64). Shape: (2M,).
+                in radians per sample (float64 or complex128). Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
         # Form the augmented matrix for SVD
