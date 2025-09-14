@@ -36,8 +36,8 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
 
     @abstractmethod
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
-    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64] | None:
+        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
         """Estimate the signal subspace using eigenvalue decomposition."""
         raise NotImplementedError
 
