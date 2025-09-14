@@ -60,12 +60,12 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies of multiple sinusoids.
 
         Args:
-            signal (np.ndarray): Input signal.
+            signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -86,7 +86,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64] | None:
         """Estimate the real-valued signal subspace using the covariance approach.
 
@@ -94,7 +94,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         which involves a real-valued SVD of a transformed data matrix.
 
         Args:
-            signal (np.ndarray): Input signal (complex128 or float64).
+            signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
             np.ndarray: The real-valued signal subspace matrix (float64).
@@ -135,7 +135,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         """Transform a complex matrix G to a real matrix T(G) based on Eq. (7).
 
         Args:
-            g_matrix (np.ndarray): Complex matrix G.
+            g_matrix (np.ndarray): Complex matrix G (complex128).
 
         Returns:
             np.ndarray: Transformed real matrix T(G) (float64).
