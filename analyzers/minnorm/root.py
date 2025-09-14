@@ -37,7 +37,7 @@ from .base import MinNormAnalyzerBase
 class RootMinNormAnalyzer(MinNormAnalyzerBase):
     """Parameter analyzer using the Root Min-Norm algorithm."""
 
-    def __init__(self, fs: float, n_sinusoids: int, subspace_ratio: float = 1 / 3):
+    def __init__(self, fs: float, n_sinusoids: int, *, subspace_ratio: float = 1 / 3):
         """Initialize the analyzer with an experiment configuration.
 
         Args:
