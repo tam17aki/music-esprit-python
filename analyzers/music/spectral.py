@@ -60,12 +60,12 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies of multiple sinusoids.
 
         Args:
-            signal (np.ndarray): Input signal (complex128 or float64).
+            signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -88,13 +88,13 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         return estimated_freqs
 
     def _calculate_music_spectrum(
-        self, noise_subspace: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+        self, noise_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Calculate the MUSIC pseudospectrum over a frequency grid.
 
         Args:
             noise_subspace (np.ndarray):
-                The noise subspace matrix (complex128 or float64).
+                The noise subspace matrix (float64 or complex128).
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
