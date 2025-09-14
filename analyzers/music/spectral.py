@@ -45,7 +45,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         *,
         n_grids: int = 16384,
         subspace_ratio: float = 1 / 3,
-    ):
+    ) -> None:
         """Initialize the analyzer with an experiment configuration.
 
         Args:
