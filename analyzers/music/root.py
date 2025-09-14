@@ -50,12 +50,12 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies of multiple sinusoids using Root MUSIC.
 
         Args:
-            signal (np.ndarray): Input signal (complex128 or float64).
+            signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
             np.ndarray: Estimated frequencies in Hz (float64).
@@ -77,16 +77,16 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
 
     @staticmethod
     def _calculate_polynomial_coefficients(
-        noise_subspace: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
-    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
+        noise_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Calculate the coefficients of the Root MUSIC polynomial D(z).
 
         Args:
             noise_subspace (np.ndarray):
-                The noise subspace matrix E_n (complex128 or float64).
+                The noise subspace matrix E_n (float64 or complex128).
 
         Returns:
-            np.ndarray: A vector of polynomial coefficients (complex128 or float64).
+            np.ndarray: A vector of polynomial coefficients (float64 or complex128).
         """
         # C = E_n * E_n^H
         projector_onto_noise = noise_subspace @ noise_subspace.conj().T
