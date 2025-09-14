@@ -84,10 +84,10 @@ def filter_unique_freqs(
         return np.sort(raw_freqs)
 
     unique_freqs: list[npt.NDArray[np.float64]] = []
-    for raw_freq in raw_freqs:
-        if any(np.abs(raw_freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
+    for freq in raw_freqs:
+        if any(np.abs(freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
             continue
-        unique_freqs.append(raw_freq)
+        unique_freqs.append(freq)
 
     return np.sort(np.array(unique_freqs[:n_sinusoids]))
 
