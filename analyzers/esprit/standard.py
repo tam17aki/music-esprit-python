@@ -43,6 +43,7 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         fs: float,
         n_sinusoids: int,
         solver: LSEspritSolver | TLSEspritSolver,
+        *,
         subspace_ratio: float = 1 / 3,
     ):
         """Initialize the analyzer with an experiment configuration.
