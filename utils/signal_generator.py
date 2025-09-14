@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Utilities for signal generation.
+"""Defines utility functions for signal generation.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
