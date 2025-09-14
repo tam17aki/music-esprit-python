@@ -59,11 +59,11 @@ class AnalyzerBase(ABC):
         self.subspace_dim: int = -1
         self.est_params: SinusoidParameters | None = None
 
-    def fit(self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]) -> Self:
+    def fit(self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]) -> Self:
         """Run the full parameter estimation process.
 
         Args:
-            signal (np.ndarray): Input signal (complex128 or float64).
+            signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
             Self@AnalyzerBase: The fitted object.
@@ -94,23 +94,23 @@ class AnalyzerBase(ABC):
 
     @abstractmethod
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64]
+        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Estimate frequencies using a specific MUSIC variant."""
         raise NotImplementedError
 
     @staticmethod
     def _build_covariance_matrix(
-        signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64], subspace_dim: int
-    ) -> npt.NDArray[np.complex128] | npt.NDArray[np.float64]:
+        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128], subspace_dim: int
+    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Build the covariance matrix from the input signal.
 
         Args:
-            signal (np.ndarray): Input signal (complex128 or float64).
+            signal (np.ndarray): Input signal (float64 or complex128).
             subspace_dim (int): The dimension of subspace.
 
         Returns:
-            np.ndarray: The covariance matrix (complex128 or float64).
+            np.ndarray: The covariance matrix (float64 or complex128).
         """
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
@@ -122,13 +122,13 @@ class AnalyzerBase(ABC):
 
     def _estimate_amplitudes_phases(
         self,
-        signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
+        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         estimated_freqs: npt.NDArray[np.float64],
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Estimate amplitudes and phases from frequencies using least squares.
 
         Args:
-            signal (np.ndarray): Input signal (complex128 or float64).
+            signal (np.ndarray): Input signal (float64 or complex128).
             estimated_freqs (np.ndarray): Array of estimated frequencies in Hz.
 
         Returns:
