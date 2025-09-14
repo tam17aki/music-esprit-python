@@ -38,7 +38,7 @@ from ..base import AnalyzerBase
 class HOYWAnalyzer(AnalyzerBase):
     """Parameter analyzer using the Higher-Order Yule-Walker (HOYW) method."""
 
-    def __init__(self, fs: float, n_sinusoids: int, ar_order: int | None = None):
+    def __init__(self, fs: float, n_sinusoids: int, *, ar_order: int | None = None):
         """Initialize the HOYW analyzer.
 
         Args:
