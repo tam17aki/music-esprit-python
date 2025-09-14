@@ -45,7 +45,7 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         solver: LSEspritSolver | TLSEspritSolver,
         *,
         subspace_ratio: float = 1 / 3,
-    ):
+    ) -> None:
         """Initialize the analyzer with an experiment configuration.
 
         Args:
