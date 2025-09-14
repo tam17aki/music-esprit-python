@@ -26,9 +26,7 @@ import argparse
 
 import numpy as np
 
-from analyzers.esprit.standard import StandardEspritAnalyzer
-from analyzers.music.root import RootMusicAnalyzer
-from analyzers.music.spectral import SpectralMusicAnalyzer
+from analyzers.base import AnalyzerBase
 from utils.data_models import ExperimentConfig, SinusoidParameters
 
 SUBSPACE_RATIO_UPPER_BOUND = 0.5
@@ -60,10 +58,7 @@ def print_experiment_setup(
     print(f"True Phases:        {true_params.phases[sort_indices]} rad")
 
 
-def print_results(
-    analyzer: SpectralMusicAnalyzer | RootMusicAnalyzer | StandardEspritAnalyzer,
-    true_params: SinusoidParameters,
-) -> None:
+def print_results(analyzer: AnalyzerBase, true_params: SinusoidParameters) -> None:
     """Prints the estimation results and errors from a fitted analyzer.
 
     This function takes a fitted analyzer object, retrieves the estimated
