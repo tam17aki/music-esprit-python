@@ -154,10 +154,10 @@ class AnalyzerBase(ABC):
             return np.array([]), np.array([])
 
         # 3. Extract amplitudes and phases
-        # For a real-valued sinusoid A*cos(2*pi*f*t + phi), the complex amplitude
-        # estimated using only the positive frequency is (A/2)*exp(j*phi).
-        # Therefore, we need to multiply the magnitude by 2.
         if np.isdtype(np.float64, signal.dtype):
+            # For a real-valued sinusoid A*cos(2*pi*f*t + phi), the complex amplitude
+            # estimated using only the positive frequency is (A/2)*exp(j*phi).
+            # Therefore, we need to multiply the magnitude by 2.
             estimated_amps = 2 * np.abs(complex_amps).astype(np.float64)
         else:
             estimated_amps = np.abs(complex_amps).astype(np.float64)
