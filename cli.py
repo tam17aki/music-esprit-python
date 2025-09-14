@@ -37,14 +37,24 @@ SUBSPACE_RATIO_UPPER_BOUND = 0.5
 def print_experiment_setup(
     config: ExperimentConfig, true_params: SinusoidParameters
 ) -> None:
-    """Print the setup of the experiment."""
+    """Prints the experimental setup parameters to the console.
+
+    This function displays the configuration of the simulation world
+    (e.g., sampling frequency, SNR) and the ground truth parameters of
+    the synthesized signal in a formatted table.
+
+    Args:
+        config (ExperimentConfig):
+            An object containing the overall experimental configuration.
+        true_params (SinusoidParameters):
+            An object containing the ground truth parameters (frequencies,
+            amplitudes, phases) of the signal sources.
+    """
     sort_indices = np.argsort(true_params.frequencies)
     print("--- Experiment Setup ---")
     print(f"Sampling Frequency: {config.fs} Hz")
     print(f"Signal Duration:    {config.duration * 1000:.0f} ms")
     print(f"SNR:                {config.snr_db} dB")
-    print(f"Subspace Ratio:     {config.subspace_ratio}")
-    print(f"# of Grid Points:   {config.n_grids}")
     print(f"True Frequencies:   {true_params.frequencies[sort_indices]} Hz")
     print(f"True Amplitudes:    {true_params.amplitudes[sort_indices]}")
     print(f"True Phases:        {true_params.phases[sort_indices]} rad")
@@ -54,7 +64,21 @@ def print_results(
     analyzer: SpectralMusicAnalyzer | RootMusicAnalyzer | StandardEspritAnalyzer,
     true_params: SinusoidParameters,
 ) -> None:
-    """Print the results."""
+    """Prints the estimation results and errors from a fitted analyzer.
+
+    This function takes a fitted analyzer object, retrieves the estimated
+    parameters via its public properties (e.g., .frequencies), and
+    displays them in a formatted table alongside the estimation errors
+    calculated against the ground truth.
+
+    Args:
+        analyzer (AnalyzerBase):
+            A fitted analyzer object. It must be an instance of a class
+            that inherits from AnalyzerBase and has been run with .fit().
+        true_params (SinusoidParameters):
+            An object containing the ground truth parameters for calculating
+            the estimation errors.
+    """
     if analyzer.est_params is None:
         print("MusicAnalyzer is not fitted.")
         return
