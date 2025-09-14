@@ -70,6 +70,8 @@ def main() -> None:
         n_grids=config.n_grids,
         subspace_ratio=config.subspace_ratio,
     )
+    print(f"Subspace Ratio: {config.subspace_ratio}")
+    print(f"Grid Points: {config.n_grids}")
     spec_analyzer.fit(noisy_signal)
 
     # Print results
@@ -80,6 +82,7 @@ def main() -> None:
     root_analyzer = RootMusicAnalyzer(
         config.fs, config.n_sinusoids, subspace_ratio=config.subspace_ratio
     )
+    print(f"Subspace Ratio: {config.subspace_ratio}")
     root_analyzer.fit(noisy_signal)
 
     # Print results
@@ -87,12 +90,15 @@ def main() -> None:
 
     # Perform parameter estimation via ESPRIT
     print("\n--- Running ESPRIT ---")
+    solver = LSEspritSolver()
     esprit_analyzer = StandardEspritAnalyzer(
         config.fs,
         config.n_sinusoids,
-        LSEspritSolver(),
+        solver,
         subspace_ratio=config.subspace_ratio,
     )
+    print(f"Subspace Ratio: {config.subspace_ratio}")
+    print(f"Solver: {solver.__class__.__name__}")
     esprit_analyzer.fit(noisy_signal)
 
     # Print results
