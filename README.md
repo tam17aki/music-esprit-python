@@ -222,6 +222,7 @@ This project is organized into a modular, object-oriented structure to promote c
 -   `analyzers/`:
     A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
     -   `base.py`: Defines `AnalyzerBase`, the top-level abstract base class for all parametric estimation methods. It contains the common logic for the analysis workflow, such as the `fit` method template, subsequent amplitude/phase estimation, and result properties.
+    -   `models.py`: Defines `TypedDict` models (e.g., `AnalyzerParams`) used for structuring and type-hinting the dictionaries of hyperparameters passed to and returned by the analyzers.
     -   `music/`: A sub-package dedicated to the MUSIC algorithm and its variants.
         -   `base.py`: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
         -   `spectral.py`: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
@@ -243,7 +244,7 @@ This project is organized into a modular, object-oriented structure to promote c
 
 -   `utils/`:
     A package for reusable helper modules and data structures.
-    -   `data_models.py`: Defines the `dataclass` structures (`SinusoidParameters`, `ExperimentConfig`).
+    -   `data_models.py`: Defines the primary `dataclass` structures (`SinusoidParameters`, `ExperimentConfig`) used for signal generation and experimental setup.
     -   `signal_generator.py`: Provides functions for synthesizing test signals.
 
 -   `cli.py`:
