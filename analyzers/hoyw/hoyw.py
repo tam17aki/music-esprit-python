@@ -32,7 +32,7 @@ from scipy.signal import correlate
 
 from .._common import find_freqs_from_roots
 from ..base import AnalyzerBase
-from ..models import AnalyzerParams
+from ..models import AnalyzerParameters
 
 
 @final
@@ -205,14 +205,14 @@ class HOYWAnalyzer(AnalyzerBase):
         return ar_coeffs
 
     @override
-    def get_params(self) -> AnalyzerParams:
+    def get_params(self) -> AnalyzerParameters:
         """Returns the analyzer's hyperparameters, including spectral-specific ones.
 
         Extends the base implementation to include the 'ar_order' parameter
         specific to the HOYW method.
 
         Returns:
-            AnalyzerParams:
+            AnalyzerParameters:
                 A TypedDict containing both common and spectral-specific
                 hyperparameters.
         """
