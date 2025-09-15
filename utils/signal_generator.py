@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Defines utility functions for signal generation.
+"""A collection of functions for building test signals for parameter estimation.
+
+This module provides the complete pipeline for generating test signals,
+from creating the ground truth parameters to synthesizing the clean waveform
+and adding controlled noise. These functions are used to create the datasets
+for demonstrating and evaluating the analyzer algorithms.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
