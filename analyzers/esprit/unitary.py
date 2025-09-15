@@ -29,6 +29,7 @@ import numpy as np
 import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigh, hankel
 
+from ..models import AnalyzerParams
 from .base import EspritAnalyzerBase
 from .solvers import LSUnitaryEspritSolver, TLSUnitaryEspritSolver
 
@@ -166,3 +167,18 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
             )
 
         return np.hstack([tg_left, tg_right]).astype(np.float64)
+
+    @override
+    def get_params(self) -> AnalyzerParams:
+        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+
+        Extends the base implementation to include the name of the solver class.
+
+        Returns:
+            AnalyzerParams:
+                A TypedDict containing both common and spectral-specific
+                hyperparameters.
+        """
+        params = super().get_params()
+        params["solver"] = self.solver.__class__.__name__
+        return params
