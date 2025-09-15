@@ -47,10 +47,10 @@ class HOYWAnalyzer(AnalyzerBase):
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
             ar_order (int, optional): The order of the AR model.
-                Should be > 2*n_sinusoids. Defaults to 128*n_sinusoids.
+                Should be > 2*n_sinusoids. Defaults to 512.
         """
         super().__init__(fs, n_sinusoids)
-        self.ar_order = ar_order if ar_order is not None else 128 * self.n_sinusoids
+        self.ar_order = ar_order if ar_order is not None else 512
 
     @override
     def _estimate_frequencies(
