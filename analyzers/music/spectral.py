@@ -32,6 +32,7 @@ from numpy.fft import fft, fftfreq
 from mixins.covariance import ForwardBackwardMixin
 
 from .._common import find_peaks_from_spectrum
+from ..models import AnalyzerParams
 from .base import MusicAnalyzerBase
 
 
@@ -121,6 +122,22 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         positive_freq_mask = freq_grid >= 0
 
         return freq_grid[positive_freq_mask], music_spectrum[positive_freq_mask]
+
+    @override
+    def get_params(self) -> AnalyzerParams:
+        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+
+        Extends the base implementation to include the 'n_grids' parameter
+        specific to the Spectral MUSIC method.
+
+        Returns:
+            AnalyzerParams:
+                A TypedDict containing both common and spectral-specific
+                hyperparameters.
+        """
+        params = super().get_params()
+        params["n_grids"] = self.n_grids
+        return params
 
 
 @final
