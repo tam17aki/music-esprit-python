@@ -32,6 +32,8 @@ from scipy.linalg import LinAlgError, hankel, pinv
 
 from utils.data_models import SinusoidParameters
 
+from .models import AnalyzerParams
+
 SUBSPACE_RATIO_UPPER_BOUND = 0.5
 
 
@@ -168,6 +170,20 @@ class AnalyzerBase(ABC):
         sort_indices = np.argsort(estimated_freqs)
 
         return estimated_amps[sort_indices], estimated_phases[sort_indices]
+
+    def get_params(self) -> AnalyzerParams:
+        """Returns a dictionary of the analyzer's hyperparameters.
+
+        This method provides a standardized way to inspect the configuration
+        of an analyzer instance. Subclasses should override this method to
+        add their specific parameters.
+
+        Returns:
+            AnalyzerParams:
+                A TypedDict containing the common hyperparameters. At minimum,
+                this includes 'subspace_ratio'.
+        """
+        return AnalyzerParams(subspace_ratio=self.subspace_ratio)
 
     @property
     def frequencies(self) -> npt.NDArray[np.float64]:
