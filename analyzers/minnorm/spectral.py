@@ -32,6 +32,7 @@ from numpy.fft import fft, fftfreq
 from mixins.covariance import ForwardBackwardMixin
 
 from .._common import find_peaks_from_spectrum
+from ..models import AnalyzerParams
 from .base import MinNormAnalyzerBase
 
 
@@ -105,7 +106,8 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         """Calculate the Min-Norm pseudospectrum over a frequency grid.
 
         Args:
-            min_norm_vector (np.ndarray): The minimum norm vector (float64 or complex128).
+            min_norm_vector (np.ndarray):
+                The minimum norm vector (float64 or complex128).
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
@@ -128,6 +130,22 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         positive_freq_mask = freq_grid >= 0
 
         return freq_grid[positive_freq_mask], music_spectrum[positive_freq_mask]
+
+    @override
+    def get_params(self) -> AnalyzerParams:
+        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+
+        Extends the base implementation to include the 'n_grids' parameter
+        specific to the Spectral Min-Norm method.
+
+        Returns:
+            AnalyzerParams:
+                A TypedDict containing both common and spectral-specific
+                hyperparameters.
+        """
+        params = super().get_params()
+        params["n_grids"] = self.n_grids
+        return params
 
 
 @final
