@@ -58,6 +58,32 @@ def print_experiment_setup(
     print(f"True Phases:        {true_params.phases[sort_indices]} rad")
 
 
+def print_analyzer_info(analyzer: AnalyzerBase) -> None:
+    """Prints the specific hyperparameters of a given analyzer instance.
+
+    This function retrieves the configuration parameters from an analyzer
+    using its `get_params()` method and displays them in a human-readable
+    format. It is used to report the settings for each analysis run.
+
+    Args:
+        analyzer (AnalyzerBase):
+            The analyzer instance whose parameters are to be printed.
+            Must be an instance of a class inheriting from `AnalyzerBase`.
+    """
+    params = analyzer.get_params()
+    print("Analyzer Parameters:")
+    if not params:
+        print("  (No specific parameters)")
+        return
+    for key, value in params.items():
+        formatted_key = key.replace("_", " ").title()
+        if isinstance(value, float):
+            formatted_value = f"{value:.4f}"
+        else:
+            formatted_value = value
+        print(f"  {formatted_key}: {formatted_value}")
+
+
 def print_results(analyzer: AnalyzerBase, true_params: SinusoidParameters) -> None:
     """Prints the estimation results and errors from a fitted analyzer.
 
