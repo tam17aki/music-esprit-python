@@ -256,8 +256,6 @@ This layered design allows for maximum code reuse and easy extension.
 
 The project is built upon a flexible and extensible object-oriented architecture designed to maximize code reuse and clearly separate concerns. The class diagram below illustrates the key relationships between the components.
 
-![Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/class_diagram.png)
-
 This architecture may seem complex at first glance, but it is organized around a few core design patterns that make it powerful and maintainable.
 
 ### 1. The Analyzer Hierarchy (Inheritance)
