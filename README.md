@@ -254,37 +254,29 @@ This layered design allows for maximum code reuse and easy extension.
 
 ## Architecture Overview
 
-The project is built upon a flexible and extensible object-oriented architecture designed to maximize code reuse and clearly separate concerns. The class diagram below illustrates the key relationships between the components.
+The project is built upon a flexible and extensible object-oriented architecture. The core of the library is a hierarchical system of analyzer classes, designed to maximize code reuse and clearly separate concerns.
 
-![Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/complete_class_diagram.png)
+The class diagram below illustrates the main **inheritance relationships** between the analyzer classes.
 
-This architecture may seem complex at first glance, but it is organized around a few core design patterns that make it powerful and maintainable.
+![Simple Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/simple_class_diagram.png)
+<p style="text-align: center;">
+  Fig. 1: Primary inheritance hierarchy of the analyzer classes
+</p>
 
-### 1. The Analyzer Hierarchy (Inheritance)
+As shown, all analyzers inherit from a common `AnalyzerBase`, ensuring a consistent API. Specialized abstract classes like `MusicAnalyzerBase` and `EspritAnalyzerBase` group together logic common to each algorithm family.
 
-The core of the library is the `Analyzer` class hierarchy.
+### Key Design Patterns
 
--   **`AnalyzerBase`**: The top-level abstract class that defines the common API (`.fit()`, `.frequencies`, etc.) for all estimation methods.
--   **Intermediate Bases (`MusicAnalyzerBase`, `EspritAnalyzerBase`, `MinNormAnalyzerBase`)**: These classes group together logic that is common to a specific family of algorithms (e.g., estimating the noise subspace for all MUSIC variants).
--   **Concrete Analyzers (`SpectralMusicAnalyzer`, `StandardEspritAnalyzer`, etc.)**: These are the final, usable classes that implement a specific algorithm.
+Beyond this basic inheritance, the architecture leverages several key design patterns to add features and flexibility in a modular way.
 
-### 2. Feature Enhancement via Mixins (Composition)
+-   **Mixin Classes for Feature Enhancement**: Optional features, such as Forward-Backward averaging, are added to concrete analyzers using **Mixin classes** (e.g., `ForwardBackwardMixin`). This allows for functionality to be added via composition, avoiding a rigid and deep inheritance tree. For example, `SpectralMusicAnalyzerFB` is created by combining `SpectralMusicAnalyzer` and the `ForwardBackwardMixin`.
 
-Instead of creating a rigid and deep inheritance tree, optional features are added using **Mixin classes**.
+-   **Strategy Pattern for Decoupling**: The ESPRIT algorithm's core numerical procedure is decoupled from the main analyzer class. The `StandardEspritAnalyzer` and `UnitaryEspritAnalyzer` delegate the final mathematical solve to separate **`Solver` objects** (`LSEspritSolver`, `TLSUnitaryEspritSolver`, etc.). This allows different numerical solution strategies to be flexibly "plugged in."
 
--   **`ForwardBackwardMixin`**: This class provides an enhanced `_build_covariance_matrix` method. Any analyzer that inherits from this mixin (e.g., `SpectralMusicAnalyzerFB`) automatically gains the benefits of Forward-Backward averaging for improved accuracy, without duplicating code.
+The complete architecture, including these mixin and composition relationships, is shown in the detailed class diagram below for those interested in the full implementation details.
 
-### 3. Decoupling with the Strategy Pattern
-
-The ESPRIT algorithm's core numerical procedure is decoupled from the main analyzer class using the **Strategy pattern**.
-
--   **`_UnitaryEspritHelpers` & `Solver` Classes**: The `StandardEspritAnalyzer` and `UnitaryEspritAnalyzer` do not perform the final mathematical solve themselves. Instead, they delegate this task to a separate **`Solver`** object (`LSEspritSolver`, `TLSUnitaryEspritSolver`, etc.). This allows different numerical solution strategies to be "plugged in" and tested independently.
-
-### 4. Data Modeling
-
--   **`SinusoidParameters` & `AnalyzerParameters`**: `dataclass` and `TypedDict` are used to create robust, type-safe models for representing signal parameters and algorithm configurations, ensuring data integrity throughout the system.
-
-This design allows for easy extension: adding a new algorithm is often a matter of creating a new concrete analyzer class that inherits the appropriate base and mixins, while reusing the existing, well-tested components.
+![Complete Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/complete_class_diagram.png)
+*(Fig. 2: Detailed class diagram including Mixins, Solvers, and Data Models)*
 
 ## Theoretical Background
 
