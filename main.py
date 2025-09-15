@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
-"""A demonstration of parameter estimation for sinusoidal signals.
+"""A demonstration script for sinusoidal parameter estimation.
 
-Frequencies are estimated using the MUSIC and ESPRIT algorithm, followed by
-amplitude and phase estimation via the least squares method.
+This script runs a comparative analysis of high-resolution parameter estimation
+algorithms:
+- MUSIC (Spectral and Root)
+- ESPRIT (Standard LS)
+
+For each method, it estimates the frequencies, amplitudes, and phases of
+sinusoidal components in a noisy signal and reports the estimation errors.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
