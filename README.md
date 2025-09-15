@@ -267,9 +267,13 @@ As shown, all analyzers inherit from a common `AnalyzerBase`, ensuring a consist
 
 Beyond this basic inheritance, the architecture leverages several key design patterns to add features and flexibility in a modular way.
 
--   **Mixin Classes for Feature Enhancement**: Optional features, such as Forward-Backward averaging, are added to concrete analyzers using **Mixin classes** (e.g., `ForwardBackwardMixin`). This allows for functionality to be added via composition, avoiding a rigid and deep inheritance tree. For example, `SpectralMusicAnalyzerFB` is created by combining `SpectralMusicAnalyzer` and the `ForwardBackwardMixin`.
+-   **Strategy Pattern for Decoupling**: The ESPRIT algorithm's core numerical procedure is decoupled from the main analyzer class. The analyzers delegate this task to separate **`Solver`** objects (`LSEspritSolver`, `TLSUnitaryEspritSolver`, etc.), allowing different numerical solution strategies to be flexibly "plugged in."
 
--   **Strategy Pattern for Decoupling**: The ESPRIT algorithm's core numerical procedure is decoupled from the main analyzer class. The `StandardEspritAnalyzer` and `UnitaryEspritAnalyzer` delegate the final mathematical solve to separate **`Solver` objects** (`LSEspritSolver`, `TLSUnitaryEspritSolver`, etc.). This allows different numerical solution strategies to be flexibly "plugged in."
+-   **Mixin Classes for Feature Enhancement**: Optional features, such as Forward-Backward averaging, are added to concrete analyzers using **Mixin classes** (e.g., `ForwardBackwardMixin`). This allows for functionality to be added via composition, avoiding a rigid and deep inheritance tree.
+
+-   **Structured Data Modeling**: Instead of passing around numerous individual variables, the project utilizes `dataclasses` and `TypedDicts` to create robust, type-safe data models.
+    -   `ExperimentConfig` and `SinusoidParameters` (`dataclasses`): These immutable objects represent the state of the simulation world and the signal's parameters, ensuring data integrity.
+    -   `AnalyzerParameters` (`TypedDict`): This defines a clear and type-safe structure for the dictionaries of hyperparameters returned by the analyzers' `.get_params()` method.
 
 The complete architecture, including these mixin and composition relationships, is shown in the detailed class diagram below for those interested in the full implementation details.
 
