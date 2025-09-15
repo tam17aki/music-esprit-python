@@ -88,11 +88,10 @@ def main() -> None:
     print_results(root_analyzer, true_params)
 
     print("\n--- Running ESPRIT ---")
-    solver = LSEspritSolver()
     esprit_analyzer = StandardEspritAnalyzer(
         config.fs,
         config.n_sinusoids,
-        solver,
+        LSEspritSolver(),
         subspace_ratio=config.subspace_ratio,
     )
     print_analyzer_info(esprit_analyzer)
