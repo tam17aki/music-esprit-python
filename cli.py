@@ -72,15 +72,15 @@ def print_analyzer_info(analyzer: AnalyzerBase) -> None:
     """
     params = analyzer.get_params()
     print("Analyzer Parameters:")
-    if not params:
-        print("  (No specific parameters)")
+    if not any(params):  # Check if the dictionary is empty
+        print("  (No specific parameters to display)")
         return
     for key, value in params.items():
         formatted_key = key.replace("_", " ").title()
         if isinstance(value, float):
             formatted_value = f"{value:.4f}"
         else:
-            formatted_value = value
+            formatted_value = str(value)
         print(f"  {formatted_key}: {formatted_value}")
 
 
