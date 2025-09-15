@@ -31,7 +31,7 @@ from scipy.linalg import LinAlgError, eigh
 
 from mixins.covariance import ForwardBackwardMixin
 
-from ..models import AnalyzerParams
+from ..models import AnalyzerParameters
 from .base import EspritAnalyzerBase
 from .solvers import LSEspritSolver, TLSEspritSolver
 
@@ -113,13 +113,13 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
         return signal_subspace.astype(np.complex128)
 
     @override
-    def get_params(self) -> AnalyzerParams:
+    def get_params(self) -> AnalyzerParameters:
         """Returns the analyzer's hyperparameters, including spectral-specific ones.
 
         Extends the base implementation to include the name of the solver class.
 
         Returns:
-            AnalyzerParams:
+            AnalyzerParameters:
                 A TypedDict containing both common and spectral-specific
                 hyperparameters.
         """
