@@ -243,8 +243,10 @@ This project is organized into a modular, object-oriented structure to promote c
     -   `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
 
 -   `utils/`:
-    A package for reusable helper modules and data structures.
-    -   `data_models.py`: Defines the primary `dataclass` structures (`SinusoidParameters`, `ExperimentConfig`) used for signal generation and experimental setup.
+    A package for reusable helper modules and data structures that are decoupled from the specific analyzer implementations.
+    -   `data_models.py`: Defines the core `dataclass` models for the project.
+        -   `ExperimentConfig`: Encapsulates all parameters for a simulation run (e.g., SNR, duration), defining the "world" in which the signals exist.
+        -   `SinusoidParameters`: Represents the ground truth or estimated parameters of a signal, serving as the data "payload" that is generated and analyzed.
     -   `signal_generator.py`: Provides functions for synthesizing test signals.
 
 -   `cli.py`:
@@ -271,9 +273,7 @@ Beyond this basic inheritance, the architecture leverages several key design pat
 
 -   **Mixin Classes for Feature Enhancement**: Optional features, such as Forward-Backward averaging, are added to concrete analyzers using **Mixin classes** (e.g., `ForwardBackwardMixin`). This allows for functionality to be added via composition, avoiding a rigid and deep inheritance tree.
 
--   **Structured Data Modeling**: Instead of passing around numerous individual variables, the project utilizes `dataclasses` and `TypedDicts` to create robust, type-safe data models.
-    -   `ExperimentConfig` and `SinusoidParameters` (`dataclasses`): These immutable objects represent the state of the simulation world and the signal's parameters, ensuring data integrity.
-    -   `AnalyzerParameters` (`TypedDict`): This defines a clear and type-safe structure for the dictionaries of hyperparameters returned by the analyzers' `.get_params()` method.
+-   **Structured Data Modeling**: Within the analyzer hierarchy, the `get_params()` method returns a `TypedDict` model (`AnalyzerParameters`) instead of a plain dictionary. This provides a clear, type-safe, and self-documenting structure for reporting the analyzers' hyperparameters.
 
 The complete architecture, including these mixin and composition relationships, is shown in the detailed class diagram below for those interested in the full implementation details.
 
