@@ -29,7 +29,7 @@ SOFTWARE.
 from typing import NotRequired, TypedDict
 
 
-class AnalyzerParams(TypedDict):
+class AnalyzerParameters(TypedDict):
     """A TypedDict model for the dictionary returned by `AnalyzerBase.get_params()`.
 
     This structure defines the set of all possible hyperparameters that can be
