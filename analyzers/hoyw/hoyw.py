@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines HOYWAnalyzer class for Higher-Order Yule-Walker (HOYW) method.
+"""Defines HoywAnalyzer class for Higher-Order Yule-Walker (HOYW) method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -36,7 +36,7 @@ from ..models import AnalyzerParameters
 
 
 @final
-class HOYWAnalyzer(AnalyzerBase):
+class HoywAnalyzer(AnalyzerBase):
     """Parameter analyzer using the Higher-Order Yule-Walker (HOYW) method."""
 
     def __init__(
