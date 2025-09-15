@@ -32,7 +32,7 @@ from numpy.fft import fft, fftfreq
 from mixins.covariance import ForwardBackwardMixin
 
 from .._common import find_peaks_from_spectrum
-from ..models import AnalyzerParams
+from ..models import AnalyzerParameters
 from .base import MinNormAnalyzerBase
 
 
@@ -132,14 +132,14 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         return freq_grid[positive_freq_mask], music_spectrum[positive_freq_mask]
 
     @override
-    def get_params(self) -> AnalyzerParams:
+    def get_params(self) -> AnalyzerParameters:
         """Returns the analyzer's hyperparameters, including spectral-specific ones.
 
         Extends the base implementation to include the 'n_grids' parameter
         specific to the Spectral Min-Norm method.
 
         Returns:
-            AnalyzerParams:
+            AnalyzerParameters:
                 A TypedDict containing both common and spectral-specific
                 hyperparameters.
         """
