@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Defines SinusoidParameters and ExperimentConfig classes.
+"""Defines core data structures for the project using dataclasses.
+
+This module centralizes the definitions of immutable data models that are
+shared across different parts of the application, such as the signal
+generator and the analyzers.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
