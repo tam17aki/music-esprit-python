@@ -237,7 +237,7 @@ This project is organized into a modular, object-oriented structure to promote c
         -   `spectral.py`: Implements `SpectralMinNormAnalyzer`, which estimates frequencies via spectral peak-picking.
         -   `root.py`: Implements `RootMinNormAnalyzer`, which estimates frequencies via polynomial rooting.
     -   `hoyw/`: A sub-package for the Higher-Order Yule-Walker (HOYW) method.
-        -   `hoyw.py`: Implements `HOYWAnalyzer`, which directly inherits from `AnalyzerBase`. It estimates frequencies by solving the HOYW equations and subsequent finding the polynomial roots.
+        -   `hoyw.py`: Implements `HoywAnalyzer`, which directly inherits from `AnalyzerBase`. It estimates frequencies by solving the HOYW equations and subsequent finding the polynomial roots.
 -   `mixins/`:
     A package for providing optional enhancements to the analyzer classes through multiple inheritance.
     -   `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
