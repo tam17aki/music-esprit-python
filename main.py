@@ -31,7 +31,7 @@ from analyzers.esprit.solvers import LSEspritSolver
 from analyzers.esprit.standard import StandardEspritAnalyzer
 from analyzers.music.root import RootMusicAnalyzer
 from analyzers.music.spectral import SpectralMusicAnalyzer
-from cli import parse_args, print_experiment_setup, print_results
+from cli import parse_args, print_analyzer_info, print_experiment_setup, print_results
 from utils.data_models import ExperimentConfig
 from utils.signal_generator import create_true_parameters, generate_test_signal
 
@@ -70,8 +70,7 @@ def main() -> None:
         n_grids=config.n_grids,
         subspace_ratio=config.subspace_ratio,
     )
-    print(f"Subspace Ratio: {config.subspace_ratio}")
-    print(f"Grid Points: {config.n_grids}")
+    print_analyzer_info(spec_analyzer)
     spec_analyzer.fit(noisy_signal)
 
     # Print results
@@ -82,7 +81,7 @@ def main() -> None:
     root_analyzer = RootMusicAnalyzer(
         config.fs, config.n_sinusoids, subspace_ratio=config.subspace_ratio
     )
-    print(f"Subspace Ratio: {config.subspace_ratio}")
+    print_analyzer_info(root_analyzer)
     root_analyzer.fit(noisy_signal)
 
     # Print results
@@ -97,8 +96,7 @@ def main() -> None:
         solver,
         subspace_ratio=config.subspace_ratio,
     )
-    print(f"Subspace Ratio: {config.subspace_ratio}")
-    print(f"Solver: {solver.__class__.__name__}")
+    print_analyzer_info(esprit_analyzer)
     esprit_analyzer.fit(noisy_signal)
 
     # Print results
