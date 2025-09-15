@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Helper functions for command line arguments and priting results.
+"""Defines the Command-Line Interface (CLI) for the demonstration script.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -127,7 +127,16 @@ def print_results(analyzer: AnalyzerBase, true_params: SinusoidParameters) -> No
 
 
 def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments for MUSIC demo."""
+    """Parses and validates command-line arguments for the main demo script.
+
+    Configures an ArgumentParser to accept settings for the signal synthesis
+    (e.g., SNR, frequencies) and for the various analyzer algorithms
+    (e.g., subspace ratio, number of grids).
+
+    Returns:
+        argparse.Namespace:
+            An object containing the parsed and validated command-line arguments.
+    """
     parser = argparse.ArgumentParser(
         description="Parameter estimation demo using MUSIC algorithm."
     )
