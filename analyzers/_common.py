@@ -49,10 +49,10 @@ def find_peaks_from_spectrum(
     """
     # 1. Find all "local maxima" as peak candidates.
     #    Ignores extremely small noise floor fluctuations.
-    all_peaks, _ = find_peaks(
+    _all_peaks, _ = find_peaks(
         spectrum, height=np.median(spectrum), prominence=np.std(spectrum) / 2.0
     )
-    all_peaks = np.array(all_peaks, dtype=np.int64)
+    all_peaks = np.array(_all_peaks)
     if all_peaks.size < n_sinusoids:
         return freq_grid[all_peaks] if all_peaks.size > 0 else np.array([])
 
