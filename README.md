@@ -252,6 +252,40 @@ This project is organized into a modular, object-oriented structure to promote c
 
 This layered design allows for maximum code reuse and easy extension.
 
+## Architecture Overview
+
+The project is built upon a flexible and extensible object-oriented architecture designed to maximize code reuse and clearly separate concerns. The class diagram below illustrates the key relationships between the components.
+
+![Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/class_diagram.png)
+
+This architecture may seem complex at first glance, but it is organized around a few core design patterns that make it powerful and maintainable.
+
+### 1. The Analyzer Hierarchy (Inheritance)
+
+The core of the library is the `Analyzer` class hierarchy.
+
+-   **`AnalyzerBase`**: The top-level abstract class that defines the common API (`.fit()`, `.frequencies`, etc.) for all estimation methods.
+-   **Intermediate Bases (`MusicAnalyzerBase`, `EspritAnalyzerBase`, `MinNormAnalyzerBase`)**: These classes group together logic that is common to a specific family of algorithms (e.g., estimating the noise subspace for all MUSIC variants).
+-   **Concrete Analyzers (`SpectralMusicAnalyzer`, `StandardEspritAnalyzer`, etc.)**: These are the final, usable classes that implement a specific algorithm.
+
+### 2. Feature Enhancement via Mixins (Composition)
+
+Instead of creating a rigid and deep inheritance tree, optional features are added using **Mixin classes**.
+
+-   **`ForwardBackwardMixin`**: This class provides an enhanced `_build_covariance_matrix` method. Any analyzer that inherits from this mixin (e.g., `SpectralMusicAnalyzerFB`) automatically gains the benefits of Forward-Backward averaging for improved accuracy, without duplicating code.
+
+### 3. Decoupling with the Strategy Pattern
+
+The ESPRIT algorithm's core numerical procedure is decoupled from the main analyzer class using the **Strategy pattern**.
+
+-   **`_UnitaryEspritHelpers` & `Solver` Classes**: The `StandardEspritAnalyzer` and `UnitaryEspritAnalyzer` do not perform the final mathematical solve themselves. Instead, they delegate this task to a separate **`Solver`** object (`LSEspritSolver`, `TLSUnitaryEspritSolver`, etc.). This allows different numerical solution strategies to be "plugged in" and tested independently.
+
+### 4. Data Modeling
+
+-   **`SinusoidParameters` & `AnalyzerParameters`**: `dataclass` and `TypedDict` are used to create robust, type-safe models for representing signal parameters and algorithm configurations, ensuring data integrity throughout the system.
+
+This design allows for easy extension: adding a new algorithm is often a matter of creating a new concrete analyzer class that inherits the appropriate base and mixins, while reusing the existing, well-tested components.
+
 ## Theoretical Background
 
 The implemented methods are **model-based** high-resolution techniques that estimate sinusoidal parameters by fitting the observed signal to a predefined mathematical model. This approach allows for performance far exceeding that of traditional non-parametric methods like the FFT.
