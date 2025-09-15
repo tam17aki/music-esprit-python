@@ -259,9 +259,7 @@ The project is built upon a flexible and extensible object-oriented architecture
 The class diagram below illustrates the main **inheritance relationships** between the analyzer classes.
 
 ![Simple Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/simple_class_diagram.png)
-<p style="text-align: center;">
-  Fig. 1: Primary inheritance hierarchy of the analyzer classes
-</p>
+*(Fig. 1: Primary inheritance hierarchy of the analyzer classes)*
 
 As shown, all analyzers inherit from a common `AnalyzerBase`, ensuring a consistent API. Specialized abstract classes like `MusicAnalyzerBase` and `EspritAnalyzerBase` group together logic common to each algorithm family.
 
