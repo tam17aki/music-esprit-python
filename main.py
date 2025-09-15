@@ -43,6 +43,7 @@ from utils.signal_generator import create_true_parameters, generate_test_signal
 
 def main() -> None:
     """Perform demonstration."""
+    # --- 1. Setup Configuration ---
     args = parse_args()
     config = ExperimentConfig(
         fs=args.fs,
@@ -54,7 +55,7 @@ def main() -> None:
         n_grids=args.n_grids,
     )
 
-    # Generate test signals (sum of multiple sinusoids with additive noise)
+    # --- 2. Generate Test Signal ---
     true_params = create_true_parameters(config)
     noisy_signal = generate_test_signal(
         config.fs,
@@ -64,10 +65,9 @@ def main() -> None:
         is_complex=args.complex,
     )
 
-    # Print the experiment setup
+    # --- 3. Print Setup and Run Analyses ---
     print_experiment_setup(config, true_params)
 
-    # Perform parameter estimation via Spectral MUSIC
     print("\n--- Running Spectral MUSIC ---")
     spec_analyzer = SpectralMusicAnalyzer(
         config.fs,
@@ -77,22 +77,16 @@ def main() -> None:
     )
     print_analyzer_info(spec_analyzer)
     spec_analyzer.fit(noisy_signal)
-
-    # Print results
     print_results(spec_analyzer, true_params)
 
-    # Perform parameter estimation via Root MUSIC
     print("\n--- Running Root MUSIC ---")
     root_analyzer = RootMusicAnalyzer(
         config.fs, config.n_sinusoids, subspace_ratio=config.subspace_ratio
     )
     print_analyzer_info(root_analyzer)
     root_analyzer.fit(noisy_signal)
-
-    # Print results
     print_results(root_analyzer, true_params)
 
-    # Perform parameter estimation via ESPRIT
     print("\n--- Running ESPRIT ---")
     solver = LSEspritSolver()
     esprit_analyzer = StandardEspritAnalyzer(
@@ -103,8 +97,6 @@ def main() -> None:
     )
     print_analyzer_info(esprit_analyzer)
     esprit_analyzer.fit(noisy_signal)
-
-    # Print results
     print_results(esprit_analyzer, true_params)
 
 
