@@ -280,8 +280,6 @@ Beyond this basic inheritance, the architecture leverages several key design pat
 The complete architecture, including these mixin and composition relationships, is shown in the detailed class diagram below for those interested in the full implementation details.
 
 ![Complete Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/complete_class_diagram.png)
-<div align="center"><img src="https://github.com/tam17aki/music-esprit-python/blob/main/class_diagram_solvers.png" width="54%"></div>
-
 *<div align="center">Fig. 2: Detailed class diagram including Mixins, Solvers, and Data Models</div>* 
 
 ## Theoretical Background
