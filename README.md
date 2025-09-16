@@ -260,7 +260,7 @@ The project is built upon a flexible and extensible object-oriented architecture
 
 The class diagram below illustrates the main **inheritance relationships** between the analyzer classes.
 
-![Simple Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/simple_class_diagram.png)
+![Simple Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/docs/images/simple_class_diagram.png)
 *<div align="center">Fig. 1: Primary inheritance hierarchy of the analyzer classes</div>*
 
 As shown, all analyzers inherit from a common `AnalyzerBase`, ensuring a consistent API. Specialized abstract classes like `MusicAnalyzerBase` and `EspritAnalyzerBase` group together logic common to each algorithm family.
@@ -279,7 +279,7 @@ Beyond this basic inheritance, the architecture leverages several key design pat
 
 The complete architecture, including these mixin and composition relationships, is shown in the detailed class diagram below for those interested in the full implementation details.
 
-![Complete Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/complete_class_diagram.png)
+![Complete Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/docs/images/complete_class_diagram.png)
 *<div align="center">Fig. 2: Detailed class diagram including Mixins, Solvers, and Data Models</div>* 
 
 ## Theoretical Background
