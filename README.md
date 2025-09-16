@@ -273,7 +273,9 @@ Beyond this basic inheritance, the architecture leverages several key design pat
 
 -   **Mixin Classes for Feature Enhancement**: Optional features, such as Forward-Backward averaging, are added to concrete analyzers using **Mixin classes** (e.g., `ForwardBackwardMixin`). This allows for functionality to be added via composition, avoiding a rigid and deep inheritance tree.
 
--   **Structured Data Modeling**: Within the analyzer hierarchy, the `get_params()` method returns a `TypedDict` model (`AnalyzerParameters`) instead of a plain dictionary. This provides a clear, type-safe, and self-documenting structure for reporting the analyzers' hyperparameters.
+-   **Structured Data Modeling**: The project heavily utilizes Python's typing features to create robust and self-documenting data structures.
+    -   **Analyzer's Public API (`get_params`)**: The `.get_params()` method returns a `TypedDict` model (`AnalyzerParameters`) instead of a plain dictionary. This provides a clear, type-safe structure for reporting the analyzers' hyperparameters.
+    -   **Analyzer's State (`est_params`)**: The estimation results are stored in an immutable `dataclass` object, `SinusoidParameters`. This encapsulates the output data (frequencies, amplitudes, phases) and ensures that the results, once computed, cannot be accidentally modified.
 
 The complete architecture, including these mixin and composition relationships, is shown in the detailed class diagram below for those interested in the full implementation details.
 
