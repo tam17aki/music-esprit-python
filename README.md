@@ -216,33 +216,33 @@ unitary_freqs = unitary_esprit_analyzer.frequencies
 
 This project is organized into a modular, object-oriented structure to promote clarity, reusability, and separation of concerns. The core logic is built upon a hierarchical class system.
 
-- `main.py`: The main entry point to run demonstrations. It orchestrates the setup, execution, and result presentation of the analysis.
-- `analyzers/`: A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
-  - `base.py`: Defines `AnalyzerBase`, the top-level abstract base class for all parametric estimation methods. It contains the common logic for the analysis workflow, such as the `fit` method template, subsequent amplitude/phase estimation, and result properties.
-  - `models.py`: Defines `TypedDict` models (e.g., `AnalyzerParameters`) used for structuring and type-hinting the dictionaries of hyperparameters passed to and returned by the analyzers.
-  - `music/`: A sub-package dedicated to the MUSIC algorithm and its variants.
-    - `base.py`: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
-    - `spectral.py`: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
-    - `root.py`: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
-  - `esprit/`: A sub-package dedicated to the ESPRIT algorithm and its variants, including the computationally efficient Unitary ESPRIT.
-    - `base.py`:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
-    - `standard.py`: Implements `StandardEspritAnalyzer` for the classic, complex-valued ESPRIT algorithm.
-    - `unitary.py`: Implements `UnitaryEspritAnalyzer`, which operates entirely on real-valued matrices for reduced computational load and improved accuracy.
-    - `solvers.py`: Defines a set of solver classes that encapsulate the specific mathematical procedures for solving the ESPRIT core equations. This demonstrates the Strategy design pattern, allowing different numerical methods (LS, TLS, Unitary LS/TLS) to be flexibly injected into the analyzers.
-  - `minnorm/`: A sub-package for Min-Norm algorithm variants.
-    - `base.py`: Defines `MinNormAnalyzerBase`, containing the core logic for computing the minimum norm vector.
-    - `spectral.py`: Implements `SpectralMinNormAnalyzer`, which estimates frequencies via spectral peak-picking.
-    - `root.py`: Implements `RootMinNormAnalyzer`, which estimates frequencies via polynomial rooting.
-  - `hoyw/`: A sub-package for the Higher-Order Yule-Walker (HOYW) method.
-     - `hoyw.py`: Implements `HoywAnalyzer`, which directly inherits from `AnalyzerBase`. It estimates frequencies by solving the HOYW equations and subsequent finding the polynomial roots.
-- `mixins/`: A package for providing optional enhancements to the analyzer classes through multiple inheritance.
-  - `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
-- `utils/`: A package for reusable helper modules and data structures that are decoupled from the specific analyzer implementations.
-  - `data_models.py`: Defines the core `dataclass` models for the project.
+- **`main.py`**: The main entry point to run demonstrations. It orchestrates the setup, execution, and result presentation of the analysis.
+- **`analyzers/`**: A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
+  - **`base.py`**: Defines `AnalyzerBase`, the top-level abstract base class for all parametric estimation methods. It contains the common logic for the analysis workflow, such as the `fit` method template, subsequent amplitude/phase estimation, and result properties.
+  - **`models.py`**: Defines `TypedDict` models (e.g., `AnalyzerParameters`) used for structuring and type-hinting the dictionaries of hyperparameters passed to and returned by the analyzers.
+  - **`music/`**: A sub-package dedicated to the MUSIC algorithm and its variants.
+    - **`base.py`**: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
+    - **`spectral.py`**: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
+    - **`root.py`**: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
+  - **`esprit/`**: A sub-package dedicated to the ESPRIT algorithm and its variants, including the computationally efficient Unitary ESPRIT.
+    - **`base.py`**:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
+    - **`standard.py`**: Implements `StandardEspritAnalyzer` for the classic, complex-valued ESPRIT algorithm.
+    - **`unitary.py`**: Implements `UnitaryEspritAnalyzer`, which operates entirely on real-valued matrices for reduced computational load and improved accuracy.
+    - **`solvers.py`**: Defines a set of solver classes that encapsulate the specific mathematical procedures for solving the ESPRIT core equations. This demonstrates the Strategy design pattern, allowing different numerical methods (LS, TLS, Unitary LS/TLS) to be flexibly injected into the analyzers.
+  - **`minnorm/`**: A sub-package for Min-Norm algorithm variants.
+    - **`base.py`**: Defines `MinNormAnalyzerBase`, containing the core logic for computing the minimum norm vector.
+    - **`spectral.py`**: Implements `SpectralMinNormAnalyzer`, which estimates frequencies via spectral peak-picking.
+    - **`root.py`**: Implements `RootMinNormAnalyzer`, which estimates frequencies via polynomial rooting.
+  - **`hoyw/`**: A sub-package for the Higher-Order Yule-Walker (HOYW) method.
+     - **`hoyw.py`**: Implements `HoywAnalyzer`, which directly inherits from `AnalyzerBase`. It estimates frequencies by solving the HOYW equations and subsequent finding the polynomial roots.
+- **`mixins/`**: A package for providing optional enhancements to the analyzer classes through multiple inheritance.
+  - **`covariance.py`**: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
+- **`utils/`**: A package for reusable helper modules and data structures that are decoupled from the specific analyzer implementations.
+  - **`data_models.py`**: Defines the core `dataclass` models for the project.
     - `ExperimentConfig`: Encapsulates all parameters for a simulation run (e.g., SNR, duration), defining the "world" in which the signals exist.
     - `SinusoidParameters`: Represents the ground truth or estimated parameters of a signal, serving as the data "payload" that is generated and analyzed.
-  - `signal_generator.py`: Provides functions for synthesizing test signals.
-- `cli.py`: A module dedicated to the Command-Line Interface. It handles argument parsing and the formatting of results for display.
+  - **`signal_generator.py`**: Provides functions for synthesizing test signals.
+- **`cli.py`**: A module dedicated to the Command-Line Interface. It handles argument parsing and the formatting of results for display.
 
 This layered design allows for maximum code reuse and easy extension.
 
