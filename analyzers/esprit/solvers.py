@@ -46,7 +46,7 @@ class LSEspritSolver:
 
         Args:
             signal_subspace (np.ndarray):
-                The complex-valued signal subspace `Es`. Shape: (L, 2M).
+                The signal subspace `Es` (float64 or complex128). Shape: (L, 2M).
 
         Returns:
             np.ndarray:
