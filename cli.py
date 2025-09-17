@@ -85,7 +85,7 @@ def print_analyzer_info(analyzer: AnalyzerBase) -> None:
 
 
 def print_results(analyzer: AnalyzerBase, true_params: SinusoidParameters) -> None:
-    """Prints the estimation results and errors from a fitted analyzer.
+    """Print the estimation results and errors from a fitted analyzer.
 
     This function takes a fitted analyzer object, retrieves the estimated
     parameters via its public properties (e.g., .frequencies), and
