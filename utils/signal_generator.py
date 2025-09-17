@@ -122,12 +122,12 @@ def add_awgn(
     """Add Additive White Gaussian Noise (AWGN) to a given signal.
 
     Args:
-        signal (np.ndarray): Input clean signal.
+        signal (np.ndarray): Input clean signal (float64 or complex128).
         snr_db (float): Target signal-to-noise ratio in dB.
         rng (np.random.Generator, optional): Random generator.
 
     Returns:
-        np.ndarray: Noisy signal with specified SNR.
+        np.ndarray: Noisy signal with specified SNR (float64 or complex128).
     """
     if rng is None:
         rng = np.random.default_rng()
