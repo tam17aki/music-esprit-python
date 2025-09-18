@@ -66,12 +66,15 @@ class AnalyzerBase(ABC):
     def fit(self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]) -> Self:
         """Run the full parameter estimation process.
 
+        This method takes an input signal, runs the complete estimation workflow
+        defined by the specific analyzer subclass, and stores the results in
+        the `est_params` attribute.
+
         Args:
             signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
-            Self@AnalyzerBase: The fitted object.
-                Returns empty result if estimation fails.
+            Self: The analyzer instance itself (for method chaining).
         """
         n_samples = signal.size
         model_order = 2 * self.n_sinusoids
