@@ -181,7 +181,7 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
            subspace_dim (int): Dimension of signal subspace.
 
         Returns:
-           tuple[np.ndarray, np.ndarray]: The selection matrices K1 and K2.
+           tuple[np.ndarray, np.ndarray]: The selection matrices K1 and K2 (float64).
         """
         m_prime = subspace_dim - 1  # Subarray size
 
