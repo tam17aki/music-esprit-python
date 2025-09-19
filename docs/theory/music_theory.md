@@ -31,10 +31,10 @@ This is achieved by creating delay vectors. We first define a subspace dimension
 - $\mathbf{v}_2 = [x[2], x[3], ..., x[L+1]]^{\top}$
 - $\ldots$
 
-These vectors $v\_{i}$ can be viewed as "snapshots" of $L$ consecutive samples of the signal. The subspace dimension $L$ is a key parameter that affects the analysis.
+These vectors $\mathbf{v}\_{i}$ can be viewed as "snapshots" of $L$ consecutive samples of the signal. The subspace dimension $L$ is a key parameter that affects the analysis.
 
 ### 2.2 Defining the Covariance Matrix
-The covariance matrix $R\_x$ represents the average correlation between these snapshot vectors. Mathematically, it is defined as the expected value of the outer product of a snapshot vector $v_{i}$ with its Hermitian conjugate $v\_{i}^{H}$ (also denoted as $v\_{i}^{*}$).
+The covariance matrix $\mathbf{R}\_x$ represents the average correlation between these snapshot vectors. Mathematically, it is defined as the expected value of the outer product of a snapshot vector $\mathbf{v}_{i}$ with its Hermitian conjugate $\mathbf{v}\_{i}^{H}$ (also denoted as $\mathbf{v}\_{i}^{*}$).
 
 $$
 \mathbf{R}_x = \mathbb{E}[\mathbf{v}_{i} \mathbf{v}_{i}^{H}]
