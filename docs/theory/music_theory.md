@@ -163,6 +163,53 @@ $$
 This can be compactly written as $\mathbf{a}(\omega\_k)^{H} \mathbf{E}\_n \approx \mathbf{0}$. Since $\mathbf{a}(\omega\_k)$ belongs to the signal subspace, this demonstrates that $\mathbf{E}\_s$ and $\mathbf{E}\_n$ are approximately orthogonal. This orthogonality is the key property exploited by the MUSIC algorithm.
 
 
+## 5. Two Approaches to Frequency Estimation
+Once the noise subspace $\mathbf{E}\_n$ has been estimated, there are two primary approaches to using its orthogonality property to estimate the signal frequencies.
+
+### 5.1. Spectral MUSIC: The Peak-Picking Approach
+
+The Spectral MUSIC approach involves computing a **pseudospectrum** over a predefined grid of discrete frequency points and then searching for its peaks. This pseudospectrum is defined to evaluate the orthogonality:
+
+$$
+\widehat{P}_{MU}(\omega) = \frac{1}{\mathbf{a}(\omega)^{H} \mathbf{E}_n \mathbf{E}_n^{H} \mathbf{a}(\omega)}
+$$
+
+At a true normalized angular frequency $\omega\_k$, the steering vector $\mathbf{a}(\omega\_k)$ is orthogonal to the noise subspace $\mathbf{E}\_n$. Consequently, the denominator approaches zero, causing a sharp peak to appear in the MUSIC spectrum $\widehat{P}\_{\text{MU}}(\omega)$. By searching for the locations of these peaks, we can obtain estimates of the normalized angular frequencies, $\widehat{\omega}\_k$.
+
+Finally, these are converted to estimates of the physical frequencies in Hz, $\widehat{f}\_k$:
+
+$$
+\widehat{f}\_k = \frac{F_s}{2\pi} \widehat{\omega}\_k
+$$
+
+- **Advantages**:
+  - The concept is intuitive and easy to understand.
+  - The resulting spectrum can be visualized, which is useful for analysis.
+  - As implemented in this project, the denominator can be computed very efficiently for all frequency grid points at once using the Fast Fourier Transform (FFT).
+- **Disadvantages**:
+  - There is a trade-off between estimation accuracy and computational cost, which depends on the density of the frequency grid.
+  - A finer grid yields higher accuracy but requires more computation.
+  - Since the estimate is chosen from a set of predefined frequency candidates (the grid), an inherent estimation error (quantization error) occurs if the true frequency lies between grid points.
+ 
+### 5.2. Root-MUSIC: The Polynomial Rooting Approach
+
+Root-MUSIC avoids the spectral search by reformulating the problem algebraically. The denominator of the MUSIC spectrum, $D(z) = \mathbf{a}(z)^{H} \mathbf{C} \mathbf{a}(z)$ (where $\mathbf{C} = \mathbf{E}\_n \mathbf{E}\_n^{H}$), can be expressed as a polynomial in $z$, where $z = e^{j\omega}$.
+
+Root-MUSIC directly computes the roots of this polynomial. The roots corresponding to the signal frequencies will lie on or very close to the unit circle in the complex plane.
+
+The solve method finds the roots of the polynomial $F(z) = z^{L-1} D(z) = 0$, which is a standard polynomial form without negative powers. The roots are of the form $z\_k = e^{j\omega\_k}$, so the normalized angular frequencies $\widehat{\omega}\_k$ are obtained by calculating their phase angles. These are then converted to physical frequencies $\widehat{f}\_k$ in the same way as in Spectral MUSIC.
+
+- **Advantages**:
+  - It avoids a spectral search, so the computational cost does not depend on the desired frequency resolution.
+  - By computing the roots, it estimates frequencies as continuous values, allowing for theoretically higher accuracy (an "off-grid" estimate).
+- **Disadvantages**:
+  - When noise is present, practical implementations require careful heuristics to stably select the true signal roots from the many extraneous roots that are also computed.
+  - The computational cost of standard polynomial solvers (like numpy.roots, which uses an eigenvalue-based approach) is high, typically on the order of $O(L^3)$, where $L$ is the polynomial degree. Since $L$ is the subspace dimension, it can be quite large (e.g., ~1500 in our experiments), making this step a significant bottleneck.
+
+In the ideal, noise-free case, all signal roots lie precisely on the unit circle. In practice, noise and finite-sample effects cause the roots to deviate from the unit circle.
+
+One effective heuristic, adopted in our implementation, is to first select an- oversized set of candidate roots—for instance, the $4M$ roots closest to the unit circle. This over-selection ensures that all true signal roots are included, even in the presence of spurious roots caused by noise. Subsequent filtering steps then isolate the desired $M$ positive frequency components from this candidate set.
+
 ## Appendix A: Proofs and Supplements
 
 ### A.1. Proof: Equivalence of Covariance Range and Steering Vector Space
