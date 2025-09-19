@@ -57,7 +57,7 @@ $$
 x\[0\] & x\[1\] &  x\[2\] & \cdots & x\[N-1\] \\
 x\[1\] & x\[2\] &  x\[3\] & \cdots & x\[N\] \\
 \vdots & \vdots  &  \vdots  & \ddots & \vdots  \\
-x\[L-1\] & x\[L\] &  x\[L+1\] & \cdots & x\[N + L -2\] \\
+x\[L-1\] & x\[L\] &  x\[L+1\] & \cdots & x\[N + L -2\]
 \end{bmatrix}
 \end{align*}
 $$
@@ -74,7 +74,7 @@ To further enhance the estimation accuracy, especially with a limited number of 
 The forward-backward averaged covariance matrix $\hat{\mathbf{R}}\_{fb}$ is computed by averaging the standard forward covariance matrix $\hat{\mathbf{R}}\_{f}$ (calculated above) and a backward covariance matrix $\hat{\mathbf{R}}\_{b}$. The backward matrix is derived from the time-reversed, complex-conjugated signal, and can be shown to be $\mathbf{J} \overline{\hat{\mathbf{R}}}\_{f}\mathbf{J}$, where $\mathbf{J}$ is the exchange matrix.
 
 $$
-\hat{\mathbf{R}}_{fb} = \frac{\hat{\mathbf{R}}_f + \mathbf{J} \overline{\hat{\mathbf{R}}}\_{f}\mathbf{J}}{2} \\
+\hat{\mathbf{R}}_{fb} = \frac{\hat{\mathbf{R}}_f + \mathbf{J} \overline{\hat{\mathbf{R}}}\_{f}\mathbf{J}}{2}
 $$
 
 Using $\hat{\mathbf{R}}\_{fb}$ instead of $\hat{\mathbf{R}}\_f$ yields a more statistically stable estimate, which in turn improves the accuracy of the MUSIC algorithm, particularly for short signals or in low SNR conditions.
