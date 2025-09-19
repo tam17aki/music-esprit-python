@@ -1,4 +1,4 @@
-##  Core Principle of MUSIC: Subspace Orthogonality
+#  Core Principle of MUSIC: Subspace Orthogonality
 
 ## 1. Signal Model
 
