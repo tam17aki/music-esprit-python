@@ -40,10 +40,10 @@ $$
 \mathbf{R}_x = \mathbb{E}[\mathbf{v}_{i} \mathbf{v}_{i}^{H}]
 $$
 
-In practice, we only have a finite number of samples. Therefore, we approximate this expectation by computing the sample covariance matrix, $\widehat{\mathbf{R}}\_x$, which is the sample mean over $N$ available snapshots:
+In practice, we only have a finite number of samples. Therefore, we approximate this expectation by computing the sample covariance matrix, $\hat{\mathbf{R}}\_x$, which is the sample mean over $N$ available snapshots:
 
 $$
-\mathbf{R}_x \approx  \widehat{\mathbf{R}}_x \triangleq \frac{1}{N} \sum_{i=0}^{N-1} \mathbf{v}_{i} \mathbf{v}_{i}^{H}
+\mathbf{R}_x \approx  \hat{\mathbf{R}}_x \triangleq \frac{1}{N} \sum_{i=0}^{N-1} \mathbf{v}_{i} \mathbf{v}_{i}^{H}
 $$
 
 ### 2.3. Efficient Calculation using a Hankel Matrix
@@ -71,13 +71,13 @@ Using this Hankel matrix $\mathbf{X}$, the sample covariance matrix can be calcu
 
 To further enhance the estimation accuracy, especially with a limited number of samples, a technique called Forward-Backward Averaging [5] can be applied. This method leverages the property that the statistical characteristics of a sinusoidal signal remain unchanged when it is time-reversed.
 
-The forward-backward averaged covariance matrix $\widehat{\mathbf{R}}\_{fb}$ is computed by averaging the standard forward covariance matrix $\widehat{\mathbf{R}}\_{f}$ (calculated above) and a backward covariance matrix $\widehat{\mathbf{R}}\_{b}$. The backward matrix is derived from the time-reversed, complex-conjugated signal, and can be shown to be $\mathbf{J} \overline{\widehat{\mathbf{R}}}\_{f}\mathbf{J}$, where $\mathbf{J}$ is the exchange matrix.
+The forward-backward averaged covariance matrix $\hat{\mathbf{R}}\_{fb}$ is computed by averaging the standard forward covariance matrix $\hat{\mathbf{R}}\_{f}$ (calculated above) and a backward covariance matrix $\hat{\mathbf{R}}\_{b}$. The backward matrix is derived from the time-reversed, complex-conjugated signal, and can be shown to be $\mathbf{J} \overline{\hat{\mathbf{R}}}\_{f}\mathbf{J}$, where $\mathbf{J}$ is the exchange matrix.
 
 $$
-\widehat{\mathbf{R}}_{fb} = \frac{\widehat{\mathbf{R}}_f + \mathbf{J} \overline{\widehat{\mathbf{R}}}\_{f}\mathbf{J}}{2} \\
+\hat{\mathbf{R}}_{fb} = \frac{\hat{\mathbf{R}}_f + \mathbf{J} \overline{\hat{\mathbf{R}}}\_{f}\mathbf{J}}{2} \\
 $$
 
-Using $\widehat{\mathbf{R}}\_{fb}$ instead of $\widehat{\mathbf{R}}\_f$ yields a more statistically stable estimate, which in turn improves the accuracy of the MUSIC algorithm, particularly for short signals or in low SNR conditions.
+Using $\hat{\mathbf{R}}\_{fb}$ instead of $\hat{\mathbf{R}}\_f$ yields a more statistically stable estimate, which in turn improves the accuracy of the MUSIC algorithm, particularly for short signals or in low SNR conditions.
 
 ## 3. Eigendecomposition and Subspace Separation
 
@@ -171,15 +171,15 @@ Once the noise subspace $\mathbf{E}\_n$ has been estimated, there are two primar
 The Spectral MUSIC approach involves computing a **pseudospectrum** over a predefined grid of discrete frequency points and then searching for its peaks. This pseudospectrum is defined to evaluate the orthogonality:
 
 $$
-\widehat{P}_{MU}(\omega) = \frac{1}{\mathbf{a}(\omega)^{H} \mathbf{E}_n \mathbf{E}_n^{H} \mathbf{a}(\omega)}
+\hat{P}_{MU}(\omega) = \frac{1}{\mathbf{a}(\omega)^{H} \mathbf{E}_n \mathbf{E}_n^{H} \mathbf{a}(\omega)}
 $$
 
-At a true normalized angular frequency $\omega\_k$, the steering vector $\mathbf{a}(\omega\_k)$ is orthogonal to the noise subspace $\mathbf{E}\_n$. Consequently, the denominator approaches zero, causing a sharp peak to appear in the MUSIC spectrum $\widehat{P}\_{\text{MU}}(\omega)$. By searching for the locations of these peaks, we can obtain estimates of the normalized angular frequencies, $\widehat{\omega}\_k$.
+At a true normalized angular frequency $\omega\_k$, the steering vector $\mathbf{a}(\omega\_k)$ is orthogonal to the noise subspace $\mathbf{E}\_n$. Consequently, the denominator approaches zero, causing a sharp peak to appear in the MUSIC spectrum $\hat{P}\_{\text{MU}}(\omega)$. By searching for the locations of these peaks, we can obtain estimates of the normalized angular frequencies, $\hat{\omega}\_k$.
 
-Finally, these are converted to estimates of the physical frequencies in Hz, $\widehat{f}\_k$:
+Finally, these are converted to estimates of the physical frequencies in Hz, $\hat{f}\_k$:
 
 $$
-\widehat{f}\_k = \frac{F_s}{2\pi} \widehat{\omega}\_k
+\hat{f}\_k = \frac{F_s}{2\pi} \hat{\omega}\_k
 $$
 
 - **Advantages**:
@@ -197,7 +197,7 @@ Root-MUSIC avoids the spectral search by reformulating the problem algebraically
 
 Root-MUSIC directly computes the roots of this polynomial. The roots corresponding to the signal frequencies will lie on or very close to the unit circle in the complex plane.
 
-The solve method finds the roots of the polynomial $F(z) = z^{L-1} D(z) = 0$, which is a standard polynomial form without negative powers. The roots are of the form $z\_k = e^{j\omega\_k}$, so the normalized angular frequencies $\widehat{\omega}\_k$ are obtained by calculating their phase angles. These are then converted to physical frequencies $\widehat{f}\_k$ in the same way as in Spectral MUSIC.
+The solve method finds the roots of the polynomial $F(z) = z^{L-1} D(z) = 0$, which is a standard polynomial form without negative powers. The roots are of the form $z\_k = e^{j\omega\_k}$, so the normalized angular frequencies $\hat{\omega}\_k$ are obtained by calculating their phase angles. These are then converted to physical frequencies $\hat{f}\_k$ in the same way as in Spectral MUSIC.
 
 - **Advantages**:
   - It avoids a spectral search, so the computational cost does not depend on the desired frequency resolution.
