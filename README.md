@@ -280,7 +280,7 @@ The implemented methods are **model-based** high-resolution techniques that esti
 
 Two main families of models are explored in this project:
 
-1.  **Subspace Models (MUSIC, ESPRIT, Min-Norm):** These methods model the signal's covariance matrix as having a low-rank signal component embedded in noise. They exploit the geometric properties of the signal and noise subspaces, which are obtained via eigenvalue decomposition.
+1.  **Subspace Models (MUSIC, ESPRIT, Min-Norm):** These methods model the signal's covariance matrix as having a low-rank signal component embedded in noise. They exploit the geometric properties of the signal and noise subspaces, which are obtained via eigenvalue decomposition. For a detailed, step-by-step walkthrough of the MUSIC algorithm, please see our in-depth technical note: [`docs/theory/music_theory.md`](docs/theory/music_theory.md).
 2.  **Autoregressive (AR) Models (HOYW):** This approach models the signal as the output of a linear time-invariant system driven by white noise. Frequencies are estimated from the roots of the AR model's characteristic polynomial, whose coefficients are found from the signal's autocorrelation sequence.
 
 For a deeper dive into the theory, please refer to the papers [1-3] for Spectral MUSIC, [4] for Root MUSIC, [5] for Min-Norm, [6] for ESPRIT, [7] for Unitary ESPRIT, and [8] for HOYW. 
