@@ -143,14 +143,10 @@ class AnalyzerBase(ABC):
                 - estimated_amps (np.ndarray): Estimated amplitudes.
                 - estimated_phases (np.ndarray): Estimated phases in radians.
         """
-        n_samples = signal.size
-        n_sinusoids = estimated_freqs.size
-
         # 1. Build the Vandermonde matrix V
-        t = np.arange(n_samples) / self.fs
-        vandermonde_matrix = np.zeros((n_samples, n_sinusoids), dtype=np.complex128)
-        for i, freq in enumerate(estimated_freqs):
-            vandermonde_matrix[:, i] = np.exp(2j * np.pi * freq * t)
+        t_vector = np.arange(signal.size).reshape(-1, 1) / self.fs
+        freq_vector = estimated_freqs.reshape(1, -1)
+        vandermonde_matrix = np.exp(2j * np.pi * t_vector @ freq_vector)
 
         # 2. Solve for complex amplitudes c using pseudo-inverse
         # y = V @ c  =>  c = pinv(V) @ y
