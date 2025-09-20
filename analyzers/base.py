@@ -140,8 +140,8 @@ class AnalyzerBase(ABC):
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
-                - estimated_amps (np.ndarray): Estimated amplitudes.
-                - estimated_phases (np.ndarray): Estimated phases in radians.
+                - estimated_amps (np.ndarray): Estimated amplitudes (float64).
+                - estimated_phases (np.ndarray): Estimated phases in radians (float64).
         """
         # 1. Build the Vandermonde matrix V
         t_vector = np.arange(signal.size).reshape(-1, 1) / self.fs
