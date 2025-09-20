@@ -100,18 +100,20 @@ def synthesize_sinusoids(
             Defaults to False.
 
     Returns:
-        clean_signal (np.ndarray): Sum of multiple sinusoids (float64 or complex128).
+        np.ndarray: Sum of multiple sinusoids (float64 or complex128).
     """
-    t = np.linspace(0, duration, int(fs * duration), endpoint=False)
+    t = np.linspace(0, duration, int(fs * duration), endpoint=False).reshape(1, -1)
+    freqs = params.frequencies.reshape(-1, 1)
+    amps = params.amplitudes.reshape(-1, 1)
+    phases = params.phases.reshape(-1, 1)
+    argument = 2 * np.pi * freqs @ t + phases
     if is_complex:
-        clean_signal = np.zeros(t.size, dtype=np.complex128)
-        for f, a, p in zip(params.frequencies, params.amplitudes, params.phases):
-            clean_signal += a * np.exp(1j * (2 * np.pi * f * t + p))
-        return clean_signal
-    clean_signal = np.zeros(t.size, dtype=np.float64)
-    for f, a, p in zip(params.frequencies, params.amplitudes, params.phases):
-        clean_signal += a * np.cos(2 * np.pi * f * t + p)
-    return clean_signal
+        clean_signal_complex: npt.NDArray[np.complex128] = np.sum(
+            amps * np.exp(1j * argument), axis=0
+        )
+        return clean_signal_complex
+    clean_signal_real: npt.NDArray[np.float64] = np.sum(amps * np.cos(argument), axis=0)
+    return clean_signal_real
 
 
 def add_awgn(
