@@ -94,8 +94,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         real_signal = np.real(signal)
 
         # 1. Calculate the autocorrelation
-        acf = np.correlate(real_signal, real_signal, mode="full")
-        acf = acf[real_signal.size - 1 :].astype(np.float64)
+        acf = np.correlate(real_signal, real_signal, mode="full").astype(np.float64)
+        acf = acf[real_signal.size - 1 :]
 
         # 2. Detect the period M
         min_period = int(self.fs / self.min_freq_period)
