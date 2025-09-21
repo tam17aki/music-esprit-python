@@ -32,6 +32,8 @@ from scipy.signal import find_peaks
 from .._common import find_peaks_from_spectrum
 from .base import MusicAnalyzerBase
 
+ZERO_FLOOR = 1e-12
+
 
 @final
 class FastMusicAnalyzer(MusicAnalyzerBase):
@@ -182,7 +184,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         asinc_matrix = self._asinc(x, period_m) ** 2
         asinc_sum = np.sum(asinc_matrix, axis=0)
         denominator = period_m - (1 / period_m) * asinc_sum
-        pseudospectrum = 1 / (np.abs(denominator) + 1e-12)
+        pseudospectrum = 1 / (np.abs(denominator) + ZERO_FLOOR)
         freq_grid = np.arange(self.n_grids) * self.fs / self.n_grids
         return freq_grid, pseudospectrum
 
@@ -200,10 +202,9 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         Returns:
             np.ndarray: The result of the aliased sinc function (float64).
         """
-        epsilon = 1e-12
         numerator = np.sin(np.pi * m * x)
         denominator = np.sin(np.pi * x)
-        near_zero_den = np.abs(denominator) < epsilon
+        near_zero_den = np.abs(denominator) < ZERO_FLOOR
         result: npt.NDArray[np.float64] = np.divide(
             numerator, denominator, out=np.zeros_like(numerator), where=~near_zero_den
         )
