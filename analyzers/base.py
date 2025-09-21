@@ -146,7 +146,9 @@ class AnalyzerBase(ABC):
         # 1. Build the Vandermonde matrix V
         t_vector = np.arange(signal.size).reshape(-1, 1) / self.fs
         freq_vector = estimated_freqs.reshape(1, -1)
-        vandermonde_matrix = np.exp(2j * np.pi * t_vector @ freq_vector)
+        vandermonde_matrix: npt.NDArray[np.complex128] = np.exp(
+            2j * np.pi * t_vector @ freq_vector
+        )
 
         # 2. Solve for complex amplitudes c using pseudo-inverse
         # y = V @ c  =>  c = pinv(V) @ y
