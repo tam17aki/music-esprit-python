@@ -131,7 +131,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
 
         Args:
             acf (np.ndarray):
-                The autocorrelation function of the signal.
+                The autocorrelation function of the signal (float64).
             min_period (int):
                 The minimum period (in samples) to search for.
             max_period (int):
@@ -169,12 +169,12 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
                 The estimated fundamental period of the signal (M).
             signal_space_indices (np.ndarray):
                 Indices of the power spectrum peaks corresponding to the
-                signal subspace eigenvectors.
+                signal subspace eigenvectors (int_).
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
                 A tuple containing the frequency grid (in Hz) and the
-                calculated FAST MUSIC pseudospectrum.
+                calculated FAST MUSIC pseudospectrum (float64 and float64).
         """
         k = np.arange(self.search_resolution).reshape(1, -1)  # (1, N_search)
         mi = signal_space_indices.reshape(-1, 1)  # (M, 1)
@@ -198,7 +198,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
             m (int): The length of the sequence (period).
 
         Returns:
-            np.ndarray: The result of the aliased sinc function.
+            np.ndarray: The result of the aliased sinc function (float64).
         """
         epsilon = 1e-12
         numerator = np.sin(np.pi * m * x)
