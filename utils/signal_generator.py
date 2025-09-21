@@ -108,11 +108,11 @@ def synthesize_sinusoids(
     phases = params.phases.reshape(-1, 1)
     argument = 2 * np.pi * freqs @ t + phases
     if is_complex:
-        clean_signal_complex: npt.NDArray[np.complex128] = np.sum(
-            amps * np.exp(1j * argument), axis=0
-        )
+        clean_signal_complex: npt.NDArray[np.complex128]
+        clean_signal_complex = np.sum(amps * np.exp(1j * argument), axis=0)
         return clean_signal_complex
-    clean_signal_real: npt.NDArray[np.float64] = np.sum(amps * np.cos(argument), axis=0)
+    clean_signal_real: npt.NDArray[np.float64]
+    clean_signal_real = np.sum(amps * np.cos(argument), axis=0)
     return clean_signal_real
 
 
