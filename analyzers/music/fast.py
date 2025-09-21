@@ -59,7 +59,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         fs: float,
         n_sinusoids: int,
         *,
-        search_resolution: int = 32768,
+        n_grids: int = 16384,
         min_freq_period: float = 20.0,
     ):
         """Initialize the FAST MUSIC analyzer.
@@ -67,16 +67,16 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            search_resolution (int, optional):
+            n_grids (int, optional):
                 The number of points for the final pseudospectrum search grid.
-                Defaults to 32768.
+                Defaults to 16384.
             min_freq_period (float, optional):
                 The minimum frequency in Hz to consider when searching for the
                 signal's fundamental period. This helps constrain the search
                 range of the periodicity detection. Defaults to 20.0.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio=0.5)  # pass dummy
-        self.search_resolution = search_resolution
+        self.n_grids = n_grids
         self.min_freq_period = min_freq_period
 
     @override
@@ -176,14 +176,14 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
                 A tuple containing the frequency grid (in Hz) and the
                 calculated FAST MUSIC pseudospectrum (float64 and float64).
         """
-        k = np.arange(self.search_resolution).reshape(1, -1)  # (1, N_search)
+        k = np.arange(self.n_grids).reshape(1, -1)  # (1, N_search)
         mi = signal_space_indices.reshape(-1, 1)  # (M, 1)
-        x = k / self.search_resolution - mi / period_m  # (M, N_search)
+        x = k / self.n_grids - mi / period_m  # (M, N_search)
         asinc_matrix = self._asinc(x, period_m) ** 2
         asinc_sum = np.sum(asinc_matrix, axis=0)
         denominator = period_m - (1 / period_m) * asinc_sum
         pseudospectrum = 1 / (np.abs(denominator) + 1e-12)
-        freq_grid = np.arange(self.search_resolution) * self.fs / self.search_resolution
+        freq_grid = np.arange(self.n_grids) * self.fs / self.n_grids
         return freq_grid, pseudospectrum
 
     @staticmethod
