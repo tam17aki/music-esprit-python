@@ -30,41 +30,40 @@ import numpy.typing as npt
 from scipy.signal import find_peaks
 
 TOLERANCE_LEVEL = 1e-4
-ZERO_FLOOR = 1e-9
 
 
-def _refine_peak_by_interpolation(
-    peak_idx: np.int_,
-    spectrum_db: npt.NDArray[np.float64],
-    freq_grid: npt.NDArray[np.float64],
-) -> np.float64:
-    """Refines a single peak location using parabolic interpolation.
+def _parabolic_interpolation(
+    spectrum: npt.NDArray[np.float64], peak_indices: npt.NDArray[np.int_]
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+    """Refines peak locations and magnitudes using parabolic interpolation.
 
     Args:
-        peak_idx (int): The integer index of the peak in the spectrum.
-        spectrum_db (np.ndarray): The spectrum in dB scale.
-        freq_grid (np.ndarray): The frequency grid corresponding to the spectrum.
+        spectrum (np.ndarray):
+            The input pseudospectrum (float64).
+        peak_indices (np.ndarray):
+            The integer index of the peak in the spectrum.
 
     Returns:
-        float64: The refined frequency estimate in Hz.
+        tuple[np.ndarray, np.ndarray]
+            - refined_indices (np.ndarray): The refined peak locations.
+            - refined_mags (np.ndarray): The refined magnitudes.
     """
-    if not 0 < peak_idx < spectrum_db.size - 1:
-        freq_on_grid: np.float64 = freq_grid[peak_idx]
-        return freq_on_grid
+    refined_indices = np.zeros_like(peak_indices, dtype=np.float64)
+    refined_mags = np.zeros_like(peak_indices, dtype=np.float64)
 
-    y_minus = spectrum_db[peak_idx - 1]
-    y_center = spectrum_db[peak_idx]
-    y_plus = spectrum_db[peak_idx + 1]
+    for i, idx in enumerate(peak_indices):
+        if idx in (0, len(spectrum) - 1):
+            refined_indices[i] = idx
+            refined_mags[i] = spectrum[idx]
+            continue
+        y_minus_1 = spectrum[idx - 1]
+        y_0 = spectrum[idx]
+        y_plus_1 = spectrum[idx + 1]
+        p = 0.5 * (y_minus_1 - y_plus_1) / (y_minus_1 - 2 * y_0 + y_plus_1)
+        refined_indices[i] = idx + p
+        refined_mags[i] = y_0 - 0.25 * (y_minus_1 - y_plus_1) * p
 
-    denominator = y_minus - 2 * y_center + y_plus
-    if np.abs(denominator) < ZERO_FLOOR:
-        delta_idx = 0.0
-    else:
-        delta_idx = 0.5 * (y_minus - y_plus) / denominator
-
-    freq_resolution = freq_grid[1] - freq_grid[0]
-    refined_freq: np.float64 = freq_grid[peak_idx] + delta_idx * freq_resolution
-    return refined_freq
+    return refined_indices, refined_mags
 
 
 def find_peaks_from_spectrum(
@@ -110,13 +109,15 @@ def find_peaks_from_spectrum(
     if not use_interpolation:
         return np.sort(freq_grid[strongest_peak_indices])
 
-    spectrum_db = 10 * np.log10(spectrum + ZERO_FLOOR)
-    refined_freqs = [
-        _refine_peak_by_interpolation(peak_idx, spectrum_db, freq_grid)
-        for peak_idx in strongest_peak_indices
-    ]
+    # Interpolation allows for more accurate peak position (index)
+    refined_indices, _ = _parabolic_interpolation(spectrum, strongest_peak_indices)
 
-    return np.sort(np.array(refined_freqs))
+    # Calculate the final frequency from the interpolated index
+    # (freq_grid[1] - freq_grid[0]) is frequency bin width
+    freq_resolution = freq_grid[1] - freq_grid[0]
+    estimated_freqs = refined_indices * freq_resolution
+
+    return np.sort(estimated_freqs)
 
 
 def filter_unique_freqs(
