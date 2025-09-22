@@ -157,7 +157,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
 
         if peaks.size > 0 and "prominences" in properties:
             best_peak_local_index = peaks[np.argmax(properties["prominences"])]
-        best_peak_local_index = np.argmax(search_range)
+        else:
+            best_peak_local_index = np.argmax(search_range)
         return int(min_period + best_peak_local_index)
 
     def _calculate_fast_music_spectrum(
