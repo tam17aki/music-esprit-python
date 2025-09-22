@@ -239,6 +239,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
                 A TypedDict containing both common and specific hyperparameters.
         """
         params = super().get_params()
+        params.pop("subspace_ratio", None)
         params["n_grids"] = self.n_grids
         params["min_freq_period"] = self.min_freq_period
         return params
