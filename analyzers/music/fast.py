@@ -51,7 +51,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
     voiced speech.
 
     Reference:
-        O. Das, J. S. Abel, J. O. Smith III, "FAST MUSIC – An Efficient
+        O. Das, J. S. Abel, J. O. Smith III, "FAST MUSIC - An Efficient
         Implementation of The Music Algorithm For Frequency Estimation of
         Approximately Periodic Signals," International Conference on Digital
         Audio Effects (DAFx), vol.21, pp.342-348, 2018.
