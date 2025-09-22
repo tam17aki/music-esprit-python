@@ -148,7 +148,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
             diff = np.abs(acf[lag:] - acf[:-lag])
             amdf[i] = np.mean(diff)
 
-        normalized_amdf = amdf / (np.array(lags) + 1e-9)
+        normalized_amdf = amdf / (np.array(lags) + ZERO_FLOOR)
         inv_amdf = -normalized_amdf
         peaks, _ = find_peaks(inv_amdf)
 
