@@ -30,38 +30,93 @@ import numpy.typing as npt
 from scipy.signal import find_peaks
 
 TOLERANCE_LEVEL = 1e-4
+ZERO_FLOOR = 1e-9
+
+
+def _refine_peak_by_interpolation(
+    peak_idx: np.int_,
+    spectrum_db: npt.NDArray[np.float64],
+    freq_grid: npt.NDArray[np.float64],
+) -> np.float64:
+    """Refines a single peak location using parabolic interpolation.
+
+    Args:
+        peak_idx (int): The integer index of the peak in the spectrum.
+        spectrum_db (np.ndarray): The spectrum in dB scale.
+        freq_grid (np.ndarray): The frequency grid corresponding to the spectrum.
+
+    Returns:
+        float64: The refined frequency estimate in Hz.
+    """
+    if not 0 < peak_idx < spectrum_db.size - 1:
+        freq_on_grid: np.float64 = freq_grid[peak_idx]
+        return freq_on_grid
+
+    y_minus = spectrum_db[peak_idx - 1]
+    y_center = spectrum_db[peak_idx]
+    y_plus = spectrum_db[peak_idx + 1]
+
+    denominator = y_minus - 2 * y_center + y_plus
+    if np.abs(denominator) < ZERO_FLOOR:
+        delta_idx = 0.0
+    else:
+        delta_idx = 0.5 * (y_minus - y_plus) / denominator
+
+    freq_resolution = freq_grid[1] - freq_grid[0]
+    refined_freq: np.float64 = freq_grid[peak_idx] + delta_idx * freq_resolution
+    return refined_freq
 
 
 def find_peaks_from_spectrum(
     spectrum: npt.NDArray[np.float64],
-    n_sinusoids: int,
+    n_peaks: int,
     freq_grid: npt.NDArray[np.float64],
+    *,
+    use_interpolation: bool = True,
 ) -> npt.NDArray[np.float64]:
     """Find the N strongest peaks from the spectrum.
 
     Args:
-       spectrum (np.ndarray): Pseudospectrum (float64).
-       n_sinusoids (int): Number of sinusoids.
-       freq_grid (np.ndarray): Frequency grid (float64).
+        spectrum (np.ndarray):
+            The input pseudospectrum (e.g., from MUSIC) (float64).
+        n_peaks (int):
+            The number of peaks to find and return.
+        freq_grid (np.ndarray):
+            The frequency grid corresponding to the spectrum (float64).
+        use_interpolation (bool, optional):
+            If True, performs parabolic interpolation on the detected peaks
+            to estimate their true location with sub-grid accuracy.
+            If False, returns the frequencies of the grid points directly.
+            Defaults to True.
 
     Returns:
-        np.ndarray: Strogest peaks from the spectrum.
+        np.ndarray:
+            A sorted array of the estimated peak frequencies in Hz (float64).
     """
-    # 1. Find all "local maxima" as peak candidates.
-    #    Ignores extremely small noise floor fluctuations.
-    _all_peaks, _ = find_peaks(
-        spectrum, height=np.median(spectrum), prominence=np.std(spectrum) / 2.0
+    # Find all "local maxima" as peak candidates.
+    # Ignores extremely small noise floor fluctuations.
+    all_peaks, _ = find_peaks(
+        spectrum, height=np.median(spectrum), prominence=np.std(spectrum) / 2
     )
-    all_peaks = np.array(_all_peaks)
-    if all_peaks.size < n_sinusoids:
-        return freq_grid[all_peaks] if all_peaks.size > 0 else np.array([])
+    strongest_peak_indices: npt.NDArray[np.int_]
+    if all_peaks.size < n_peaks:
+        strongest_peak_indices = all_peaks
+    else:
+        strongest_peak_indices = all_peaks[np.argsort(spectrum[all_peaks])[-n_peaks:]]
 
-    # 2. From all the peak candidates found, select N peaks
-    #    with the highest spectral values.
-    strongest_peak_indices = all_peaks[np.argsort(spectrum[all_peaks])[-n_sinusoids:]]
-    estimated_freqs = freq_grid[strongest_peak_indices]
+    if strongest_peak_indices.size == 0:
+        return np.array([])
 
-    return np.sort(estimated_freqs)
+    if not use_interpolation:
+        return np.sort(freq_grid[strongest_peak_indices])
+
+    spectrum_db = 10 * np.log10(spectrum + ZERO_FLOOR)
+    refined_freqs = [
+        _refine_peak_by_interpolation(peak_idx, spectrum_db, freq_grid)
+        for peak_idx in strongest_peak_indices
+    ]
+
+    return np.sort(np.array(refined_freqs))
 
 
 def filter_unique_freqs(
