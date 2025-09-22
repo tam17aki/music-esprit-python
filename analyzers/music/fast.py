@@ -30,6 +30,7 @@ import numpy.typing as npt
 from scipy.signal import find_peaks
 
 from .._common import find_peaks_from_spectrum
+from ..models import AnalyzerParameters
 from .base import MusicAnalyzerBase
 
 ZERO_FLOOR = 1e-12
@@ -210,3 +211,19 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         )
         result[near_zero_den] = m
         return result
+
+    @override
+    def get_params(self) -> AnalyzerParameters:
+        """Returns the analyzer's hyperparameters.
+
+        Extends the base implementation to include the 'n_grids' parameter
+        specific to the FAST MUSIC method.
+
+        Returns:
+            AnalyzerParameters:
+                A TypedDict containing both common and specific hyperparameters.
+        """
+        params = super().get_params()
+        params["n_grids"] = self.n_grids
+        params["min_freq_period"] = self.min_freq_period
+        return params
