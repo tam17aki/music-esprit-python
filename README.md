@@ -10,7 +10,8 @@ This work is inspired by the foundational papers in subspace-based signal proces
 
 - **High-Resolution Algorithms**: Implements spectral estimation techniques that surpass the resolution limits of the classical Fast Fourier Transform (FFT).
 - **Multiple Methods Implemented**: A comprehensive suite of high-resolution algorithms is provided:
-  - **MUSIC (Spectral & Root)**: A classic high-resolution method based on the orthogonality of signal and noise subspaces.
+  - **MUSIC (Spectral, Root & FAST)**: A classic high-resolution method based on the orthogonality of signal and noise subspaces.
+    - The **FAST MUSIC** variant provides a computationally efficient implementation for (quasi-)periodic signals by replacing the expensive EVD with an FFT. 
   - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
   - **ESPRIT (Standard & Unitary)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
     - The **Standard ESPRIT** (LS/TLS) provides a direct algebraic solution in the complex domain.
@@ -224,6 +225,7 @@ This project is organized into a modular, object-oriented structure to promote c
     - **`base.py`**: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
     - **`spectral.py`**: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
     - **`root.py`**: Implements `RootMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via polynomial rooting.
+    - **`fast.py`**: Implements `FastMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies for periodic signals by analyzing the peaks of the ACF's power spectrum and computing a closed-form pseudospectrum.
   - **`esprit/`**: A sub-package dedicated to the ESPRIT algorithm and its variants, including the computationally efficient Unitary ESPRIT.
     - **`base.py`**:  Defines `EspritAnalyzerBase`, an intermediate abstract class for ESPRIT-based methods. It inherits from `AnalyzerBase`, and adds ESPRIT-specific logic, like the estimation of the signal subspace.
     - **`standard.py`**: Implements `StandardEspritAnalyzer` for the classic, complex-valued ESPRIT algorithm.
