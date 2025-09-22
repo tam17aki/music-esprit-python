@@ -33,7 +33,7 @@ from .._common import find_peaks_from_spectrum
 from ..models import AnalyzerParameters
 from .base import MusicAnalyzerBase
 
-ZERO_FLOOR = 1e-12
+ZERO_FLOOR = 1e-9
 
 
 @final
@@ -103,6 +103,14 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         # 2. Detect the period M
         min_period = int(self.fs / self.min_freq_period)
         max_period = real_signal.size // 2
+        if min_period >= max_period:
+            warnings.warn(
+                "The search range for period detection is invalid "
+                + f"(min_period={min_period}, max_period={max_period}). "
+                + "This is likely because "
+                + f"`min_freq_period` ({self.min_freq_period} Hz) "
+                + "is too low for the given signal duration. Algorithm may fail."
+            )
         period_m = self._find_period_amdf(acf, min_period, max_period)
 
         # 3. Identify the signal space indices from the power spectrum
