@@ -103,15 +103,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         # 2. Detect the period M
         min_period = int(self.fs / self.min_freq_period)
         max_period = real_signal.size // 2
-        if min_period >= max_period:
-            warnings.warn(
-                "The search range for period detection is invalid "
-                + f"(min_period={min_period}, max_period={max_period}). "
-                + "This is likely because "
-                + f"`min_freq_period` ({self.min_freq_period} Hz) "
-                + "is too low for the given signal duration. Algorithm may fail."
-            )
-        period_m = self._find_period_amdf(acf, min_period, max_period)
+        period_m = self._find_period(acf, min_period, max_period)
 
         # 3. Identify the signal space indices from the power spectrum
         power_spectrum = np.abs(np.fft.fft(acf[:period_m]))
@@ -132,13 +124,10 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         return find_peaks_from_spectrum(pseudospectrum, self.n_sinusoids, freq_grid)
 
     @staticmethod
-    def _find_period_amdf(
+    def _find_period(
         acf: npt.NDArray[np.float64], min_period: int, max_period: int
     ) -> int:
         """Estimates the fundamental period of a signal from its ACF.
-
-        This method uses the Average Magnitude Difference Function (AMDF)
-        to find the most prominent period within a specified range.
 
         Args:
             acf (np.ndarray):
@@ -151,20 +140,25 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         Returns:
             int: The estimated period in samples.
         """
-        lags = range(min_period, max_period)
-        amdf = np.zeros(len(lags))
-        for i, lag in enumerate(lags):
-            diff = np.abs(acf[lag:] - acf[:-lag])
-            amdf[i] = np.mean(diff)
+        if min_period >= max_period:
+            warnings.warn(
+                "Invalid search range for period detection: "
+                + f"min_period ({min_period}) must be less than max_"
+                + f"period ({max_period}). Falling back to midpoint."
+            )
+            return (min_period + max_period) // 2
 
-        normalized_amdf = amdf / (np.array(lags) + ZERO_FLOOR)
-        inv_amdf = -normalized_amdf
-        peaks, _ = find_peaks(inv_amdf)
+        search_range = acf[min_period:max_period]
+        required_height = np.max(search_range) * 0.25
+        required_prominence = np.std(search_range) * 0.5
+        peaks, properties = find_peaks(
+            search_range, height=required_height, prominence=required_prominence
+        )
 
-        if len(peaks) > 0:
-            best_peak_index = peaks[np.argmax(inv_amdf[peaks])]
-            return int(np.array(lags)[best_peak_index])
-        return (min_period + max_period) // 2
+        if peaks.size > 0 and "prominences" in properties:
+            best_peak_local_index = peaks[np.argmax(properties["prominences"])]
+        best_peak_local_index = np.argmax(search_range)
+        return int(min_period + best_peak_local_index)
 
     def _calculate_fast_music_spectrum(
         self, period_m: int, signal_space_indices: npt.NDArray[np.int_]
