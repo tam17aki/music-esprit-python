@@ -105,22 +105,34 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         max_period = real_signal.size // 2
         period_m = self._find_period(acf, min_period, max_period)
 
-        # 3. Identify the signal space indices from the power spectrum
-        power_spectrum = np.abs(np.fft.fft(acf[:period_m]))
+        # 3. Calculate the amplitude spectrum
+        amplitude_spectrum = np.abs(np.fft.fft(acf[:period_m]))
         num_unique_bins = period_m // 2 + 1
-        half_spectrum = power_spectrum[:num_unique_bins]
-        if half_spectrum.size < self.n_sinusoids:
-            # Fallback if spectrum is too short
-            signal_space_indices = np.argsort(half_spectrum)[::-1]
-        else:
-            signal_space_indices = np.argsort(half_spectrum)[::-1][: self.n_sinusoids]
+        half_spectrum = amplitude_spectrum[:num_unique_bins]
 
-        # 4. Calculates the FAST MUSIC pseudospectrum in closed form
+        # 4. Search peaks on the spectrum and identify the signal space indices
+        peaks, properties = find_peaks(
+            half_spectrum,
+            height=np.median(half_spectrum),
+            prominence=np.std(half_spectrum) * 0.5,
+        )
+        if peaks.size < self.n_sinusoids:
+            warnings.warn(
+                f"Found only {peaks.size} prominent peaks, less than the expected "
+                + f"{self.n_sinusoids}. Falling back to a simpler peak search."
+            )
+            signal_space_indices = np.argsort(half_spectrum)[::-1][: self.n_sinusoids]
+        else:
+            signal_space_indices = peaks[
+                np.argsort(properties["peak_heights"])[::-1][: self.n_sinusoids]
+            ]
+
+        # 5. Calculates the FAST MUSIC pseudospectrum in closed form
         freq_grid, pseudospectrum = self._calculate_fast_music_spectrum(
             period_m, signal_space_indices
         )
 
-        # 5. Find peaks and estimate frequencies (reuse common helpers)
+        # 6. Find peaks and estimate frequencies (reuse common helpers)
         return find_peaks_from_spectrum(pseudospectrum, self.n_sinusoids, freq_grid)
 
     @staticmethod
