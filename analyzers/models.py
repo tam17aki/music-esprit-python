@@ -46,5 +46,8 @@ class AnalyzerParameters(TypedDict):
     n_grids: NotRequired[int]
     """Number of grid points for spectral search methods."""
 
+    min_freq_period: NotRequired[float]
+    """The minimum frequency in Hz for FAST MUSIC method."""
+
     ar_order: NotRequired[int]
     """The order of the  AutoRegressive (AR) model for HOYW method."""
