@@ -123,7 +123,7 @@ class AnalyzerBase(ABC):
         n_snapshots = n_samples - subspace_dim + 1
         hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
         cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
-        if np.isdtype(np.float64, signal.dtype):
+        if np.isrealobj(signal):
             return cov_matrix.astype(np.float64)
         return cov_matrix.astype(np.complex128)
 
@@ -160,7 +160,7 @@ class AnalyzerBase(ABC):
 
         # 3. Extract amplitudes and phases
         estimated_amps = np.abs(complex_amps).astype(np.float64)
-        if np.isdtype(np.float64, signal.dtype):
+        if np.isrealobj(signal):
             # For a real-valued sinusoid A*cos(2*pi*f*t + phi), the complex amplitude
             # estimated using only the positive frequency is (A/2)*exp(j*phi).
             # Therefore, we need to multiply the magnitude by 2.
