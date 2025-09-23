@@ -60,6 +60,6 @@ class ForwardBackwardMixin:
 
         # 3. Averaged covariance matrix
         cov_matrix_fb = (cov_matrix_f + cov_matrix_b) / 2.0
-        if np.isdtype(np.float64, signal.dtype):
+        if np.isrealobj(signal):
             return cov_matrix_fb.astype(np.float64)
         return cov_matrix_fb.astype(np.complex128)
