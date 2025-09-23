@@ -95,7 +95,7 @@ def find_peaks_from_spectrum(
     # Find all "local maxima" as peak candidates.
     # Ignores extremely small noise floor fluctuations.
     all_peaks, _ = find_peaks(
-        spectrum, height=np.median(spectrum), prominence=np.std(spectrum) / 2
+        spectrum, height=np.median(spectrum), prominence=np.std(spectrum) * 0.5
     )
     strongest_peak_indices: npt.NDArray[np.int_]
     if all_peaks.size < n_peaks:
