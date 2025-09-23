@@ -117,7 +117,7 @@ class HoywAnalyzer(AnalyzerBase):
         n_samples = signal.size
         corr_full = correlate(signal, signal)
         autocorr = corr_full[n_samples - 1 : n_samples - 1 + n_lags] / n_samples
-        if np.isdtype(np.float64, signal.dtype):
+        if np.isrealobj(signal):
             return autocorr.astype(np.float64)
         return autocorr.astype(np.complex128)
 
@@ -143,7 +143,7 @@ class HoywAnalyzer(AnalyzerBase):
         column = autocorr[p : p + m]
         row = autocorr[p:0:-1]
         acorr_mat = toeplitz(column, r=row)
-        if np.isdtype(np.float64, autocorr.dtype):
+        if np.isrealobj(autocorr):
             return acorr_mat.astype(np.float64)
         return acorr_mat.astype(np.complex128)
 
