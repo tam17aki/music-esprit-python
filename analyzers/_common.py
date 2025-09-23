@@ -45,8 +45,8 @@ def _parabolic_interpolation(
 
     Returns:
         tuple[np.ndarray, np.ndarray]
-            - refined_indices (np.ndarray): The refined peak locations.
-            - refined_mags (np.ndarray): The refined magnitudes.
+            - refined_indices (np.ndarray): The refined peak locations (float64).
+            - refined_mags (np.ndarray): The refined magnitudes (float64).
     """
     refined_indices = np.zeros_like(peak_indices, dtype=np.float64)
     refined_mags = np.zeros_like(peak_indices, dtype=np.float64)
@@ -80,7 +80,7 @@ def find_peak_indices_from_spectrum(
             The number of peaks to find and return.
 
     Returns:
-        np.ndarray: The indices of the top-N strongest peaks.
+        np.ndarray: The indices of the top-N strongest peaks (int_).
     """
     prominence_thresh = (np.max(spectrum) - np.min(spectrum)) * 0.01
     all_peaks, _ = find_peaks(spectrum, prominence=prominence_thresh)
