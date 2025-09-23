@@ -93,7 +93,7 @@ def find_peaks_from_spectrum(
             A sorted array of the estimated peak frequencies in Hz (float64).
     """
     # Detects all local peaks under very loose conditions
-    #    Set a low height just to cut out minute fluctuations in the noise floor
+    # Set a low height just to cut out minute fluctuations in the noise floor
     noise_floor_est = np.quantile(spectrum, 0.25)
     all_peaks, _ = find_peaks(spectrum, height=noise_floor_est)
     if all_peaks.size == 0:
