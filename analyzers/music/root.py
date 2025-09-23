@@ -106,7 +106,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         coefficients = np.concatenate([coefficients[::-1], coefficients[1:]])
 
         # Notice: The polynomial coefficients are arranged in descending order of powers
-        if np.isdtype(np.float64, noise_subspace.dtype):
+        if np.isrealobj(noise_subspace):
             return coefficients.astype(np.float64)
         return coefficients.astype(np.complex128)
 
