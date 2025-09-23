@@ -29,7 +29,7 @@ import numpy as np
 import numpy.typing as npt
 from scipy.signal import find_peaks
 
-from .._common import find_peaks_from_spectrum
+from .._common import find_peak_indices_from_spectrum, find_peaks_from_spectrum
 from ..models import AnalyzerParameters
 from .base import MusicAnalyzerBase
 
@@ -111,21 +111,9 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         half_spectrum = amplitude_spectrum[:num_unique_bins]
 
         # 4. Search peaks on the spectrum and identify the signal space indices
-        peaks, properties = find_peaks(
-            half_spectrum,
-            height=np.median(half_spectrum),
-            prominence=np.std(half_spectrum) * 0.5,
+        signal_space_indices = find_peak_indices_from_spectrum(
+            half_spectrum, self.n_sinusoids
         )
-        if peaks.size < self.n_sinusoids:
-            warnings.warn(
-                f"Found only {peaks.size} prominent peaks, less than the expected "
-                + f"{self.n_sinusoids}. Falling back to a simpler peak search."
-            )
-            signal_space_indices = np.argsort(half_spectrum)[::-1][: self.n_sinusoids]
-        else:
-            signal_space_indices = peaks[
-                np.argsort(properties["peak_heights"])[::-1][: self.n_sinusoids]
-            ]
 
         # 5. Calculates the FAST MUSIC pseudospectrum in closed form
         freq_grid, pseudospectrum = self._calculate_fast_music_spectrum(
@@ -161,13 +149,18 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
             return (min_period + max_period) // 2
 
         search_range = acf[min_period:max_period]
-        required_height = np.max(search_range) * 0.25
-        required_prominence = np.std(search_range) * 0.5
-        peaks, properties = find_peaks(
-            search_range, height=required_height, prominence=required_prominence
+        all_peaks, properties = find_peaks(
+            search_range,
+            height=np.max(search_range) * 0.1,
+            prominence=np.std(search_range) * 0.25,
         )
-        if peaks.size > 0 and "prominences" in properties:
-            best_peak_local_index = peaks[np.argmax(properties["prominences"])]
+        if all_peaks.size == 0:
+            warnings.warn(
+                "No periodic peaks found in ACF. Using the highest point as fallback."
+            )
+            best_peak_local_index = np.argmax(search_range)
+        elif all_peaks.size > 0 and "prominences" in properties:
+            best_peak_local_index = all_peaks[np.argmax(properties["prominences"])]
         else:
             best_peak_local_index = np.argmax(search_range)
 
