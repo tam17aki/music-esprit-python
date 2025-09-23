@@ -83,7 +83,7 @@ def find_peak_indices_from_spectrum(
     Returns:
         np.ndarray: The indices of the top-N strongest peaks.
     """
-    noise_floor_est = np.quantile(spectrum, 0.5)
+    noise_floor_est = np.quantile(spectrum, 0.25)
     all_peaks, _ = find_peaks(spectrum, height=noise_floor_est)
     if all_peaks.size == 0:
         warnings.warn("No peaks found. Falling back to simple argsort.")
