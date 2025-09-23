@@ -105,7 +105,7 @@ class TLSEspritSolver:
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
         _augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
-        if np.isdtype(np.float64, signal_subspace.dtype):
+        if np.isrealobj(signal_subspace):
             augmented_subspace = _augmented_subspace.astype(np.float64)
         else:
             augmented_subspace = _augmented_subspace.astype(np.complex128)
