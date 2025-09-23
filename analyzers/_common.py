@@ -129,6 +129,7 @@ def find_peaks_from_spectrum(
     strongest_peak_indices = find_peak_indices_from_spectrum(spectrum, n_peaks)
 
     if strongest_peak_indices.size == 0:
+        warnings.warn("No peaks found from spectrum.")
         return np.array([])
 
     if not use_interpolation:
