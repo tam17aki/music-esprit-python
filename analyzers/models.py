@@ -37,7 +37,7 @@ class AnalyzerParameters(TypedDict):
     be present depending on the specific analyzer class.
     """
 
-    subspace_ratio: float
+    subspace_ratio: NotRequired[float]
     """Ratio of the subspace dimension to the signal length (L/N)."""
 
     solver: NotRequired[str]
