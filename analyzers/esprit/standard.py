@@ -108,7 +108,7 @@ class StandardEspritAnalyzer(EspritAnalyzerBase):
 
         # Estimated signal subspace is the 2*M principal eigenvectors
         signal_subspace = eigenvectors[:, -2 * self.n_sinusoids :]
-        if np.isdtype(np.float64, signal.dtype):
+        if np.isrealobj(signal_subspace):
             return signal_subspace.astype(np.float64)
         return signal_subspace.astype(np.complex128)
 
