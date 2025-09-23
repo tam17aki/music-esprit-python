@@ -66,6 +66,39 @@ def _parabolic_interpolation(
     return refined_indices, refined_mags
 
 
+def find_peak_indices_from_spectrum(
+    spectrum: npt.NDArray[np.float64],
+    n_peaks: int,
+) -> npt.NDArray[np.int_]:
+    """Finds the indices of the N strongest peaks from a spectrum.
+
+    This function implements a robust two-stage peak finding strategy.
+
+    Args:
+        spectrum (np.ndarray):
+            The input pseudospectrum (e.g., from MUSIC) (float64).
+        n_peaks (int):
+            The number of peaks to find and return.
+
+    Returns:
+        np.ndarray: The indices of the top-N strongest peaks.
+    """
+    noise_floor_est = np.quantile(spectrum, 0.5)
+    all_peaks, _ = find_peaks(spectrum, height=noise_floor_est)
+    if all_peaks.size == 0:
+        warnings.warn("No peaks found. Falling back to simple argsort.")
+        return np.argsort(spectrum)[::-1][:n_peaks]
+    if all_peaks.size < n_peaks:
+        warnings.warn(
+            f"Found only {all_peaks.size} peaks, < {n_peaks}. "
+            + "Falling back to simple argsort."
+        )
+        return np.argsort(spectrum)[::-1][:n_peaks]
+    peak_heights = spectrum[all_peaks]
+    strongest_local_indices = np.argsort(peak_heights)[::-1][:n_peaks]
+    return np.sort(all_peaks[strongest_local_indices])
+
+
 def find_peaks_from_spectrum(
     spectrum: npt.NDArray[np.float64],
     n_peaks: int,
@@ -101,6 +134,7 @@ def find_peaks_from_spectrum(
         return np.array([])
 
     # Among the detected peaks, select the M most intense ones
+    strongest_peak_indices: npt.NDArray[np.int_]
     if all_peaks.size < n_peaks:
         warnings.warn(
             f"Found only {all_peaks.size} peaks, less than the expected {n_peaks}."
