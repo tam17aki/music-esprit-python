@@ -125,27 +125,8 @@ def find_peaks_from_spectrum(
         np.ndarray:
             A sorted array of the estimated peak frequencies in Hz (float64).
     """
-    # Detects all local peaks under very loose conditions
-    # Set a low height just to cut out minute fluctuations in the noise floor
-    noise_floor_est = np.quantile(spectrum, 0.25)
-    all_peaks, _ = find_peaks(spectrum, height=noise_floor_est)
-    if all_peaks.size == 0:
-        warnings.warn("No peaks found in the spectrum.")
-        return np.array([])
-
-    # Among the detected peaks, select the M most intense ones
-    strongest_peak_indices: npt.NDArray[np.int_]
-    if all_peaks.size < n_peaks:
-        warnings.warn(
-            f"Found only {all_peaks.size} peaks, less than the expected {n_peaks}."
-        )
-        # If there are not enough candidates, use only the ones found
-        strongest_peak_indices = all_peaks
-    else:
-        # Select the top n_peaks from the candidates in order of height
-        peak_heights = spectrum[all_peaks]
-        strongest_indices_in_peaks = np.argsort(peak_heights)[::-1][:n_peaks]
-        strongest_peak_indices = all_peaks[strongest_indices_in_peaks]
+    # Find the indices of the N strongest peaks from a spectrum
+    strongest_peak_indices = find_peak_indices_from_spectrum(spectrum, n_peaks)
 
     if strongest_peak_indices.size == 0:
         return np.array([])
