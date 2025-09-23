@@ -63,6 +63,6 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         # from the beginning, where model_order = 2 * n_sinusoids
         n_noise_vectors = self.subspace_dim - 2 * self.n_sinusoids
         noise_subspace = eigenvectors[:, :n_noise_vectors]
-        if np.isdtype(np.float64, noise_subspace.dtype):
+        if np.isrealobj(noise_subspace):
             return noise_subspace.astype(np.float64)
         return noise_subspace.astype(np.complex128)
