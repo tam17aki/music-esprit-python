@@ -30,6 +30,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import time
+
 import numpy as np
 
 from analyzers.esprit.solvers import LSEspritSolver
@@ -76,35 +78,36 @@ def main() -> None:
     # --- 3. Print Setup and Run Analyses ---
     print_experiment_setup(config, true_params)
 
-    print("\n--- Running Spectral MUSIC ---")
-    spec_analyzer = SpectralMusicAnalyzer(
-        config.fs,
-        config.n_sinusoids,
-        n_grids=config.n_grids,
-        subspace_ratio=config.subspace_ratio,
-    )
-    print_analyzer_info(spec_analyzer)
-    spec_analyzer.fit(noisy_signal)
-    print_results(spec_analyzer, true_params)
+    analyzers_to_test = {
+        "Spectral MUSIC": SpectralMusicAnalyzer(
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            n_grids=config.n_grids,
+            subspace_ratio=config.subspace_ratio,
+        ),
+        "Root MUSIC": RootMusicAnalyzer(
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            subspace_ratio=config.subspace_ratio,
+        ),
+        "ESPRIT (LS)": StandardEspritAnalyzer(
+            config.fs,
+            config.n_sinusoids,
+            LSEspritSolver(),
+            subspace_ratio=config.subspace_ratio,
+        ),
+    }
 
-    print("\n--- Running Root MUSIC ---")
-    root_analyzer = RootMusicAnalyzer(
-        config.fs, config.n_sinusoids, subspace_ratio=config.subspace_ratio
-    )
-    print_analyzer_info(root_analyzer)
-    root_analyzer.fit(noisy_signal)
-    print_results(root_analyzer, true_params)
+    for name, analyzer in analyzers_to_test.items():
+        print(f"\n--- Running {name} ---")
+        print_analyzer_info(analyzer)
 
-    print("\n--- Running ESPRIT ---")
-    esprit_analyzer = StandardEspritAnalyzer(
-        config.fs,
-        config.n_sinusoids,
-        LSEspritSolver(),
-        subspace_ratio=config.subspace_ratio,
-    )
-    print_analyzer_info(esprit_analyzer)
-    esprit_analyzer.fit(noisy_signal)
-    print_results(esprit_analyzer, true_params)
+        start_time = time.perf_counter()
+        analyzer.fit(noisy_signal)
+        end_time = time.perf_counter()
+
+        print(f"Elapsed Time: {end_time - start_time:.4f} seconds")
+        print_results(analyzer, true_params)
 
 
 if __name__ == "__main__":
