@@ -66,54 +66,57 @@ Sampling Frequency: 44100.0 Hz
 Signal Duration:    100 ms
 SNR:                30.0 dB
 True Frequencies:   [440. 460. 480.] Hz
-True Amplitudes:    [1.37608315 0.83629437 0.68580361]
-True Phases:        [-2.57054399  3.06942632  1.2589388 ] rad
+True Amplitudes:    [1.08607452 1.26224867 1.02368536]
+True Phases:        [-1.84613126 -2.56550767  1.29983362] rad
 
 --- Running Spectral MUSIC ---
 Analyzer Parameters:
   Subspace Ratio: 0.3333
   N Grids: 16384
+Elapsed Time: 0.7337 seconds
 
 --- Estimation Results ---
-Est Frequencies: [441.43066406 460.2722168  479.11376953] Hz
-Est Amplitudes:  [1.31970983 0.91049428 0.63996752]
-Est Phases:      [-3.02360917  3.01468944  1.60191168] rad
+Est Frequencies: [440.21491002 460.26970412 479.18628111] Hz
+Est Amplitudes:  [1.05378802 1.23946073 0.99548543]
+Est Phases:      [-1.90415797 -2.66810899  1.56569674] rad
 
 --- Estimation Errors ---
-Freq Errors:  [ 1.43066406  0.2722168  -0.88623047] Hz
-Amp Errors:   [-0.05637332  0.07419992 -0.04583609]
-Phase Errors: [-0.45306517 -0.05473689  0.34297288] rad
+Freq Errors:  [ 0.21491002  0.26970412 -0.81371889] Hz
+Amp Errors:   [-0.0322865  -0.02278794 -0.02819992]
+Phase Errors: [-0.05802671 -0.10260131  0.26586312] rad
 
 
 --- Running Root MUSIC ---
 Analyzer Parameters:
   Subspace Ratio: 0.3333
+Elapsed Time: 15.5962 seconds
 
 --- Estimation Results ---
-Est Frequencies: [440.00253227 460.01181416 480.00302957] Hz
-Est Amplitudes:  [1.3752451  0.83682708 0.68580222]
-Est Phases:      [-2.57156131  3.06372891  1.25841805] rad
+Est Frequencies: [440.00114041 460.01159413 479.99561256] Hz
+Est Amplitudes:  [1.08709193 1.26275134 1.02308641]
+Est Phases:      [-1.84674599 -2.57022537  1.3015119 ] rad
 
 --- Estimation Errors ---
-Freq Errors:  [0.00253227 0.01181416 0.00302957] Hz
-Amp Errors:   [-8.38051531e-04  5.32715139e-04 -1.38207764e-06]
-Phase Errors: [-0.00101732 -0.00569741 -0.00052075] rad
+Freq Errors:  [ 0.00114041  0.01159413 -0.00438744] Hz
+Amp Errors:   [ 0.00101742  0.00050267 -0.00059895]
+Phase Errors: [-0.00061473 -0.00471769  0.00167828] rad
 
 
---- Running ESPRIT ---
+--- Running ESPRIT (LS) ---
 Analyzer Parameters:
   Subspace Ratio: 0.3333
   Solver: LSEspritSolver
+Elapsed Time: 0.4664 seconds
 
 --- Estimation Results ---
-Est Frequencies: [440.00164814 460.00529982 480.00820167] Hz
-Est Amplitudes:  [1.37552985 0.83680788 0.68588656]
-Est Phases:      [-2.57136149  3.06593575  1.25639301] rad
+Est Frequencies: [439.98992195 460.01069727 479.99639225] Hz
+Est Amplitudes:  [1.08715901 1.26232343 1.02343474]
+Est Phases:      [-1.8432428  -2.57024044  1.30123083] rad
 
 --- Estimation Errors ---
-Freq Errors:  [0.00164814 0.00529982 0.00820167] Hz
-Amp Errors:   [-5.53302726e-04  5.13512704e-04  8.29517958e-05]
-Phase Errors: [-0.0008175  -0.00349057 -0.0025458 ] rad
+Freq Errors:  [-0.01007805  0.01069727 -0.00360775] Hz
+Amp Errors:   [ 1.08449626e-03  7.47562613e-05 -2.50621360e-04]
+Phase Errors: [ 0.00288846 -0.00473276  0.00139721] rad
 ```
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
