@@ -36,7 +36,14 @@ import numpy as np
 
 from analyzers.music.root import RootMusicAnalyzer, RootMusicAnalyzerFB
 from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
-from cli import parse_args, print_analyzer_info, print_experiment_setup, print_results
+from cli import (
+    compute_summary_row,
+    parse_args,
+    print_analyzer_info,
+    print_experiment_setup,
+    print_results,
+    print_summary_table,
+)
 from utils.data_models import ExperimentConfig
 from utils.signal_generator import create_true_parameters, generate_test_signal
 
@@ -81,6 +88,7 @@ def main() -> None:
         ),
     }
 
+    results_summary: list[dict[str, str | float]] = []
     for name, analyzer in analyzers_to_test.items():
         print(f"\n--- Running {name} ---")
         print_analyzer_info(analyzer)
@@ -91,6 +99,18 @@ def main() -> None:
 
         print(f"Elapsed Time: {end_time - start_time:.4f} seconds")
         print_results(analyzer, true_params)
+
+        # Call the function and get the resulting rows
+        summary_row = compute_summary_row(
+            name, analyzer, true_params, end_time - start_time
+        )
+
+        # If the result is valid, add it to the summary list
+        if summary_row is not None:
+            results_summary.append(summary_row)
+
+    # --- 4. Print Summary Table ---
+    print_summary_table(results_summary)
 
 
 if __name__ == "__main__":
