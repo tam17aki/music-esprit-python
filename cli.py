@@ -205,8 +205,63 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
+def compute_summary_row(
+    name: str,
+    analyzer: AnalyzerBase,
+    true_params: SinusoidParameters,
+    elapsed_time: float,
+) -> dict[str, str | float] | None:
+    """Computes a single row of the results summary table.
+
+    Calculates RMSEs for frequency, amplitude, and phase from a fitted
+    analyzer and returns them as a dictionary.
+
+    Args:
+        name (str): The name of the method being evaluated.
+        analyzer (AnalyzerBase): The fitted analyzer instance.
+        true_params (SinusoidParameters): The ground truth parameters.
+        elapsed_time (float): The execution time of the .fit() method.
+
+    Returns:
+        dict[str, str | float] | None:
+            A dictionary representing one row of the summary table,
+            or None if the estimation was incomplete.
+    """
+    if (
+        analyzer.est_params is None
+        or analyzer.frequencies.size != true_params.frequencies.size
+    ):
+        return None
+
+    sort_indices = np.argsort(true_params.frequencies)
+
+    # Frequency Error
+    freq_errors = analyzer.frequencies - true_params.frequencies[sort_indices]
+    freq_rmse = np.sqrt(np.mean(freq_errors**2))
+
+    # amplitude error
+    amp_errors = analyzer.amplitudes - true_params.amplitudes[sort_indices]
+    amp_rmse = np.sqrt(np.mean(amp_errors**2))
+
+    # phase error
+    phase_errors = analyzer.phases - true_params.phases[sort_indices]
+    phase_rmse = np.sqrt(np.mean(phase_errors**2))
+
+    return {
+        "Method": name,
+        "Time (s)": elapsed_time,
+        "Freq RMSE (Hz)": freq_rmse,
+        "Amp RMSE": amp_rmse,
+        "Phase RMSE": phase_rmse,
+    }
+
+
 def print_summary_table(results: list[dict[str, str | float]]) -> None:
-    """Prints a summary table of the estimation results."""
+    """Prints a summary table of the estimation results.
+
+    Args:
+        results (list[dict[str, str | float]]): The rows of summary table.
+    """
     if not results:
         print("\n--- No results to summarize. ---")
         return
