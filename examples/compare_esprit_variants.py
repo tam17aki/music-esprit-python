@@ -71,6 +71,9 @@ def main() -> None:
         is_complex=args.complex,
     )
 
+    # --- 3. Print Setup and Run Analyses ---
+    print_experiment_setup(config, true_params)
+
     analyzers_to_test = {
         "ESPRIT (LS)": StandardEspritAnalyzer(
             config.fs, config.n_sinusoids, LSEspritSolver()
@@ -85,9 +88,6 @@ def main() -> None:
             config.fs, config.n_sinusoids, TLSUnitaryEspritSolver()
         ),
     }
-
-    # --- 3. Print Setup and Run Analyses ---
-    print_experiment_setup(config, true_params)
 
     for name, analyzer in analyzers_to_test.items():
         print(f"\n--- Running {name} ---")
