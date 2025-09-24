@@ -51,15 +51,7 @@ from utils.signal_generator import create_true_parameters, generate_test_signal
 
 
 def main() -> None:
-    """Perform the main demonstration workflow.
-
-    This function orchestrates the entire demonstration process:
-    1. Parses command-line arguments to create an experiment configuration.
-    2. Generates a synthetic test signal based on the configuration.
-    3. Prints the ground truth setup to the console.
-    4. Instantiates and runs each implemented analyzer (Spectral MUSIC, etc.).
-    5. Prints the estimation results and errors for each analyzer.
-    """
+    """Perform the main demonstration workflow."""
     # --- 1. Setup Configuration ---
     args = parse_args()
     config = ExperimentConfig(
