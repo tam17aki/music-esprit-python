@@ -208,6 +208,7 @@ This project is organized into a modular, object-oriented structure to promote c
     - `run_comparison.py`: The main demonstration script that runs a comparative analysis of Spectral/Root MUSIC and ESPRIT algorithm. It can be used as a starting point for your own experiments.
     - `compare_music_variants.py`: The demonstration script that runs a comparative analysis of Spectral and Root MUSIC algorithm, including their Forward-Backward enhanced versions.
     - `compare_esprit_variants.py`: The demonstration script that runs a comparative analysis of Standard ESPRIT (LS/TLS) and  Unitary ESPRIT (LS/TLS) algorithm.
+    - `compare_minnorm_variants.py`: The demonstration script that runs a comparative analysis of Spectral and Root Min-Norm algorithm, including their Forward-Backward enhanced versions.
 
 This layered design allows for maximum code reuse and easy extension.
 
