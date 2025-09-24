@@ -126,14 +126,14 @@ Phase Errors: [ 0.00288846 -0.00473276  0.00139721] rad
 For more specific comparisons, you can run other example scripts:
 
 - `examples/compare_music_variants.py`:<br>
-This script focuses exclusively on the MUSIC family, comparing the performance of `SpectralMusicAnalyzer`, `RootMusicAnalyzer`, `SpectralMinNormAnalyzer`, and `RootMinNormAnalyzer`.
+This script focuses exclusively on the MUSIC family, comparing the performance of `SpectralMusicAnalyzer`, `RootMusicAnalyzer`, and their Forward-Backward enhanced versions.
 
 ```bash
 python examples/compare_music_variants.py
 ```
 
 - `examples/compare_esprit_variants.py`:<br>
-This script is dedicated to the ESPRIT family. It compares `StandardEspritAnalyzer` against the computationally efficient `UnitaryEspritAnalyzer` (with both LS and TLS solvers).
+This script is dedicated to the ESPRIT family. It compares `StandardEspritAnalyzer` against the computationally efficient `UnitaryEspritAnalyzer`, with both LS and TLS solvers.
 
 ```bash
 python examples/compare_esprit_variants.py
