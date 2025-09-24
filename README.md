@@ -21,7 +21,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
 - **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
 - **Clean and Type-Hinted Code**: Fully type-hinted with `mypy` validation. Code quality is enforced by a combination of `ruff` (for speed and formatting) and `pylint` (for in-depth analysis), ensuring high standards of maintainability.
-- **Demonstration Script**: Includes a flexible command-line interface (`main.py`) to easily run experiments and compare the performance of different algorithms and their variants.
+- **Demonstration Script**: Includes a flexible command-line interface to easily run experiments and compare the performance of different algorithms and their variants.
 
 ## Installation
 
