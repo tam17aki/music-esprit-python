@@ -38,20 +38,23 @@ This work is inspired by the foundational papers in subspace-based signal proces
     ```
 
 3.  Install the required dependencies:
+
+     This is the recommended way to install the package for development or running examples. It installs the necessary dependencies and makes the package available throughout your environment.
     ```bash
-    pip install -r requirements.txt
+    pip install -e .
     ```
+    *(Note: This command reads the `pyproject.toml` file to understand how to install the package.)*
 
 ## Usage
 
-The main entry point is `main.py`, which allows you to run a comparative analysis of MUSIC and ESPRIT.
+After installation, you can run the provided example scripts to see the analyzers in action. These scripts are located in the `examples/` directory and serve as a starting point for your own experiments.
 
 ### Basic Example
 
-To run a demonstration with default parameters (a signal with three sinusoids at 440, 460, and 480 Hz):
+To run a comparative analysis of MUSIC and ESPRIT with default parameters (a signal with three sinusoids at 440, 460, and 480 Hz):
 
 ```bash
-python main.py
+python examples/run_comparison.py
 ```
 
 #### Example Output
@@ -115,18 +118,38 @@ Phase Errors: [-0.0008175  -0.00349057 -0.0025458 ] rad
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
 
+### Running Focused Comparisons
+
+For more specific comparisons, you can run other example scripts:
+
+- `examples/compare_music_variants.py`:<br>
+This script focuses exclusively on the MUSIC family, comparing the performance of `SpectralMusicAnalyzer`, `RootMusicAnalyzer`, `SpectralMinNormAnalyzer`, and `RootMinNormAnalyzer`.
+
+```bash
+python examples/compare_music_variants.py
+```
+
+- `examples/compare_esprit_variants.py`:<br>
+This script is dedicated to the ESPRIT family. It compares `StandardEspritAnalyzer` against the computationally efficient `UnitaryEspritAnalyzer` (with both LS and TLS solvers).
+
+```bash
+python examples/compare_esprit_variants.py
+```
+
+You can customize the experiments by modifying these scripts or by using the command-line arguments they provide.
+
 ### Command-Line Options
 
 You can customize the experiment via command-line arguments.
 
 ```bash
-python main.py --freqs_true 440 445 450 --snr_db 25 --duration 0.8 --complex
+python examples/run_comparison.py --freqs_true 440 445 450 --snr_db 25 --duration 0.8 --complex
 ```
 
 To see all available options, run:
 
 ```bash
-python main.py --help
+python examples/run_comparison.py --help
 ```
 
 | Argument| Description | Default |
@@ -139,6 +162,7 @@ python main.py --help
 | `--subspace_ratio` | The ratio of the subspace dimension to the signal length.<br> Must be in (0, 0.5].| 1/3|
 | `--complex` | If specified, generate a complex-valued signal instead of <br> a real-valued one.| False (Flag)|
 | `--n_grids` | Number of grid points for Spectral MUSIC and Spectral Min-Norm. | 16384|
+
 
 
 ### Using a Specific Analyzer in Your Own Code
