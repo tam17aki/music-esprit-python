@@ -277,7 +277,7 @@ def print_summary_table(results: list[dict[str, str | float]]) -> None:
         for key, value in row.items():
             # Calculate the length of the formatted value
             if isinstance(value, float):
-                val_len = len(f"{value:.4f}")
+                val_len = len(f"{value:.6f}")
             else:
                 val_len = len(str(value))
             col_widths[key] = max(col_widths[key], val_len)
@@ -296,7 +296,7 @@ def print_summary_table(results: list[dict[str, str | float]]) -> None:
         for key in headers:
             value = row[key]
             if isinstance(value, float):
-                formatted_value = f"{value:<{col_widths[key]}.4f}"
+                formatted_value = f"{value:<{col_widths[key]}.6f}"
             else:
                 formatted_value = f"{str(value):<{col_widths[key]}}"
             row_items.append(formatted_value)
