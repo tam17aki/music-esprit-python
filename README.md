@@ -170,7 +170,6 @@ python examples/run_comparison.py --help
 
 This project is organized into a modular, object-oriented structure to promote clarity, reusability, and separation of concerns. The core logic is built upon a hierarchical class system.
 
-- **`main.py`**: The main entry point to run demonstrations. It orchestrates the setup, execution, and result presentation of the analysis.
 - **`analyzers/`**: A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
   - `base.py`: Defines `AnalyzerBase`, the top-level abstract base class for all parametric estimation methods. It contains the common logic for the analysis workflow, such as the `fit` method template, subsequent amplitude/phase estimation, and result properties.
   - `models.py`: Defines `TypedDict` models (e.g., `AnalyzerParameters`) used for structuring and type-hinting the dictionaries of hyperparameters passed to and returned by the analyzers.
