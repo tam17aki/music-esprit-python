@@ -203,3 +203,46 @@ def parse_args() -> argparse.Namespace:
         )
 
     return args
+
+
+def print_summary_table(results: list[dict[str, str | float]]) -> None:
+    """Prints a summary table of the estimation results."""
+    if not results:
+        print("\n--- No results to summarize. ---")
+        return
+
+    print("\n--- Results Summary ---")
+
+    # Determine the header
+    headers = list(results[0].keys())
+
+    # Calculate the maximum width for each column
+    col_widths = {key: len(key) for key in headers}
+    for row in results:
+        for key, value in row.items():
+            # Calculate the length of the formatted value
+            if isinstance(value, float):
+                val_len = len(f"{value:.4f}")
+            else:
+                val_len = len(str(value))
+            col_widths[key] = max(col_widths[key], val_len)
+
+    # --- Output header line ---
+    header_line = " | ".join([f"{h:<{col_widths[h]}}" for h in headers])
+    print(header_line)
+
+    # --- Output separator lines ---
+    separator_line = "-|-".join(["-" * col_widths[h] for h in headers])
+    print(separator_line)
+
+    # --- Output data rows ---
+    for row in results:
+        row_items: list[str] = []
+        for key in headers:
+            value = row[key]
+            if isinstance(value, float):
+                formatted_value = f"{value:<{col_widths[key]}.4f}"
+            else:
+                formatted_value = f"{str(value):<{col_widths[key]}}"
+            row_items.append(formatted_value)
+        print(" | ".join(row_items))
