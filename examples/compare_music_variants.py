@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""A demonstration script for sinusoidal parameter estimation.
+"""A demonstration script to compare variants of the MUSIC algorithm.
 
-This script runs a comparative analysis of high-resolution parameter estimation
-algorithms:
-- MUSIC (Spectral and Root)
-- Min-Norm (Spectral and Root)
+This script compares:
+- SpectralMusicAnalyzer
+- RootMusicAnalyzer
+and their Forward-Backward enhanced versions.
 
 For each method, it estimates the frequencies, amplitudes, and phases of
 sinusoidal components in a noisy signal and reports the estimation errors.
@@ -30,27 +30,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import time
+
 import numpy as np
 
-from analyzers.minnorm.root import RootMinNormAnalyzer
-from analyzers.minnorm.spectral import SpectralMinNormAnalyzer
-from analyzers.music.root import RootMusicAnalyzer
-from analyzers.music.spectral import SpectralMusicAnalyzer
+from analyzers.music.root import RootMusicAnalyzer, RootMusicAnalyzerFB
+from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
 from cli import parse_args, print_analyzer_info, print_experiment_setup, print_results
 from utils.data_models import ExperimentConfig
 from utils.signal_generator import create_true_parameters, generate_test_signal
 
 
 def main() -> None:
-    """Perform the main demonstration workflow.
-
-    This function orchestrates the entire demonstration process:
-    1. Parses command-line arguments to create an experiment configuration.
-    2. Generates a synthetic test signal based on the configuration.
-    3. Prints the ground truth setup to the console.
-    4. Instantiates and runs each implemented analyzer (Spectral MUSIC, etc.).
-    5. Prints the estimation results and errors for each analyzer.
-    """
+    """Perform the main demonstration workflow."""
     # --- 1. Setup Configuration ---
     args = parse_args()
     config = ExperimentConfig(
@@ -76,33 +68,29 @@ def main() -> None:
     # --- 3. Print Setup and Run Analyses ---
     print_experiment_setup(config, true_params)
 
-    print("\n--- Running Spectral MUSIC ---")
-    spec_analyzer = SpectralMusicAnalyzer(
-        config.fs, config.n_sinusoids, n_grids=config.n_grids
-    )
-    print_analyzer_info(spec_analyzer)
-    spec_analyzer.fit(noisy_signal)
-    print_results(spec_analyzer, true_params)
+    analyzers_to_test = {
+        "Spectral MUSIC": SpectralMusicAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=config.n_grids
+        ),
+        "Root MUSIC": RootMusicAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
+        "Spectral MUSIC FB": SpectralMusicAnalyzerFB(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=config.n_grids
+        ),
+        "Root MUSIC FB": RootMusicAnalyzerFB(
+            fs=config.fs, n_sinusoids=config.n_sinusoids
+        ),
+    }
 
-    print("\n--- Running Root MUSIC ---")
-    root_analyzer = RootMusicAnalyzer(config.fs, config.n_sinusoids)
-    print_analyzer_info(root_analyzer)
-    root_analyzer.fit(noisy_signal)
-    print_results(root_analyzer, true_params)
+    for name, analyzer in analyzers_to_test.items():
+        print(f"\n--- Running {name} ---")
+        print_analyzer_info(analyzer)
 
-    print("\n--- Running Spectral Min-Norm ---")
-    minnorm_spec_analyzer = SpectralMinNormAnalyzer(
-        config.fs, config.n_sinusoids, n_grids=config.n_grids
-    )
-    minnorm_spec_analyzer.fit(noisy_signal)
-    print_analyzer_info(minnorm_spec_analyzer)
-    print_results(minnorm_spec_analyzer, true_params)
+        start_time = time.perf_counter()
+        analyzer.fit(noisy_signal)
+        end_time = time.perf_counter()
 
-    print("\n--- Running Root Min-Norm ---")
-    minnorm_root_analyzer = RootMinNormAnalyzer(config.fs, config.n_sinusoids)
-    minnorm_root_analyzer.fit(noisy_signal)
-    print_analyzer_info(minnorm_root_analyzer)
-    print_results(minnorm_root_analyzer, true_params)
+        print(f"Elapsed Time: {end_time - start_time:.4f} seconds")
+        print_results(analyzer, true_params)
 
 
 if __name__ == "__main__":
