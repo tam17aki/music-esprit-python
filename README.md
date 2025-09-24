@@ -139,6 +139,13 @@ This script is dedicated to the ESPRIT family. It compares `StandardEspritAnalyz
 python examples/compare_esprit_variants.py
 ```
 
+- `examples/compare_minnorm_variants.py`:<br>
+This script is dedicated to the Min-Norm family, comparing the performance of `SpectralMinNormAnalyzer`, `RootMinNormAnalyzer`, and their Forward-Backward enhanced versions.
+
+```bash
+python examples/compare_minnorm_variants.py
+```
+
 You can customize the experiments by modifying these scripts or by using the command-line arguments they provide.
 
 ### Command-Line Options
