@@ -252,7 +252,7 @@ def compute_summary_row(
         "Time (s)": elapsed_time,
         "Freq RMSE (Hz)": freq_rmse,
         "Amp RMSE": amp_rmse,
-        "Phase RMSE": phase_rmse,
+        "Phase RMSE (rad)": phase_rmse,
     }
 
 
