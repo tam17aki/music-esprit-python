@@ -69,7 +69,15 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         *,
         n_fft_iip: int | None = None,
     ):
-        """Initializes the FFT-ESPRIT analyzer."""
+        """Initialize the analyzer with an experiment configuration.
+
+        Args:
+            fs (float): Sampling frequency in Hz.
+            n_sinusoids (int): Number of sinusoids.
+            solver (LSEspritSolver | TLSEspritSolver):
+                Solver to solve frequencies with the rotation operator.
+            n_fft_iip (int): The length of iterative interpolation FFT.
+        """
         super().__init__(fs, n_sinusoids, subspace_ratio=0.5)
         self.solver = solver
         self.n_fft_iip = n_fft_iip
@@ -136,16 +144,16 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+        """Returns the analyzer's hyperparameters.
 
         Extends the base implementation to include the name of the solver class.
 
         Returns:
             AnalyzerParameters:
-                A TypedDict containing both common and spectral-specific
-                hyperparameters.
+                A TypedDict containing both common and specific hyperparameters.
         """
         params = super().get_params()
         params.pop("subspace_ratio", None)
         params["solver"] = self.solver.__class__.__name__
+        params["n_fft_iip"] = self.n_fft_iip
         return params
