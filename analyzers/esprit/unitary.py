@@ -27,15 +27,15 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import LinAlgError, eigh, hankel
+from scipy.linalg import LinAlgError, eigh
 
 from ..models import AnalyzerParameters
-from .base import EspritAnalyzerBase
+from .base import EVDBasedEspritAnalyzer
 from .solvers import LSUnitaryEspritSolver, TLSUnitaryEspritSolver
 
 
 @final
-class UnitaryEspritAnalyzer(EspritAnalyzerBase):
+class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
     """A class to solve frequencies via Unitary ESPRIT with least squares."""
 
     def __init__(
@@ -103,9 +103,7 @@ class UnitaryEspritAnalyzer(EspritAnalyzerBase):
         """
         # 1. Construct the data matrix X (Hankel matrix)
         #    size: (L, N) = (subspace_dim, n_snapshots)
-        _data_matrix = hankel(
-            signal[: self.subspace_dim], signal[self.subspace_dim - 1 :]
-        )
+        _data_matrix = self._build_hankel_matrix(signal, self.subspace_dim)
         data_matrix = _data_matrix.astype(np.complex128)
 
         # 2. Convert complex matrix X to real matrix T(X) (based on Eq. (7))
