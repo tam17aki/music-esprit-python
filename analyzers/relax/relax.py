@@ -31,6 +31,7 @@ from scipy.linalg import LinAlgError
 
 from .._common import estimate_freqs_iterative_fft
 from ..base import AnalyzerBase
+from ..models import AnalyzerParameters
 
 ZERO_LEVEL = 1e-9
 
@@ -186,3 +187,19 @@ class RelaxEspritAnalyzer(AnalyzerBase):
             amp *= 2.0
 
         return amp, phase
+
+    @override
+    def get_params(self) -> AnalyzerParameters:
+        """Returns the analyzer's hyperparameters.
+
+        Extends the base implementation to include the length of iterative
+        interpolation FFT.
+
+        Returns:
+            AnalyzerParameters:
+                A TypedDict containing both common and specific hyperparameters.
+        """
+        params = super().get_params()
+        params.pop("subspace_ratio", None)
+        params["n_fft_iip"] = self.n_fft_iip
+        return params
