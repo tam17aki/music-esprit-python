@@ -339,7 +339,7 @@ def estimate_freqs_iterative_fft(
         signal (np.ndarray): Input signal (float64 or complex128).
         n_peaks (int): The number of peaks to find and return.
         fs (float): Sampling frequency in Hz.
-        n_fft (int): The length of FFT.
+        n_fft (int | None): The length of FFT.
 
     Returns:
         np.ndarray:
