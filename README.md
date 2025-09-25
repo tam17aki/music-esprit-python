@@ -10,12 +10,13 @@ This work is inspired by the foundational papers in subspace-based signal proces
 - **Multiple Methods Implemented**:
   A comprehensive suite of advanced parameter estimation algorithms is provided, grouped by their core approach:
   - **High-Resolution Subspace and AR-Modeling Methods**: These techniques surpass the resolution limits of the classical FFT by exploiting the algebraic structure of the signal model.
-    - **MUSIC (Spectral, Root & FAST)**: A classic high-resolution method based on the orthogonality of signal and noise subspaces.
-      - The **FAST MUSIC** variant provides a computationally efficient implementation for (quasi-)periodic signals by replacing the expensive EVD with an FFT. 
+    - **MUSIC (Spectral, Root, & FAST)**: A family of high-resolution methods based on the orthogonality of signal and noise subspaces.
+       - The **Spectral** and **Root** MUSIC variants are classic implementations that offer true super-resolution capabilities.
+       - The **FAST MUSIC** variant is a modern, computationally efficient implementation for (quasi-)periodic signals that replaces the expensive EVD with an FFT, prioritizing speed over ultimate resolution.
     - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
     - **ESPRIT (Standard, Unitary, & FFT-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
-      -   The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
-      -   The **FFT-ESPRIT** variant offers a significant speed-up ($`O(N\:\log\:N)`$) by approximating the signal subspace with an FFT-based kernel method, making it suitable for real-time applications.
+      - The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
+      - The **FFT-ESPRIT** variant offers a significant speed-up ($`O(N\:\log\:N)`$) by approximating the signal subspace with an FFT-based kernel method, making it suitable for real-time applications.
     - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
   - **Fast Iterative Methods**:
     This approach prioritizes computational speed, making it ideal for applications where frequencies are well-separated.
