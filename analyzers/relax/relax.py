@@ -120,12 +120,12 @@ class RelaxEspritAnalyzer(AnalyzerBase):
                 A flag indicating whether the sinusoid is real-valued.
         """
         t = np.arange(n_samples) / fs
-        arg = 2 * np.pi * params.frequency * t + params.phase
+        argument = 2 * np.pi * params.frequency * t + params.phase
         if is_real_signal:
-            signal_real = params.amplitude * np.cos(arg)
+            signal_real = params.amplitude * np.cos(argument)
             return signal_real
         signal_complex: npt.NDArray[np.complex128] = (
-            params.amplitude * np.exp(1j * arg)
+            params.amplitude * np.exp(1j * argument)
         ).astype(np.complex128)
         return signal_complex
 
