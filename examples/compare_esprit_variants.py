@@ -5,6 +5,7 @@ This script runs a comparative analysis of high-resolution parameter estimation
 algorithms:
 - ESPRIT (Standard LS/TLS)
 - ESPRIT (Unitary LS/TLS)
+- FFT-ESPRIT (LS/TLS)
 
 For each method, it estimates the frequencies, amplitudes, and phases of
 sinusoidal components in a noisy signal and reports the estimation errors.
@@ -34,6 +35,7 @@ import time
 
 import numpy as np
 
+from analyzers.esprit.fft import FFTEspritAnalyzer
 from analyzers.esprit.solvers import (
     LSEspritSolver,
     LSUnitaryEspritSolver,
@@ -93,6 +95,12 @@ def main() -> None:
         ),
         "Unitary ESPRIT (TLS)": UnitaryEspritAnalyzer(
             config.fs, config.n_sinusoids, TLSUnitaryEspritSolver()
+        ),
+        "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
+            config.fs, config.n_sinusoids, LSEspritSolver()
+        ),
+        "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
+            config.fs, config.n_sinusoids, TLSEspritSolver()
         ),
     }
 
