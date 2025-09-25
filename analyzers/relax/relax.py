@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import NamedTuple, final, override
+from dataclasses import dataclass
+from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
@@ -34,12 +35,13 @@ from ..base import AnalyzerBase
 ZERO_LEVEL = 1e-9
 
 
-class SinusoidParameter(NamedTuple):
+@dataclass
+class SingleSinusoidParameters:
     """Represents the parameters of a single sinusoid."""
 
-    freq: float  # fundamental frequency
-    amplitude: float  # amplitude
-    phase: float  # initial phase
+    frequency: float
+    amplitude: float
+    phase: float
 
 
 @final
@@ -77,31 +79,54 @@ class RelaxEspritAnalyzer(AnalyzerBase):
         """
         residual_signal = signal.copy()
         estimated_freqs: list[float] = []
+        params = SingleSinusoidParameters(0.0, 0.0, 0.0)
         for _ in range(self.n_sinusoids):
             strongest_freq = estimate_freqs_iterative_fft(
                 residual_signal, n_peaks=1, fs=self.fs
             )[0]
             estimated_freqs.append(strongest_freq)
             amp, phase = self._estimate_amp_phase(residual_signal, strongest_freq)
-            params = SinusoidParameter(float(strongest_freq), float(amp), float(phase))
-            sinusoid_to_remove = self.synthesize_single_sinusoid(
+            params.frequency = float(strongest_freq)
+            params.amplitude = float(amp)
+            params.phase = float(phase)
+            single_sinsoid = self.synthesize_single_sinusoid(
                 params, signal.size, self.fs, np.isrealobj(signal)
             )
+            if np.isrealobj(signal):
+                sinusoid_to_remove = single_sinsoid.astype(np.float64)
+            else:
+                sinusoid_to_remove = single_sinsoid.astype(np.complex128)
             residual_signal -= sinusoid_to_remove
 
         return np.sort(np.array(estimated_freqs))
 
     @staticmethod
     def synthesize_single_sinusoid(
-        params: SinusoidParameter, n_samples: int, fs: float, is_real_signal: bool
+        params: SingleSinusoidParameters,
+        n_samples: int,
+        fs: float,
+        is_real_signal: bool,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-        """Re-synthesize a single  sinusoid from its parameter object."""
+        """Re-synthesize a single  sinusoid from its parameter object.
+
+        Args:
+            params (SingleSinusoidParameters):
+                The parameters of the single sinusoid.
+            n_samples (int):
+                The number of samples in the sinsoid.
+            fs (float):
+                Sampling frequency in Hz of the sinusoid.
+            is_real_signal (bool):
+                A flag indicating whether the sinusoid is real-valued.
+        """
         t = np.arange(n_samples) / fs
-        arg = 2 * np.pi * params.freq * t + params.phase
+        arg = 2 * np.pi * params.frequency * t + params.phase
         if is_real_signal:
             signal_real = params.amplitude * np.cos(arg)
             return signal_real
-        signal_complex = (params.amplitude * np.exp(1j * arg)).astype(np.complex128)
+        signal_complex: npt.NDArray[np.complex128] = (
+            params.amplitude * np.exp(1j * arg)
+        ).astype(np.complex128)
         return signal_complex
 
     def _estimate_amp_phase(
