@@ -78,7 +78,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
                 signal's fundamental period. This helps constrain the search
                 range of the periodicity detection. Defaults to 20.0.
         """
-        super().__init__(fs, n_sinusoids, subspace_ratio=0.5)  # pass dummy
+        super().__init__(fs, n_sinusoids)
         self.n_grids = n_grids
         self.min_freq_period = min_freq_period
 
