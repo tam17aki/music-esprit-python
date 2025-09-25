@@ -78,7 +78,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
                 Solver to solve frequencies with the rotation operator.
             n_fft_iip (int): The length of iterative interpolation FFT.
         """
-        super().__init__(fs, n_sinusoids, subspace_ratio=0.5)
+        super().__init__(fs, n_sinusoids)
         self.solver = solver
         self.n_fft_iip = n_fft_iip
 
