@@ -13,9 +13,9 @@ This work is inspired by the foundational papers in subspace-based signal proces
   - **MUSIC (Spectral, Root & FAST)**: A classic high-resolution method based on the orthogonality of signal and noise subspaces.
     - The **FAST MUSIC** variant provides a computationally efficient implementation for (quasi-)periodic signals by replacing the expensive EVD with an FFT. 
   - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
-  - **ESPRIT (Standard & Unitary)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
-    - The **Standard ESPRIT** (LS/TLS) provides a direct algebraic solution in the complex domain.
-    - The **Unitary ESPRIT** (LS/TLS) variant transforms the problem into the real domain, significantly reducing computational complexity.
+  - **ESPRIT (Standard, Unitary, & FFT-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
+    -   The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
+    -   The **FFT-ESPRIT** variant offers a significant speed-up ($`O(N\:\log\:N)`$) by approximating the signal subspace with an FFT-based kernel method, making it suitable for real-time applications, though it may have lower resolution for very closely spaced sinusoids.
   - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
