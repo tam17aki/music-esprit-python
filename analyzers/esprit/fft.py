@@ -30,6 +30,7 @@ import numpy.typing as npt
 from scipy.linalg import qr
 
 from .._common import estimate_freqs_iterative_fft
+from ..models import AnalyzerParameters
 from .base import EspritAnalyzerBase
 from .solvers import LSEspritSolver, TLSEspritSolver
 
@@ -132,3 +133,19 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         # 7. Post-processing
         est_freqs = self._postprocess_omegas(omegas)
         return est_freqs
+
+    @override
+    def get_params(self) -> AnalyzerParameters:
+        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+
+        Extends the base implementation to include the name of the solver class.
+
+        Returns:
+            AnalyzerParameters:
+                A TypedDict containing both common and spectral-specific
+                hyperparameters.
+        """
+        params = super().get_params()
+        params.pop("subspace_ratio", None)
+        params["solver"] = self.solver.__class__.__name__
+        return params
