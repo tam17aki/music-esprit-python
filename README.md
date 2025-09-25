@@ -17,6 +17,7 @@ This work is inspired by the foundational papers in subspace-based signal proces
     -   The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
     -   The **FFT-ESPRIT** variant offers a significant speed-up ($`O(N\:\log\:N)`$) by approximating the signal subspace with an FFT-based kernel method, making it suitable for real-time applications.
   - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
+  - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
 - **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
@@ -207,6 +208,8 @@ This project is organized into a modular, object-oriented structure to promote c
     - `root.py`: Implements `RootMinNormAnalyzer`, which estimates frequencies via polynomial rooting.
   - **`hoyw/`**: A sub-package for the Higher-Order Yule-Walker (HOYW) method.
      - `hoyw.py`: Implements `HoywAnalyzer`, which directly inherits from `AnalyzerBase`. It estimates frequencies by solving the HOYW equations and subsequent finding the polynomial roots.
+  - **`relax/`**: A sub-package for the RELAX algorithm.
+     - `relax.py`: Implements `RelaxAnalyzer`, which sequentially estimates parameters using an iterative signal cancellation approach.
 - **`mixins/`**: A package for providing optional enhancements to the analyzer classes through multiple inheritance.
   - `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
 - **`utils/`**: A package for reusable helper modules and data structures that are decoupled from the specific analyzer implementations.
@@ -274,8 +277,9 @@ For a deeper dive into the theory behind each algorithm, please refer to the fol
     -   Unitary ESPRIT: [8]
     -   FFT-ESPRIT: [9]
 -   **HOYW**: [10]
+-   **RELAX**: [11]
 
-For a comprehensive overview and detailed mathematical derivations, the following textbook is highly recommended: [11].
+For a comprehensive overview and detailed mathematical derivations, the following textbook is highly recommended: [12].
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/tam17aki/music-esprit-python/blob/main/LICENSE) file for details.
@@ -300,5 +304,7 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 [9] S. L. Kiser, et al., "Fast Kernel-based Signal Subspace Estimates for Line Spectral Estimation," PREPRINT, 2023.
 
 [10] P. Stoica, T. Soderstrom and F. Ti, "Asymptotic properties of the high-order Yule-Walker estimates of sinusoidal frequencies," in IEEE Transactions on Acoustics, Speech, and Signal Processing, vol. 37, no. 11, pp. 1721-1734, 1989.
+
+[11] J. Li and P. Stoica, "Efficient mixed-spectrum estimation with applications to target feature extraction," in IEEE Transactions on Signal Processing, vol. 44, no. 2, pp. 281-295, 1996.
 
 [11] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
