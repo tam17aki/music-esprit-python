@@ -32,11 +32,11 @@ from scipy.linalg import LinAlgError, eigh
 from mixins.covariance import ForwardBackwardMixin
 
 from ..models import AnalyzerParameters
-from .base import EspritAnalyzerBase
+from .base import EVDBasedEspritAnalyzer
 from .solvers import LSEspritSolver, TLSEspritSolver
 
 
-class StandardEspritAnalyzer(EspritAnalyzerBase):
+class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
     """A class to solve frequencies via ESPRIT."""
 
     def __init__(
