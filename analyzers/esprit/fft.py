@@ -146,7 +146,8 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
     def get_params(self) -> AnalyzerParameters:
         """Returns the analyzer's hyperparameters.
 
-        Extends the base implementation to include the name of the solver class.
+        Extends the base implementation to include the name of the solver class
+        and the length of iterative interpolation FFT.
 
         Returns:
             AnalyzerParameters:
