@@ -163,9 +163,6 @@ class RelaxEspritAnalyzer(AnalyzerBase):
         try:
             # For pinv calculations, using np.dot is faster
             # when there is only one vector.
-            # complex_amp = pinv(steering_vector) @ complex_signal
-
-            # A more direct calculation:
             # c = (a^H * a)^-1 * a^H * x
             a_h_a = np.dot(steering_vector.conj().T, steering_vector)
             a_h_x = np.dot(steering_vector.conj().T, complex_signal)
