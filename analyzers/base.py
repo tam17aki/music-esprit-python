@@ -107,8 +107,27 @@ class AnalyzerBase(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def _build_covariance_matrix(
+    def _build_hankel_matrix(
         signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128], subspace_dim: int
+    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        """Builds the Hankel data matrix.
+
+        Args:
+            signal (np.ndarray): Input signal (float64 or complex128).
+            subspace_dim (int): The dimension of subspace.
+
+        Returns:
+            np.ndarray: The Hankel matrix (float64 or complex128).
+        """
+        hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
+        if np.isrealobj(signal):
+            return hankel_matrix.astype(np.float64)
+        return hankel_matrix.astype(np.complex128)
+
+    @staticmethod
+    def _build_covariance_matrix(
+        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        subspace_dim: int,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Build the covariance matrix from the input signal.
 
@@ -127,6 +146,20 @@ class AnalyzerBase(ABC):
             return cov_matrix.astype(np.float64)
         return cov_matrix.astype(np.complex128)
 
+    @staticmethod
+    def _build_vandermonde_matrix(
+        freqs: npt.NDArray[np.float64], n_rows: int, fs: float
+    ) -> npt.NDArray[np.complex128]:
+        """Builds a Vandermonde matrix from a set of frequencies."""
+        # Create the time vector t as a column vector
+        t_vector = np.arange(n_rows).reshape(-1, 1) / fs
+
+        # Create the frequency vector freqs as a row vector
+        freq_vector = freqs.reshape(1, -1)
+
+        vandermonde_matrix = np.exp(2j * np.pi * t_vector @ freq_vector)
+        return vandermonde_matrix.astype(np.complex128)
+
     def _estimate_amplitudes_phases(
         self,
         signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
@@ -144,10 +177,8 @@ class AnalyzerBase(ABC):
                 - estimated_phases (np.ndarray): Estimated phases in radians (float64).
         """
         # 1. Build the Vandermonde matrix V
-        t_vector = np.arange(signal.size).reshape(-1, 1) / self.fs
-        freq_vector = estimated_freqs.reshape(1, -1)
-        vandermonde_matrix: npt.NDArray[np.complex128] = np.exp(
-            2j * np.pi * t_vector @ freq_vector
+        vandermonde_matrix = self._build_vandermonde_matrix(
+            estimated_freqs, signal.size, self.fs
         )
 
         # 2. Solve for complex amplitudes c using pseudo-inverse
