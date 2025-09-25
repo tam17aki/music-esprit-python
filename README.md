@@ -262,8 +262,20 @@ Two main families of models are explored in this project:
      - [Printable Version (PDF)](docs/theory/music_theory.pdf)
 2.  **Autoregressive (AR) Models (HOYW):** This approach models the signal as the output of a linear time-invariant system driven by white noise. Frequencies are estimated from the roots of the AR model's characteristic polynomial, whose coefficients are found from the signal's autocorrelation sequence.
 
-For a deeper dive into the theory, please refer to the papers [1-3] for Spectral MUSIC, [4] for Root MUSIC, [5] for FAST MUSIC, [6] for Min-Norm, [7] for ESPRIT, [8] for Unitary ESPRIT, [9] for FFT-ESPRIT and [10] for HOYW. 
-The comprehensive textbook [11] provides detailed mathematical derivations and analyses of these methods and many other advanced signal processing techniques.
+For a deeper dive into the theory behind each algorithm, please refer to the following key papers:
+
+-   **MUSIC Variants**:
+    -   Spectral MUSIC: [1-3]
+    -   Root-MUSIC: [4]
+    -   FAST MUSIC: [5]
+-   **Min-Norm**: [6]
+-   **ESPRIT Variants**:
+    -   Standard ESPRIT: [7]
+    -   Unitary ESPRIT: [8]
+    -   FFT-ESPRIT: [9]
+-   **HOYW**: [10]
+
+For a comprehensive overview and detailed mathematical derivations, the following textbook is highly recommended: [11].
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/tam17aki/music-esprit-python/blob/main/LICENSE) file for details.
