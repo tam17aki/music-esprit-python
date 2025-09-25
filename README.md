@@ -262,8 +262,8 @@ Two main families of models are explored in this project:
      - [Printable Version (PDF)](docs/theory/music_theory.pdf)
 2.  **Autoregressive (AR) Models (HOYW):** This approach models the signal as the output of a linear time-invariant system driven by white noise. Frequencies are estimated from the roots of the AR model's characteristic polynomial, whose coefficients are found from the signal's autocorrelation sequence.
 
-For a deeper dive into the theory, please refer to the papers [1-3] for Spectral MUSIC, [4] for Root MUSIC, [5] for FAST MUSIC, [6] for Min-Norm, [7] for ESPRIT, [8] for Unitary ESPRIT, and [9] for HOYW. 
-The comprehensive textbook [10] provides detailed mathematical derivations and analyses of these methods and many other advanced signal processing techniques.
+For a deeper dive into the theory, please refer to the papers [1-3] for Spectral MUSIC, [4] for Root MUSIC, [5] for FAST MUSIC, [6] for Min-Norm, [7] for ESPRIT, [8] for Unitary ESPRIT, [9] for FFT-ESPRIT and [10] for HOYW. 
+The comprehensive textbook [11] provides detailed mathematical derivations and analyses of these methods and many other advanced signal processing techniques.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/tam17aki/music-esprit-python/blob/main/LICENSE) file for details.
@@ -285,6 +285,8 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 
 [8] M. Haardt and J. A. Nossek, "Unitary ESPRIT: how to obtain increased estimation accuracy with a reduced computational burden," in IEEE Transactions on Signal Processing, vol. 43, no. 5, pp. 1232-1242, 1995.
 
-[9] P. Stoica, T. Soderstrom and F. Ti, "Asymptotic properties of the high-order Yule-Walker estimates of sinusoidal frequencies," in IEEE Transactions on Acoustics, Speech, and Signal Processing, vol. 37, no. 11, pp. 1721-1734, 1989.
+[9] S. L. Kiser, et al., "Fast Kernel-based Signal Subspace Estimates for Line Spectral Estimation," PREPRINT, 2023.
 
-[10] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
+[10] P. Stoica, T. Soderstrom and F. Ti, "Asymptotic properties of the high-order Yule-Walker estimates of sinusoidal frequencies," in IEEE Transactions on Acoustics, Speech, and Signal Processing, vol. 37, no. 11, pp. 1721-1734, 1989.
+
+[11] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
