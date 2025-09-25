@@ -7,17 +7,19 @@ This repository provides Python implementations of high-resolution parameter est
 This work is inspired by the foundational papers in subspace-based signal processing and aims to provide a practical and understandable guide to these powerful techniques.
 
 ## Features
-
-- **High-Resolution Algorithms**: Implements spectral estimation techniques that surpass the resolution limits of the classical Fast Fourier Transform (FFT).
-- **Multiple Methods Implemented**: A comprehensive suite of high-resolution algorithms is provided:
-  - **MUSIC (Spectral, Root & FAST)**: A classic high-resolution method based on the orthogonality of signal and noise subspaces.
-    - The **FAST MUSIC** variant provides a computationally efficient implementation for (quasi-)periodic signals by replacing the expensive EVD with an FFT. 
-  - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
-  - **ESPRIT (Standard, Unitary, & FFT-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
-    -   The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
-    -   The **FFT-ESPRIT** variant offers a significant speed-up ($`O(N\:\log\:N)`$) by approximating the signal subspace with an FFT-based kernel method, making it suitable for real-time applications.
-  - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
-  - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
+- **Multiple Methods Implemented**:
+  A comprehensive suite of advanced parameter estimation algorithms is provided, grouped by their core approach:
+  - **High-Resolution Subspace and AR-Modeling Methods**: These techniques surpass the resolution limits of the classical FFT by exploiting the algebraic structure of the signal model.
+    - **MUSIC (Spectral, Root & FAST)**: A classic high-resolution method based on the orthogonality of signal and noise subspaces.
+      - The **FAST MUSIC** variant provides a computationally efficient implementation for (quasi-)periodic signals by replacing the expensive EVD with an FFT. 
+    - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
+    - **ESPRIT (Standard, Unitary, & FFT-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
+      -   The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
+      -   The **FFT-ESPRIT** variant offers a significant speed-up ($`O(N\:\log\:N)`$) by approximating the signal subspace with an FFT-based kernel method, making it suitable for real-time applications.
+    - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
+  - **Fast Iterative Methods**:
+    This approach prioritizes computational speed, making it ideal for applications where frequencies are well-separated.
+    - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
 - **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
