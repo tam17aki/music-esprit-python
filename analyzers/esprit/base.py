@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines EspritAnalyzerBase class for ESPRIT-based parameter analyzers.
+"""Defines base classes for ESPRIT-based parameter analyzers.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -33,13 +33,6 @@ from ..base import AnalyzerBase
 
 class EspritAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for ESPRIT-based parameter analyzers."""
-
-    @abstractmethod
-    def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
-        """Estimate the signal subspace using eigenvalue decomposition."""
-        raise NotImplementedError
 
     def _postprocess_omegas(
         self, raw_omegas: npt.NDArray[np.float64]
@@ -78,3 +71,14 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         est_freqs = filter_unique_freqs(raw_freqs, self.n_sinusoids)
 
         return est_freqs
+
+
+class EVDBasedEspritAnalyzer(EspritAnalyzerBase, ABC):
+    """Base class for ESPRIT variants that use EVD/SVD for subspace estimation."""
+
+    @abstractmethod
+    def _estimate_signal_subspace(
+        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
+        """Estimate the signal subspace via EVD/SVD."""
+        raise NotImplementedError
