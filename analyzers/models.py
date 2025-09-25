@@ -51,3 +51,6 @@ class AnalyzerParameters(TypedDict):
 
     ar_order: NotRequired[int]
     """The order of the  AutoRegressive (AR) model for HOYW method."""
+
+    n_fft_iip: NotRequired[int | None]
+    """The length of iterative interpolation FFT for FFT-ESPRIT."""
