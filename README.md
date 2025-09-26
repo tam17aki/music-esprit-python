@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository provides Python implementations of a comprehensive suite of modern, high-resolution parameter estimation algorithms for sinusoidal signals. It covers major algorithm families including **subspace-based methods (MUSIC, ESPRIT, Min-Norm), AR-modeling (HOYW), and fast iterative techniques (RELAX, FAST MUSIC, FFT-ESPRIT)**.
+This repository provides Python implementations of a comprehensive suite of modern, high-resolution parameter estimation algorithms for sinusoidal signals. It covers major algorithm families including **subspace-based methods (MUSIC, ESPRIT, Min-Norm), AR-modeling (HOYW), and fast iterative techniques (RELAX, FAST MUSIC, Nystrom-based ESPRIT, FFT-ESPRIT)**.
 
 The project is architected with a clean, object-oriented design, emphasizing code clarity, reusability, and extensibility. It serves not only as a practical toolkit but also as an educational resource for understanding and comparing these powerful techniques. This work is inspired by the foundational papers in spectral estimation and aims to provide a robust and understandable guide.
 
@@ -14,9 +14,9 @@ The project is architected with a clean, object-oriented design, emphasizing cod
        - The **Spectral** and **Root** MUSIC variants are classic implementations that offer true super-resolution capabilities.
        - The **FAST MUSIC** variant is a modern, computationally efficient implementation for (quasi-)periodic signals that replaces the expensive EVD with an FFT, prioritizing speed over ultimate resolution.
     - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
-    - **ESPRIT (Standard, Unitary, FFT-based, & Nystrom-based))**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
+    - **ESPRIT (Standard, Unitary, FFT-based, & Nystrom-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
       - The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
-      - The **FFT-ESPRIT** and **Nystrom-based** variants offer significant speed-ups by approximating the signal subspace using different techniques (FFT kernels and matrix sampling, respectively).
+      - The **FFT-based** and **Nystrom-based** variants offer significant speed-ups by approximating the signal subspace using different techniques (FFT kernels and matrix sampling, respectively).
     - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
   - **Fast Iterative Methods**:
     This approach prioritizes computational speed, making it ideal for applications where frequencies are well-separated.
