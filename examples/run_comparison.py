@@ -60,8 +60,6 @@ def main() -> None:
         snr_db=args.snr_db,
         freqs_true=np.array(args.freqs_true, dtype=np.float64),
         amp_range=tuple(args.amp_range),
-        subspace_ratio=args.subspace_ratio,
-        n_grids=args.n_grids,
     )
 
     # --- 2. Generate Test Signal ---
@@ -81,19 +79,19 @@ def main() -> None:
         "Spectral MUSIC": SpectralMusicAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            n_grids=config.n_grids,
-            subspace_ratio=config.subspace_ratio,
+            n_grids=args.n_grids,
+            subspace_ratio=args.subspace_ratio,
         ),
         "Root MUSIC": RootMusicAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            subspace_ratio=config.subspace_ratio,
+            subspace_ratio=args.subspace_ratio,
         ),
         "ESPRIT (LS)": StandardEspritAnalyzer(
             config.fs,
             config.n_sinusoids,
             LSEspritSolver(),
-            subspace_ratio=config.subspace_ratio,
+            subspace_ratio=args.subspace_ratio,
         ),
     }
 
