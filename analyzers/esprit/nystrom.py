@@ -27,7 +27,7 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import eigh, qr
+from scipy.linalg import LinAlgError, eigh, qr
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
@@ -121,14 +121,14 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         # --- Step 3: Build the matrix F ---
         try:
             matrix_f = self._build_f_matrix(r11, r12)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("Failed to build the F matrix in Nystrom method.")
             return None
 
         # --- Step 4: Compute the signal subspace from F ---
         try:
             signal_subspace = self._compute_subspace_from_f(matrix_f)
-        except np.linalg.LinAlgError:
+        except LinAlgError:
             warnings.warn("EVD of F^H*F failed in Nystrom method.")
             return None
 
@@ -155,7 +155,19 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         r11: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         r12: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-        """Builds the intermediate matrix F based on Eq. (12)."""
+        """Build the intermediate matrix F based on the Nyström method formulation.
+
+        This corresponds to equation (12) in the reference paper, which defines
+        F = [R11; R12^H] * R11^(-1/2). The matrix square root inverse is
+        calculated via eigenvalue decomposition for numerical stability.
+
+        Args:
+            r11 (np.ndarray): The P x P sub-covariance matrix.
+            r12 (np.ndarray): The P x (L-P) sub-covariance matrix.
+
+        Returns:
+            np.ndarray: The resulting L x P matrix F.
+        """
         eigvals_r11, u_a = eigh(r11)
         safe_eigvals = np.maximum(eigvals_r11, 1e-12)
         l_a_inv_sqrt_diag = 1 / np.sqrt(safe_eigvals)
@@ -172,7 +184,21 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     def _compute_subspace_from_f(
         self, matrix_f: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-        """Computes the signal subspace from the F matrix based on Eq. (11, 13)."""
+        """Compute the signal subspace from the F matrix.
+
+        This function implements equations (11) and (13) from the reference
+        paper. It first performs an eigenvalue decomposition of F^H*F to find
+        the basis U_F and eigenvalues Lambda_F, and then computes the final
+        signal subspace Us = F * U_F * Lambda_F^(-1/2). The result is
+        orthonormalized via QR decomposition.
+
+        Args:
+            matrix_f (np.ndarray): The intermediate matrix F of shape (L, P).
+
+        Returns:
+            np.ndarray:
+                An orthonormal basis for the approximated signal subspace, Q.
+        """
         f_h_f = matrix_f.conj().T @ matrix_f
         eigvals_f, u_f = eigh(f_h_f)
 
@@ -190,7 +216,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters.
+        """Return the analyzer's hyperparameters.
 
         Extends the base implementation to include the name of the solver class.
 
