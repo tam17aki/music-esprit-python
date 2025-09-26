@@ -86,6 +86,15 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
+        """Estimate frequencies of multiple sinusoids using FAST MUSIC.
+
+        Args:
+            signal (np.ndarray): Input signal (float64 or complex128).
+
+        Returns:
+            np.ndarray: Estimated frequencies in Hz (float64).
+                Returns empty arrays if estimation fails.
+        """
         # 0. Convert the signal to real (FAST MUSIC often assumes real signals)
         if np.iscomplexobj(signal):
             warnings.warn(
@@ -127,7 +136,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
     def _find_period(
         acf: npt.NDArray[np.float64], min_period: int, max_period: int
     ) -> int:
-        """Estimates the fundamental period of a signal from its ACF.
+        """Estimate the fundamental period of a signal from its ACF.
 
         Args:
             acf (np.ndarray):
