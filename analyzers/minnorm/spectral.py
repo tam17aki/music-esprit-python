@@ -133,7 +133,7 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+        """Return the analyzer's hyperparameters, including spectral-specific ones.
 
         Extends the base implementation to include the 'n_grids' parameter
         specific to the Spectral Min-Norm method.
