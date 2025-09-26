@@ -118,6 +118,11 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
                 An orthonormal basis for the approximated signal subspace
                 (float64 or complex128). Returns None if estimation fails.
         """
+        if np.isrealobj(signal):
+            n_complex_sinusoids = self.n_sinusoids * 2
+        else:
+            n_complex_sinusoids = self.n_sinusoids
+
         # --- Step 1: Prepare the parameters ---
         n_signals = self.n_sinusoids * 2
         model_order = self.nystrom_rank_factor * n_signals
@@ -141,7 +146,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
 
         # --- Step 4: Compute the signal subspace from G ---
         try:
-            signal_subspace = self._compute_subspace_from_g(matrix_g)
+            signal_subspace = self._compute_subspace_from_g(
+                matrix_g, n_complex_sinusoids
+            )
         except LinAlgError:
             warnings.warn(
                 "A linear algebra error occurred during the Nyström subspace "
@@ -228,6 +235,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     def _compute_subspace_from_g(
         self,
         matrix_g: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        n_components: int,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Compute the signal subspace from the G matrix.
 
@@ -240,6 +248,11 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         Args:
             matrix_g (np.ndarray):
                 The intermediate matrix G of shape (L, K) (float64 or complex128).
+            n_components (int):
+                The number of complex exponential components to estimate.
+                This value is typically `2 * n_sinusoids` for real-valued input
+                signals (to account for positive/negative frequency pairs)
+                and `n_sinusoids` for complex-valued signals.
 
         Returns:
             np.ndarray:
@@ -250,7 +263,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         eigvals_g, u_g = eigh(g_h_g)
         idx = np.argsort(eigvals_g)[::-1]
         u_g = u_g[:, idx]
-        signal_subspace_unortho = (matrix_g @ u_g)[:, : 2 * self.n_sinusoids]
+        signal_subspace_unortho = (matrix_g @ u_g)[:, :n_components]
         _q_matrix, _ = qr(signal_subspace_unortho, mode="economic")
         if np.isrealobj(_q_matrix):
             q_matrix_float: npt.NDArray[np.float64] = _q_matrix.astype(np.float64)
