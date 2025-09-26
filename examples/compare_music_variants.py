@@ -58,8 +58,6 @@ def main() -> None:
         snr_db=args.snr_db,
         freqs_true=np.array(args.freqs_true, dtype=np.float64),
         amp_range=tuple(args.amp_range),
-        subspace_ratio=args.subspace_ratio,
-        n_grids=args.n_grids,
     )
 
     # --- 2. Generate Test Signal ---
@@ -77,11 +75,11 @@ def main() -> None:
 
     analyzers_to_test = {
         "Spectral MUSIC": SpectralMusicAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=config.n_grids
+            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
         "Root MUSIC": RootMusicAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
         "Spectral MUSIC FB": SpectralMusicAnalyzerFB(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=config.n_grids
+            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
         "Root MUSIC FB": RootMusicAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids
