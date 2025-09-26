@@ -35,7 +35,7 @@ SUBSPACE_RATIO_UPPER_BOUND = 0.5
 def print_experiment_setup(
     config: ExperimentConfig, true_params: SinusoidParameters
 ) -> None:
-    """Prints the experimental setup parameters to the console.
+    """Print the experimental setup parameters to the console.
 
     This function displays the configuration of the simulation world
     (e.g., sampling frequency, SNR) and the ground truth parameters of
@@ -59,7 +59,7 @@ def print_experiment_setup(
 
 
 def print_analyzer_info(analyzer: AnalyzerBase) -> None:
-    """Prints the specific hyperparameters of a given analyzer instance.
+    """Print the specific hyperparameters of a given analyzer instance.
 
     This function retrieves the configuration parameters from an analyzer
     using its `get_params()` method and displays them in a human-readable
@@ -127,7 +127,7 @@ def print_results(analyzer: AnalyzerBase, true_params: SinusoidParameters) -> No
 
 
 def parse_args() -> argparse.Namespace:
-    """Parses and validates command-line arguments for the main demo script.
+    """Parse and validates command-line arguments for the main demo script.
 
     Configures an ArgumentParser to accept settings for the signal synthesis
     (e.g., SNR, frequencies) and for the various analyzer algorithms
@@ -225,7 +225,7 @@ def compute_summary_row(
     true_params: SinusoidParameters,
     elapsed_time: float,
 ) -> dict[str, str | float] | None:
-    """Computes a single row of the results summary table.
+    """Compute a single row of the results summary table.
 
     Calculates RMSEs for frequency, amplitude, and phase from a fitted
     analyzer and returns them as a dictionary.
@@ -271,7 +271,7 @@ def compute_summary_row(
 
 
 def print_summary_table(results: list[dict[str, str | float]]) -> None:
-    """Prints a summary table of the estimation results.
+    """Print a summary table of the estimation results.
 
     Args:
         results (list[dict[str, str | float]]): The rows of summary table.
