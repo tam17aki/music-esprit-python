@@ -165,7 +165,8 @@ You can customize the experiments by modifying these scripts or by using the com
 You can customize the experiment via command-line arguments.
 
 ```bash
-python examples/run_comparison.py --freqs_true 440 445 450 --snr_db 25 --duration 0.8 --complex
+python examples/run_comparison.py --freqs_true 440 445 450 \
+       --snr_db 25 --duration 0.2 --amp_range 0.2 1.8 --complex
 ```
 
 To see all available options, run:
