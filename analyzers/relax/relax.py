@@ -108,7 +108,7 @@ class RelaxEspritAnalyzer(AnalyzerBase):
         fs: float,
         is_real_signal: bool,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-        """Re-synthesize a single  sinusoid from its parameter object.
+        """Re-synthesize a single sinusoid from its parameter object.
 
         Args:
             params (SingleSinusoidParameters):
@@ -119,6 +119,9 @@ class RelaxEspritAnalyzer(AnalyzerBase):
                 Sampling frequency in Hz of the sinusoid.
             is_real_signal (bool):
                 A flag indicating whether the sinusoid is real-valued.
+
+        Returns:
+            np.ndarray: Re-synthesized single sinusoid (float64 or complex128).
         """
         t = np.arange(n_samples) / fs
         argument = 2 * np.pi * params.frequency * t + params.phase
