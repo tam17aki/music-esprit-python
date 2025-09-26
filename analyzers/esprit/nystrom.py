@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines NystromEspritAnalyzer class to solve frequencies via Nyström-ESPRIT.
+"""Defines NystromEspritAnalyzer class to solve frequencies via Nyström-based ESPRIT.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -36,7 +36,7 @@ from .solvers import LSEspritSolver, TLSEspritSolver
 
 @final
 class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
-    """A class to solve frequencies via Nyström-ESPRIT."""
+    """A class to solve frequencies via Nyström-based ESPRIT."""
 
     def __init__(
         self,
@@ -200,4 +200,5 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         """
         params = super().get_params()
         params["solver"] = self.solver.__class__.__name__
+        params["nystrom_rank_factor"] = self.nystrom_rank_factor
         return params
