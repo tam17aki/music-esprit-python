@@ -183,8 +183,8 @@ python examples/run_comparison.py --help
 | `--amp_range` | The range for random amplitude generation. | 0.5 1.5|
 | `--subspace_ratio` | The ratio of the subspace dimension to the signal length.<br> Must be in (0, 0.5].| 1/3|
 | `--complex` | If specified, generate a complex-valued signal instead of <br> a real-valued one.| False (Flag)|
-| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral Min-Norm. | 16384|
-| `--ar_order` | The order of the AutoRegressive (AR) model for HOYW. | 512|
+| `--n_grids` | Number of grid points for the Spectral MUSIC and Spectral Min-Norm. | 16384|
+| `--ar_order` | The order of the AutoRegressive (AR) model for the HOYW. | 512|
 | `--rank_factor` | A factor to determine the number of rows to sample for the Nyström-based ESPRIT. | 10|
 
 ## Project Structure
