@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines RelaxEspritAnalyzer class for RELAX algorithm.
+"""Defines RelaxAnalyzer class for RELAX algorithm.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -44,7 +44,7 @@ class SingleSinusoidParameters:
 
 
 @final
-class RelaxEspritAnalyzer(AnalyzerBase):
+class RelaxAnalyzer(AnalyzerBase):
     """Analyzes sinusoidal parameters using the RELAX algorithm."""
 
     def __init__(
