@@ -36,7 +36,7 @@ ZERO_LEVEL = 1e-9
 
 
 def _compute_parabolic_offset(y_minus_1: float, y_0: float, y_plus_1: float) -> float:
-    """Computes the offset from a peak's integer index via parabolic interpolation.
+    """Compute the offset from a peak's integer index via parabolic interpolation.
 
     Args:
         y_minus_1 (float): Magnitude of the sample to the left of the peak.
@@ -56,7 +56,7 @@ def _compute_parabolic_offset(y_minus_1: float, y_0: float, y_plus_1: float) -> 
 def _parabolic_interpolation(
     spectrum: npt.NDArray[np.float64], peak_indices: npt.NDArray[np.int_]
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
-    """Refines peak locations and magnitudes using parabolic interpolation.
+    """Refine peak locations and magnitudes using parabolic interpolation.
 
     Args:
         spectrum (np.ndarray):
@@ -88,7 +88,7 @@ def _parabolic_interpolation(
 def find_peak_indices_from_spectrum(
     spectrum: npt.NDArray[np.float64], n_peaks: int
 ) -> npt.NDArray[np.int_]:
-    """Finds the indices of the N strongest peaks from a spectrum.
+    """Find the indices of the N strongest peaks from a spectrum.
 
     This function implements a robust two-stage peak finding strategy.
 
@@ -238,7 +238,7 @@ def find_freqs_from_roots(
 def _find_and_refine_strongest_peak(
     spectrum: npt.NDArray[np.float64], fs: float, n_fft: int, is_real_signal: bool
 ) -> float:
-    """Finds the strongest peak in a spectrum and refines it with interpolation.
+    """Find the strongest peak in a spectrum and refines it with interpolation.
 
     This helper function identifies the frequency bin with the maximum
     magnitude in the first half of a given FFT spectrum. It then applies
@@ -287,7 +287,7 @@ def _find_and_refine_strongest_peak(
 def _estimate_and_subtract_component(
     signal: npt.NDArray[np.complex128], freq: float, fs: float
 ) -> npt.NDArray[np.complex128]:
-    """Estimates a sinusoidal component at a given frequency and subtracts it.
+    """Estimate a sinusoidal component at a given frequency and subtracts it.
 
     This function performs one step of a signal decomposition process.
     Given a signal and a single frequency, it estimates the complex
@@ -329,7 +329,7 @@ def estimate_freqs_iterative_fft(
     fs: float,
     n_fft: int | None = None,
 ) -> npt.NDArray[np.float64]:
-    """Estimates frequencies using an iterative interpolated FFT method (IIp-DFT like).
+    """Estimate frequencies using an iterative interpolated FFT method (IIp-DFT like).
 
     This method iteratively finds the strongest sinusoidal component,
     refines its frequency using parabolic interpolation, and subtracts
