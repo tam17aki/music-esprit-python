@@ -81,34 +81,36 @@ def main() -> None:
 
     analyzers_to_test = {
         "ESPRIT (LS)": StandardEspritAnalyzer(
-            config.fs, config.n_sinusoids, LSEspritSolver()
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
         "ESPRIT (TLS)": StandardEspritAnalyzer(
-            config.fs, config.n_sinusoids, TLSEspritSolver()
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
         ),
         "Unitary ESPRIT (LS)": UnitaryEspritAnalyzer(
-            config.fs, config.n_sinusoids, LSUnitaryEspritSolver()
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSUnitaryEspritSolver()
         ),
         "Unitary ESPRIT (TLS)": UnitaryEspritAnalyzer(
-            config.fs, config.n_sinusoids, TLSUnitaryEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=TLSUnitaryEspritSolver(),
         ),
         "Nyström-ESPRIT (LS)": NystromEspritAnalyzer(
-            config.fs,
-            config.n_sinusoids,
-            LSEspritSolver(),
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSEspritSolver(),
             nystrom_rank_factor=args.rank_factor,
         ),
         "Nyström-ESPRIT (TLS)": NystromEspritAnalyzer(
-            config.fs,
-            config.n_sinusoids,
-            TLSEspritSolver(),
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=TLSEspritSolver(),
             nystrom_rank_factor=args.rank_factor,
         ),
         "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
-            config.fs, config.n_sinusoids, LSEspritSolver()
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
         "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
-            config.fs, config.n_sinusoids, TLSEspritSolver()
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
         ),
     }
 
