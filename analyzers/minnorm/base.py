@@ -28,9 +28,8 @@ from abc import ABC
 import numpy as np
 import numpy.typing as npt
 
+from .._common import ZERO_LEVEL
 from ..music.base import MusicAnalyzerBase
-
-ZERO_LEVEL = 1e-9
 
 
 class MinNormAnalyzerBase(MusicAnalyzerBase, ABC):
