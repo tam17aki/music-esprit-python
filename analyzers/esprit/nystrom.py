@@ -29,6 +29,7 @@ import numpy as np
 import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigh, qr
 
+from .._common import ZERO_LEVEL
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
 from .solvers import LSEspritSolver, TLSEspritSolver
@@ -213,7 +214,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         idx = np.argsort(eigvals_r11)[::-1]
         eigvals_r11 = eigvals_r11[idx]
         u11 = u11[:, idx]
-        safe_eigvals = np.maximum(eigvals_r11, 1e-12)
+        safe_eigvals = np.maximum(eigvals_r11, ZERO_LEVEL)
         lambda11_inv = np.diag(1 / safe_eigvals)
         u21 = r21 @ u11 @ lambda11_inv
         u = np.vstack([u11, u21])
