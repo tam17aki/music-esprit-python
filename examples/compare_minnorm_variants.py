@@ -61,8 +61,6 @@ def main() -> None:
         snr_db=args.snr_db,
         freqs_true=np.array(args.freqs_true, dtype=np.float64),
         amp_range=tuple(args.amp_range),
-        subspace_ratio=args.subspace_ratio,
-        n_grids=args.n_grids,
     )
 
     # --- 2. Generate Test Signal ---
@@ -80,13 +78,13 @@ def main() -> None:
 
     analyzers_to_test = {
         "Spectral Min-Norm": SpectralMinNormAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=config.n_grids
+            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
         "Root Min-Norm": RootMinNormAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids
         ),
         "Spectral Min-Norm FB": SpectralMinNormAnalyzerFB(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=config.n_grids
+            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
         "Root Min-Norm FB": RootMinNormAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids
