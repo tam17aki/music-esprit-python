@@ -84,9 +84,9 @@ def main() -> None:
             subspace_ratio=args.subspace_ratio,
         ),
         "ESPRIT (LS)": StandardEspritAnalyzer(
-            config.fs,
-            config.n_sinusoids,
-            LSEspritSolver(),
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSEspritSolver(),
             subspace_ratio=args.subspace_ratio,
         ),
     }
