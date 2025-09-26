@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository provides Python implementations of a comprehensive suite of modern, high-resolution parameter estimation algorithms for sinusoidal signals. It covers major algorithm families including **subspace-based methods (MUSIC, ESPRIT, Min-Norm), AR-modeling (HOYW), and fast iterative techniques (RELAX, FAST MUSIC, Nystrom-based ESPRIT, FFT-ESPRIT)**.
+This repository provides Python implementations of a comprehensive suite of modern, high-resolution parameter estimation algorithms for sinusoidal signals. It covers major algorithm families including **subspace-based methods (MUSIC, ESPRIT, Min-Norm), AR-modeling (HOYW), and fast iterative techniques (RELAX, FAST MUSIC, FFT-ESPRIT)**.
 
 The project is architected with a clean, object-oriented design, emphasizing code clarity, reusability, and extensibility. It serves not only as a practical toolkit but also as an educational resource for understanding and comparing these powerful techniques. This work is inspired by the foundational papers in spectral estimation and aims to provide a robust and understandable guide.
 
