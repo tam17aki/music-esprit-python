@@ -168,7 +168,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+        """Return the analyzer's hyperparameters, including spectral-specific ones.
 
         Extends the base implementation to include the name of the solver class.
 
