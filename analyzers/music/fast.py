@@ -222,7 +222,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters.
+        """Return the analyzer's hyperparameters.
 
         Extends the base implementation to include the 'n_grids' parameter
         specific to the FAST MUSIC method.
