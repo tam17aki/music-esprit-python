@@ -196,6 +196,13 @@ def parse_args() -> argparse.Namespace:
         help="Number of frequency grid points for MUSIC spectrum (default: 16384).",
     )
     parser.add_argument(
+        "--ar_order",
+        type=int,
+        default=512,
+        help="The order of the AutoRegressive (AR) model "
+        + "for HOYW method. (default: 512)",
+    )
+    parser.add_argument(
         "--rank_factor",
         type=int,
         default=10,
