@@ -138,21 +138,21 @@ ESPRIT (LS)    | 0.381926 | 0.005426       | 0.001396 | 0.002110
 For more specific comparisons, you can run other example scripts:
 
 - `examples/compare_music_variants.py`:<br>
-This script focuses exclusively on the MUSIC family, comparing the performance of `SpectralMusicAnalyzer`, `RootMusicAnalyzer`, and their Forward-Backward enhanced versions.
+This script focuses exclusively on the MUSIC family, comparing the performance of Spectral MUSIC, Root MUSIC, and their Forward-Backward enhanced versions.
 
 ```bash
 python examples/compare_music_variants.py
 ```
 
 - `examples/compare_esprit_variants.py`:<br>
-This script is dedicated to the ESPRIT family, comparing the performance of `StandardEspritAnalyzer`, `UnitaryEspritAnalyzer`,`NystromEspritAnalyzer` and `FFTEspritAnalyzer` with both LS and TLS solvers.
+This script is dedicated to the ESPRIT family, comparing the performance of Standard ESPRIT, Unitary ESPRIT, Nyström-based ESPRIT and FFT-ESPRIT with both LS and TLS solvers.
 
 ```bash
 python examples/compare_esprit_variants.py
 ```
 
 - `examples/compare_minnorm_variants.py`:<br>
-This script is dedicated to the Min-Norm family, comparing the performance of `SpectralMinNormAnalyzer`, `RootMinNormAnalyzer`, and their Forward-Backward enhanced versions.
+This script is dedicated to the Min-Norm family, comparing the performance of Spectral Min-Norm, Root Min-Norm`, and their Forward-Backward enhanced versions.
 
 ```bash
 python examples/compare_minnorm_variants.py
