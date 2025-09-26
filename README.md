@@ -14,9 +14,9 @@ The project is architected with a clean, object-oriented design, emphasizing cod
        - The **Spectral** and **Root** MUSIC variants are classic implementations that offer true super-resolution capabilities.
        - The **FAST MUSIC** variant is a modern, computationally efficient implementation for (quasi-)periodic signals that replaces the expensive EVD with an FFT, prioritizing speed over ultimate resolution.
     - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
-    - **ESPRIT (Standard, Unitary, FFT-based, & Nystrom-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
+    - **ESPRIT (Standard, Unitary, FFT-based, & Nyström-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
       - The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
-      - The **FFT-based** and **Nystrom-based** variants offer significant speed-ups by approximating the signal subspace using different techniques (FFT kernels and matrix sampling, respectively).
+      - The **FFT-based** and **Nyström-based** variants offer significant speed-ups by approximating the signal subspace using different techniques (FFT kernels and matrix sampling, respectively).
     - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
   - **Fast Iterative Methods**:
     This approach prioritizes computational speed, making it ideal for applications where frequencies are well-separated.
