@@ -195,6 +195,13 @@ def parse_args() -> argparse.Namespace:
         default=16384,
         help="Number of frequency grid points for MUSIC spectrum (default: 16384).",
     )
+    parser.add_argument(
+        "--rank_factor",
+        type=int,
+        default=10,
+        help="A factor to determine the number of rows to sample "
+        + "for the Nyström approximation (default: 10).",
+    )
     args = parser.parse_args()
     if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
         parser.error(
