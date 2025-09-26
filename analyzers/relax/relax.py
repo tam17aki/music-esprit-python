@@ -135,7 +135,7 @@ class RelaxEspritAnalyzer(AnalyzerBase):
         signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
         freq: float,
     ) -> tuple[float, float]:
-        """Estimates the amplitude and phase of a single sinusoidal component.
+        """Estimate the amplitude and phase of a single sinusoidal component.
 
         This method solves a least-squares problem to find the best fit
         of a single sinusoid at the given frequency to the signal.
@@ -190,7 +190,7 @@ class RelaxEspritAnalyzer(AnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters.
+        """Return the analyzer's hyperparameters.
 
         Extends the base implementation to include the length of iterative
         interpolation FFT.
