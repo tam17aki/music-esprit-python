@@ -29,11 +29,9 @@ import numpy as np
 import numpy.typing as npt
 from scipy.linalg import LinAlgError
 
-from .._common import estimate_freqs_iterative_fft
+from .._common import ZERO_LEVEL, estimate_freqs_iterative_fft
 from ..base import AnalyzerBase
 from ..models import AnalyzerParameters
-
-ZERO_LEVEL = 1e-9
 
 
 @dataclass
