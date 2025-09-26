@@ -115,7 +115,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         Returns:
             np.ndarray:
                 An orthonormal basis for the approximated signal subspace
-                (complex128). Returns None if estimation fails.
+                (float64 or complex128). Returns None if estimation fails.
         """
         # --- Step 1: Prepare the parameters ---
         n_signals = self.n_sinusoids * 2
@@ -200,11 +200,14 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         calculated via eigenvalue decomposition for numerical stability.
 
         Args:
-            r11 (np.ndarray): The K x K sub-covariance matrix.
-            r21 (np.ndarray): The (L-K) x K sub-covariance matrix.
+            r11 (np.ndarray):
+                The K x K sub-covariance matrix (float64 or complex128).
+            r21 (np.ndarray):
+                The (L-K) x K sub-covariance matrix (float64 or complex128).
 
         Returns:
-            np.ndarray: The resulting L x K matrix G.
+            np.ndarray:
+                The resulting L x K matrix G (float64 or complex128).
         """
         eigvals_r11, u11 = eigh(r11)
         idx = np.argsort(eigvals_r11)[::-1]
@@ -234,11 +237,13 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         QR decomposition.
 
         Args:
-            matrix_g (np.ndarray): The intermediate matrix G of shape (L, K).
+            matrix_g (np.ndarray):
+                The intermediate matrix G of shape (L, K) (float64 or complex128).
 
         Returns:
             np.ndarray:
-                An orthonormal basis for the approximated signal subspace, Q.
+                An orthonormal basis for the approximated signal subspace, Q
+                (float64 or complex128).
         """
         g_h_g = matrix_g.conj().T @ matrix_g
         eigvals_g, u_g = eigh(g_h_g)
