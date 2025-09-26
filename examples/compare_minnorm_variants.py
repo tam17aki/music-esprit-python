@@ -2,8 +2,8 @@
 """A demonstration script to compare variants of the Min-Norm algorithm.
 
 This script compares:
-- SpectralMinNormAnalyzer
-- RootMinNormAnalyzer
+- Spectral Min-Norm
+- Root Min-Norm
 and their Forward-Backward enhanced versions.
 
 For each method, it estimates the frequencies, amplitudes, and phases of
