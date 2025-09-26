@@ -206,7 +206,7 @@ class HoywAnalyzer(AnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+        """Return the analyzer's hyperparameters, including spectral-specific ones.
 
         Extends the base implementation to include the 'ar_order' parameter
         specific to the HOYW method.
