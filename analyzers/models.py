@@ -50,7 +50,7 @@ class AnalyzerParameters(TypedDict):
     """The minimum frequency in Hz for FAST MUSIC method."""
 
     ar_order: NotRequired[int]
-    """The order of the  AutoRegressive (AR) model for HOYW method."""
+    """The order of the AutoRegressive (AR) model for HOYW method."""
 
     n_fft_iip: NotRequired[int | None]
     """The length of iterative interpolation FFT for FFT-ESPRIT."""
