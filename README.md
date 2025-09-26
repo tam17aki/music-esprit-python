@@ -308,7 +308,7 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 
 [8] M. Haardt and J. A. Nossek, "Unitary ESPRIT: how to obtain increased estimation accuracy with a reduced computational burden," in IEEE Transactions on Signal Processing, vol. 43, no. 5, pp. 1232-1242, 1995.
 
-[9] Y. Guo, W. Li, Y. Zuo and J. Shen, "A Nyström-Based esprit algorithm for DOA estimation of coherent signals," in Proceedings of the International Symposium on Antennas & Propagation, pp. 426-429, 2013.
+[9] C. Qian, L. Huang, and H.C. So, "Computationally efficient ESPRIT algorithm for direction-of-arrival estimation based on Nyström method," Signal Processing, vol. 94, pp. 74-80, 2014.
 
 [10] S. L. Kiser, et al., "Fast Kernel-based Signal Subspace Estimates for Line Spectral Estimation," PREPRINT, 2023.
 
