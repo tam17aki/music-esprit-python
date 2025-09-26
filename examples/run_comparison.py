@@ -65,11 +65,7 @@ def main() -> None:
     # --- 2. Generate Test Signal ---
     true_params = create_true_parameters(config)
     noisy_signal = generate_test_signal(
-        config.fs,
-        config.duration,
-        config.snr_db,
-        true_params,
-        is_complex=args.complex,
+        config.fs, config.duration, config.snr_db, true_params, is_complex=args.complex
     )
 
     # --- 3. Print Setup and Run Analyses ---
