@@ -14,9 +14,9 @@ The project is architected with a clean, object-oriented design, emphasizing cod
        - The **Spectral** and **Root** MUSIC variants are classic implementations that offer true super-resolution capabilities.
        - The **FAST MUSIC** variant is a modern, computationally efficient implementation for (quasi-)periodic signals that replaces the expensive EVD with an FFT, prioritizing speed over ultimate resolution.
     - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
-    - **ESPRIT (Standard, Unitary, & FFT-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
+    - **ESPRIT (Standard, Unitary, FFT-based, & Nystrom-based))**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
       - The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
-      - The **FFT-ESPRIT** variant offers a significant speed-up ($`O(N\:\log\:N)`$) by approximating the signal subspace with an FFT-based kernel method, making it suitable for real-time applications.
+      - The **FFT-ESPRIT** and **Nystrom-based** variants offer significant speed-ups by approximating the signal subspace using different techniques (FFT kernels and matrix sampling, respectively).
     - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
   - **Fast Iterative Methods**:
     This approach prioritizes computational speed, making it ideal for applications where frequencies are well-separated.
@@ -203,6 +203,7 @@ This project is organized into a modular, object-oriented structure to promote c
         -   `EVDBasedEspritAnalyzer`: An intermediate base class for variants (like Standard and Unitary) that rely on computationally intensive Eigenvalue/Singular Value Decomposition (EVD/SVD) for subspace estimation.
     - `standard.py`: Implements `StandardEspritAnalyzer` (inheriting from `EVDBasedEspritAnalyzer`), the classic, complex-valued ESPRIT algorithm.
     - `unitary.py`: Implements `UnitaryEspritAnalyzer` (inheriting from `EVDBasedEspritAnalyzer`), which operates on real-valued matrices.
+    - `nystrom.py`: Implements `NystromEspritAnalyzer`, a fast variant that approximates the signal subspace using the Nyström method, reducing the complexity of the EVD step.
     - `fft.py`: Implements `FFTEspritAnalyzer`, a computationally efficient variant that approximates the signal subspace using an FFT-based kernel method instead of SVD/EVD.
     - `solvers.py`: Defines a set of solver classes that encapsulate the specific mathematical procedures for solving the ESPRIT core equations. This demonstrates the Strategy design pattern, allowing different numerical methods (LS, TLS, Unitary LS/TLS) to be flexibly injected into the analyzers.
   - **`minnorm/`**: A sub-package for Min-Norm algorithm variants.
