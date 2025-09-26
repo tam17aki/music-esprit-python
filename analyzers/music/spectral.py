@@ -63,7 +63,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Estimate frequencies of multiple sinusoids.
+        """Estimate frequencies of multiple sinusoids using spectral MUSIC.
 
         Args:
             signal (np.ndarray): Input signal (float64 or complex128).
@@ -125,7 +125,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters, including spectral-specific ones.
+        """Return the analyzer's hyperparameters, including spectral-specific ones.
 
         Extends the base implementation to include the 'n_grids' parameter
         specific to the Spectral MUSIC method.
