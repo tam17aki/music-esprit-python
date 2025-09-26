@@ -145,7 +145,7 @@ python examples/compare_music_variants.py
 ```
 
 - `examples/compare_esprit_variants.py`:<br>
-This script is dedicated to the ESPRIT family. It compares `StandardEspritAnalyzer` against the computationally efficient `UnitaryEspritAnalyzer`, with both LS and TLS solvers.
+This script is dedicated to the ESPRIT family, comparing the performance of `StandardEspritAnalyzer`, `UnitaryEspritAnalyzer`,`NystromEspritAnalyzer` and `FFTEspritAnalyzer` with both LS and TLS solvers.
 
 ```bash
 python examples/compare_esprit_variants.py
