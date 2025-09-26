@@ -37,7 +37,7 @@ class LSEspritSolver:
     def solve(
         self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solves for rotational factors using the Least Squares (LS) method.
+        """Solve for rotational factors using the Least Squares (LS) method.
 
         This method estimates the rotation operator Psi from the equation
         `subspace_upper @ Psi = subspace_lower` by solving a least squares
@@ -83,7 +83,7 @@ class TLSEspritSolver:
     def solve(
         self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solves for rotational factors using the Total Least Squares (TLS) method.
+        """Solve for rotational factors using the Total Least Squares (TLS) method.
 
         This method formulates the problem as `[subspace_upper, subspace_lower]`
         and solves for the rotational operator Psi via Singular Value
@@ -217,7 +217,7 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
     def solve(
         self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
-        """Solves the real-valued Unitary ESPRIT problem using Least Squares.
+        """Solve the real-valued Unitary ESPRIT problem using Least Squares.
 
         This method constructs real-valued selection matrices K1 and K2,
         and solves the system `(K1 @ Es) @ Y = (K2 @ Es)` for Y using a
@@ -267,7 +267,7 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
     def solve(
         self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
-        """Solves the real-valued Unitary ESPRIT problem using Total Least Squares.
+        """Solve the real-valued Unitary ESPRIT problem using Total Least Squares.
 
         This method constructs real-valued matrices T1 and T2 from the real
         signal subspace, and solves the system `T1 @ Y ≈ T2` using a more
