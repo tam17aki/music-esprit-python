@@ -2,8 +2,8 @@
 """A demonstration script to compare variants of the MUSIC algorithm.
 
 This script compares:
-- SpectralMusicAnalyzer
-- RootMusicAnalyzer
+- Spectral MUSIC
+- Root MUSIC
 and their Forward-Backward enhanced versions.
 
 For each method, it estimates the frequencies, amplitudes, and phases of
