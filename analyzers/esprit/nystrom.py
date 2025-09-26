@@ -118,30 +118,34 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
                 An orthonormal basis for the approximated signal subspace
                 (float64 or complex128). Returns None if estimation fails.
         """
+        # --- Step 1: Prepare the parameters ---
+        # The number of complex exponential components
         if np.isrealobj(signal):
+            # For real signals, positive and negative frequency pairs are considered
             n_complex_sinusoids = self.n_sinusoids * 2
         else:
+            # For complex signals, the number of signals themselves
             n_complex_sinusoids = self.n_sinusoids
 
-        # --- Step 1: Prepare the parameters ---
-        n_signals = self.n_sinusoids * 2
-        model_order = self.nystrom_rank_factor * n_signals
-        if not n_signals < model_order < self.subspace_dim:
+        # The rank of the Nyström method
+        k_nystrom = self.nystrom_rank_factor * n_complex_sinusoids
+        if not n_complex_sinusoids < k_nystrom < self.subspace_dim:
             warnings.warn(
-                "Invalid model order for Nystrom method. Adjust nystrom_rank_factor."
+                "Invalid model order for Nyström method. Adjust nystrom_rank_factor."
             )
-            model_order = int((n_signals + self.subspace_dim) / 2)
+            k_nystrom = int((n_complex_sinusoids + self.subspace_dim) / 2)
 
+        # Calculate the data matrix
         data_matrix = self._build_hankel_matrix(signal, self.subspace_dim)
 
         # --- Step 2: Calculate R11 and R21 ---
-        r11, r21 = self._compute_sub_covariance_matrices(data_matrix, model_order)
+        r11, r21 = self._compute_sub_covariance_matrices(data_matrix, k_nystrom)
 
         # --- Step 3: Build the matrix G ---
         try:
             matrix_g = self._build_g_matrix(r11, r21)
         except LinAlgError:
-            warnings.warn("Failed to build the G matrix in Nystrom method.")
+            warnings.warn("Failed to build the G matrix in Nyström method.")
             return None
 
         # --- Step 4: Compute the signal subspace from G ---
