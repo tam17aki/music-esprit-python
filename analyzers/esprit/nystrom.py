@@ -256,7 +256,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     def get_params(self) -> AnalyzerParameters:
         """Return the analyzer's hyperparameters.
 
-        Extends the base implementation to include the name of the solver class.
+        Extends the base implementation to include the name of the solver class
+        and the hyperparameter specific to the Nyström-based ESPRIT method.
 
         Returns:
             AnalyzerParameters:
