@@ -5,6 +5,7 @@ This script runs a comparative analysis of high-resolution parameter estimation
 algorithms:
 - ESPRIT (Standard LS/TLS)
 - ESPRIT (Unitary LS/TLS)
+- Nyström-based ESPRIT (LS/TLS)
 - FFT-ESPRIT (LS/TLS)
 
 For each method, it estimates the frequencies, amplitudes, and phases of
@@ -36,6 +37,7 @@ import time
 import numpy as np
 
 from analyzers.esprit.fft import FFTEspritAnalyzer
+from analyzers.esprit.nystrom import NystromEspritAnalyzer
 from analyzers.esprit.solvers import (
     LSEspritSolver,
     LSUnitaryEspritSolver,
@@ -93,6 +95,18 @@ def main() -> None:
         ),
         "Unitary ESPRIT (TLS)": UnitaryEspritAnalyzer(
             config.fs, config.n_sinusoids, TLSUnitaryEspritSolver()
+        ),
+        "Nyström-ESPRIT (LS)": NystromEspritAnalyzer(
+            config.fs,
+            config.n_sinusoids,
+            LSEspritSolver(),
+            nystrom_rank_factor=args.rank_factor,
+        ),
+        "Nyström-ESPRIT (TLS)": NystromEspritAnalyzer(
+            config.fs,
+            config.n_sinusoids,
+            TLSEspritSolver(),
+            nystrom_rank_factor=args.rank_factor,
         ),
         "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
             config.fs, config.n_sinusoids, LSEspritSolver()
