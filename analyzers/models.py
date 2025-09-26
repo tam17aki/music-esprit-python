@@ -54,3 +54,7 @@ class AnalyzerParameters(TypedDict):
 
     n_fft_iip: NotRequired[int | None]
     """The length of iterative interpolation FFT for FFT-ESPRIT."""
+
+    nystrom_rank_factor: NotRequired[float]
+    """A factor to determine the number of rows to sample for
+       the Nyström-based ESPRIT."""
