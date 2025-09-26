@@ -110,7 +110,7 @@ class AnalyzerBase(ABC):
     def _build_hankel_matrix(
         signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128], subspace_dim: int
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-        """Builds the Hankel data matrix.
+        """Build the Hankel data matrix.
 
         Args:
             signal (np.ndarray): Input signal (float64 or complex128).
@@ -150,7 +150,7 @@ class AnalyzerBase(ABC):
     def _build_vandermonde_matrix(
         freqs: npt.NDArray[np.float64], n_rows: int, fs: float
     ) -> npt.NDArray[np.complex128]:
-        """Builds a Vandermonde matrix from a set of frequencies."""
+        """Build a Vandermonde matrix from a set of frequencies."""
         # Create the time vector t as a column vector
         t_vector = np.arange(n_rows).reshape(-1, 1) / fs
 
@@ -204,7 +204,7 @@ class AnalyzerBase(ABC):
         return estimated_amps[sort_indices], estimated_phases[sort_indices]
 
     def get_params(self) -> AnalyzerParameters:
-        """Returns a dictionary of the analyzer's hyperparameters.
+        """Return a dictionary of the analyzer's hyperparameters.
 
         This method provides a standardized way to inspect the configuration
         of an analyzer instance. Subclasses should override this method to
