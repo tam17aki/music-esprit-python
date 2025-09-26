@@ -185,7 +185,7 @@ python examples/run_comparison.py --help
 | `--complex` | If specified, generate a complex-valued signal instead of <br>a real-valued one.| False (Flag)|
 | `--n_grids` | Number of grid points for the Spectral MUSIC and <br>Spectral Min-Norm. | 16384|
 | `--ar_order` | The order of the AutoRegressive (AR) model for the HOYW. | 512|
-| `--rank_factor` | A factor to determine the number of rows to sample for <br>the Nyström-based ESPRIT. | 10|
+| `--rank_factor` | A factor to determine the number of rows to sample for the <br>Nyström-based ESPRIT. | 10|
 
 ## Project Structure
 
