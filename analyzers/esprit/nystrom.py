@@ -92,7 +92,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     def _estimate_signal_subspace(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
-        """Approximates the signal subspace using the Nyström method.
+        """Approximate the signal subspace using the Nyström method.
 
         This method avoids the computationally expensive EVD of the full
         covariance matrix. Instead, it constructs an approximation of the
@@ -244,7 +244,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters.
+        """Return the analyzer's hyperparameters.
 
         Extends the base implementation to include the name of the solver class.
 
