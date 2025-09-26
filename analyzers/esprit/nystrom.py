@@ -36,7 +36,7 @@ from .solvers import LSEspritSolver, TLSEspritSolver
 
 @final
 class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
-    """A class to solve frequencies via Nyström-based ESPRIT."""
+    """A class to solve frequencies via Nyström-based ESPRIT algorithm."""
 
     def __init__(
         self,
@@ -46,7 +46,12 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         *,
         nystrom_rank_factor: int = 10,
     ) -> None:
-        """Initialize the analyzer with an experiment configuration.
+        """Initialize the Nyström-ESPRIT analyzer.
+
+        This implementation is based on the computationally efficient
+        Nyström method for subspace estimation, which avoids the expensive
+        EVD of the full covariance matrix. It approximates the signal
+        subspace from a smaller set of sampled rows and columns.
 
         Args:
             fs (float): Sampling frequency in Hz.
@@ -55,8 +60,13 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
                 Solver to solve frequencies with the rotation operator.
             nystrom_rank_factor (int, optional):
                 A factor to determine the number of rows to sample for the
-                Nyström approximation (P = factor * 2M). A larger value
+                Nyström approximation (K = factor * 2M). A larger value
                 improves robustness at the cost of computation. Defaults to 10.
+
+        Reference:
+            C. Qian, L. Huang, H.C. So, "Computationally efficient ESPRIT
+            algorithm for direction-of-arrival estimation based on Nyström
+            method," Signal Processing, vol. 94, pp. 74-80, 2014.
         """
         super().__init__(fs, n_sinusoids)
         self.solver: LSEspritSolver | TLSEspritSolver = solver
@@ -159,7 +169,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
             data_matrix (np.ndarray):
                 The full Hankel data matrix X (float64 or complex128).
             model_order (int):
-                The number of rows to sample for the approximation (P).
+                The number of rows to sample for the approximation (K).
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
@@ -190,11 +200,11 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         calculated via eigenvalue decomposition for numerical stability.
 
         Args:
-            r11 (np.ndarray): The P x P sub-covariance matrix.
-            r21 (np.ndarray): The (L-P) x P sub-covariance matrix.
+            r11 (np.ndarray): The K x K sub-covariance matrix.
+            r21 (np.ndarray): The (L-K) x K sub-covariance matrix.
 
         Returns:
-            np.ndarray: The resulting L x P matrix G.
+            np.ndarray: The resulting L x K matrix G.
         """
         eigvals_r11, u11 = eigh(r11)
         idx = np.argsort(eigvals_r11)[::-1]
@@ -224,7 +234,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         QR decomposition.
 
         Args:
-            matrix_g (np.ndarray): The intermediate matrix G of shape (L, P).
+            matrix_g (np.ndarray): The intermediate matrix G of shape (L, K).
 
         Returns:
             np.ndarray:
