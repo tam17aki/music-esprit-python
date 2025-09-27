@@ -53,7 +53,7 @@ The project is architected with a clean, object-oriented design, emphasizing cod
 
 After installation, you can run the provided example scripts to see the analyzers in action. These scripts are located in the `examples/` directory and serve as a starting point for your own experiments.
 
-### Basic Example
+### Basic Demonstration
 
 To run a comparative analysis of MUSIC and ESPRIT with default parameters (a signal with three sinusoids at 440, 460, and 480 Hz):
 
@@ -135,38 +135,21 @@ ESPRIT (LS)    | 0.381926 | 0.005426       | 0.001396 | 0.002110
 
 ### Running Focused Comparisons
 
-For more specific comparisons, you can run other example scripts:
+For more specific analyses, you can run other example scripts dedicated to each algorithm family:
 
-- `examples/compare_music_variants.py`:<br>
-This script focuses exclusively on the MUSIC family, comparing the performance of Spectral MUSIC, Root MUSIC, and their Forward-Backward enhanced versions.
+- `examples/compare_music_variants.py`: Focuses exclusively on the MUSIC family, comparing the performance of Spectral MUSIC, Root MUSIC, and their Forward-Backward enhanced versions.
 
-```bash
-python examples/compare_music_variants.py
-```
+- `examples/compare_esprit_variants.py`: Is dedicated to the ESPRIT family, comparing the performance of Standard ESPRIT, Unitary ESPRIT, Nyström-based ESPRIT and FFT-ESPRIT with both LS and TLS solvers.
 
-- `examples/compare_esprit_variants.py`:<br>
-This script is dedicated to the ESPRIT family, comparing the performance of Standard ESPRIT, Unitary ESPRIT, Nyström-based ESPRIT and FFT-ESPRIT with both LS and TLS solvers.
-
-```bash
-python examples/compare_esprit_variants.py
-```
-
-- `examples/compare_minnorm_variants.py`:<br>
-This script is dedicated to the Min-Norm family, comparing the performance of Spectral Min-Norm, Root Min-Norm`, and their Forward-Backward enhanced versions.
-
-```bash
-python examples/compare_minnorm_variants.py
-```
-
-You can customize the experiments by modifying these scripts or by using the command-line arguments they provide.
+- `examples/compare_minnorm_variants.py`: Is dedicated to the Min-Norm family, comparing the performance of Spectral Min-Norm, Root Min-Norm`, and their Forward-Backward enhanced versions.
 
 ### Command-Line Options
 
-You can customize the experiment via command-line arguments.
+All of the above experiments can be easily customized using a shared set of command-line arguments. This allows you to test the algorithms' performance with different signals and noise conditions.
+For example, to test with closely spaced frequencies at a lower SNR:
 
 ```bash
-python examples/run_comparison.py --freqs_true 440 445 450 \
-       --snr_db 25 --duration 0.2 --amp_range 0.2 1.8 --complex
+python examples/run_comparison.py --freqs_true 440 445 450 --snr_db 20
 ```
 
 To see all available options, run:
