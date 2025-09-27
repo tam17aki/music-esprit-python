@@ -104,9 +104,12 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
  ```bash
     python examples/compare_standard_esprit.py
  ```
-- `examples/compare_fast_esprit.py`:<br>This script is dedicated to the approximation-based variants of ESPRIT family, comparing the trade-offs between:
-    - Nyström-based ESPRIT vs. FFT-based ESPRIT
-    - Least Squares (LS) vs. Total Least Squares (TLS) vs. Woodbury-based Least Squares (Woodbury-LS) solvers
+- `examples/compare_fast_esprit.py`:<br>This script focuses on the computationally efficient, approximation-based variants of the ESPRIT family. It allows you to compare the trade-offs between:
+    -   Subspace Approximation Methods:
+        -   Nyström-based ESPRIT vs. FFT-based ESPRIT
+    -   Numerical Solvers:
+        -   Least Squares (LS) vs. Total Least Squares (TLS) solvers for both methods.
+        -   For FFT-ESPRIT, an even faster Woodbury-based LS solver is also available for comparison.
     ```bash
     python examples/compare_fast_esprit.py
     ```
