@@ -4,7 +4,8 @@
 This script compares:
 - Spectral MUSIC
 - Root MUSIC
-and their Forward-Backward enhanced versions.
+- FAST MUSIC
+and their Forward-Backward enhanced versions (only for Spectral/Root).
 
 For each method, it estimates the frequencies, amplitudes, and phases of
 sinusoidal components in a noisy signal and reports the estimation errors.
@@ -34,6 +35,7 @@ import time
 
 import numpy as np
 
+from analyzers.music.fast import FastMusicAnalyzer
 from analyzers.music.root import RootMusicAnalyzer, RootMusicAnalyzerFB
 from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
 from cli import (
@@ -79,6 +81,12 @@ def main() -> None:
         ),
         "Root MUSIC FB": RootMusicAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids
+        ),
+        "FAST MUSIC": FastMusicAnalyzer(
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            n_grids=args.n_grids,
+            min_freq_period=args.min_freq_period,
         ),
     }
 
