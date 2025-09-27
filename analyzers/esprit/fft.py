@@ -83,39 +83,6 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         self.solver = solver
         self.n_fft_iip = n_fft_iip
 
-    def _fast_hankel_vandermonde_product(
-        self,
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        kernel_matrix: npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.complex128]:
-        """Computes the product of a Hankel data matrix and a kernel matrix.
-
-        This method efficiently calculates `Yp = X @ Ap` where `X` is the
-        Hankel matrix of the signal. It leverages the convolution theorem,
-        replacing the direct, computationally expensive matrix multiplication
-        with FFT-based convolution via `scipy.signal.fftconvolve`.
-
-        This corresponds to the "Fast Hankel Matrix-Matrix product"
-        (Algorithm 3) in the reference paper.
-
-        Args:
-            signal (np.ndarray): The input signal x, of length N.
-            kernel_matrix (np.ndarray): The Vandermonde-like kernel matrix Ap,
-                                        of shape (L, P).
-
-        Returns:
-            np.ndarray: The projected matrix Yp = X @ Ap, of shape (M, P).
-        """
-        n_components = kernel_matrix.shape[1]
-        projected_matrix = np.zeros(
-            (self.subspace_dim, n_components), dtype=np.complex128
-        )
-        for i in range(n_components):
-            kernel_vector = kernel_matrix[:, i]
-            conv_result = fftconvolve(signal, kernel_vector[::-1], mode="valid")
-            projected_matrix[:, i] = conv_result[: self.subspace_dim]
-        return projected_matrix
-
     @override
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
@@ -173,6 +140,39 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         # 6. Post-process the results to get final frequencies in Hz.
         est_freqs = self._postprocess_omegas(omegas)
         return est_freqs
+
+    def _fast_hankel_vandermonde_product(
+        self,
+        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        kernel_matrix: npt.NDArray[np.complex128],
+    ) -> npt.NDArray[np.complex128]:
+        """Computes the product of a Hankel data matrix and a kernel matrix.
+
+        This method efficiently calculates `Yp = X @ Ap` where `X` is the
+        Hankel matrix of the signal. It leverages the convolution theorem,
+        replacing the direct, computationally expensive matrix multiplication
+        with FFT-based convolution via `scipy.signal.fftconvolve`.
+
+        This corresponds to the "Fast Hankel Matrix-Matrix product"
+        (Algorithm 3) in the reference paper.
+
+        Args:
+            signal (np.ndarray): The input signal x, of length N.
+            kernel_matrix (np.ndarray): The Vandermonde-like kernel matrix Ap,
+                                        of shape (L, P).
+
+        Returns:
+            np.ndarray: The projected matrix Yp = X @ Ap, of shape (M, P).
+        """
+        n_components = kernel_matrix.shape[1]
+        projected_matrix = np.zeros(
+            (self.subspace_dim, n_components), dtype=np.complex128
+        )
+        for i in range(n_components):
+            kernel_vector = kernel_matrix[:, i]
+            conv_result = fftconvolve(signal, kernel_vector[::-1], mode="valid")
+            projected_matrix[:, i] = conv_result[: self.subspace_dim]
+        return projected_matrix
 
     @override
     def get_params(self) -> AnalyzerParameters:
