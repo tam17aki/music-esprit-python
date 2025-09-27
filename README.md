@@ -140,14 +140,14 @@ python examples/run_comparison.py --help
 |`--fs`| Sampling frequency in Hz.| 44100.0 |
 | `--duration` | Signal duration in seconds. | 0.1|
 |`--snr_db` | Signal-to-Noise Ratio in dB. | 30.0|
-| `--freqs_true`  | A list of true frequencies in Hz (space separated). | 440.0 460.0 480.0|
-| `--amp_range` | The range for random amplitude generation. | 0.5 1.5|
-| `--subspace_ratio` | The ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| 1/3|
+| `--freqs_true`  | List of true frequencies in Hz (space separated). | 440.0 460.0 480.0|
+| `--amp_range` | Range for random generation of sinusoidal amplitudes. | 0.5 1.5|
+| `--subspace_ratio` | Ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| 1/3|
 | `--complex` | If specified, generate a complex-valued signal instead of<br>a real-valued one.| False (Flag)|
-| `--n_grids` | Number of grid points for the Spectral MUSIC and<br>Spectral Min-Norm method. | 16384|
-| `--min_freq_period`| Minimum frequency for periodicity search for the FAST<br>MUSIC method. | 20.0|
-| `--ar_order` | The order of the AutoRegressive (AR) model for the<br>HOYW method. | 512|
-| `--rank_factor` | A factor to determine the number of rows to sample for<br>the Nyström-based ESPRIT method. | 10|
+| `--n_grids` | Number of grid points for the Spectral MUSIC and Spectral<br>Min-Norm method. | 16384|
+| `--min_freq_period`| Minimum frequency for periodicity search for FAST MUSIC<br>method. | 20.0|
+| `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | 512|
+| `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | 10|
 
 ## Project Structure
 
