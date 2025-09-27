@@ -98,7 +98,7 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
  ```bash
     python examples/compare_music_variants.py
  ```
-- `examples/compare_esprit_variants.py`:<br>This script is dedicated to the high-accuracy variants of ESPRIT family, comparing the trade-offs between:
+- `examples/compare_standard_esprit.py`:<br>This script is dedicated to the high-accuracy variants of ESPRIT family, comparing the trade-offs between:
     -   Standard vs. Unitary ESPRIT
     -   Least Squares (LS) vs. Total Least Squares (TLS) solvers
  ```bash
