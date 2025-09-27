@@ -168,14 +168,10 @@ class RelaxAnalyzer(AnalyzerBase):
             # c = (a^H * a)^-1 * a^H * x
             a_h_a = np.dot(steering_vector.conj().T, steering_vector)
             a_h_x = np.dot(steering_vector.conj().T, complex_signal)
-
             if np.abs(a_h_a) < ZERO_LEVEL:
                 return 0.0, 0.0
-
-            complex_amp: npt.NDArray[np.complex128] = (a_h_x / a_h_a).astype(
-                np.complex128
-            )
-
+            _complex_amp = a_h_x / a_h_a
+            complex_amp: npt.NDArray[np.complex128] = _complex_amp.astype(np.complex128)
         except LinAlgError:
             return 0.0, 0.0
 
