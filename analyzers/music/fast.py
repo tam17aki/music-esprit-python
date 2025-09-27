@@ -29,11 +29,13 @@ import numpy as np
 import numpy.typing as npt
 from scipy.signal import find_peaks
 
-from .._common import find_peak_indices_from_spectrum, find_peaks_from_spectrum
+from .._common import (
+    ZERO_LEVEL,
+    find_peak_indices_from_spectrum,
+    find_peaks_from_spectrum,
+)
 from ..models import AnalyzerParameters
 from .base import MusicAnalyzerBase
-
-ZERO_FLOOR = 1e-9
 
 
 @final
@@ -202,7 +204,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         asinc_matrix = self._asinc(x, period_m) ** 2
         asinc_sum = np.sum(asinc_matrix, axis=0)
         denominator = period_m - (1 / period_m) * asinc_sum
-        pseudospectrum = 1 / (np.abs(denominator) + ZERO_FLOOR)
+        pseudospectrum = 1 / (np.abs(denominator) + ZERO_LEVEL)
         freq_grid = np.arange(self.n_grids) * self.fs / self.n_grids
         return freq_grid, pseudospectrum
 
@@ -222,7 +224,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         """
         numerator = np.sin(np.pi * m * x)
         denominator = np.sin(np.pi * x)
-        near_zero_den = np.abs(denominator) < ZERO_FLOOR
+        near_zero_den = np.abs(denominator) < ZERO_LEVEL
         result: npt.NDArray[np.float64] = np.divide(
             numerator, denominator, out=np.zeros_like(numerator), where=~near_zero_den
         )
