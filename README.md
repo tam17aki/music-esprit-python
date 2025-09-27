@@ -55,7 +55,7 @@ After installation, you can run the provided example scripts to see the analyzer
 
 ### Basic Demonstration
 
-To run a comparative analysis of MUSIC and ESPRIT with default parameters (a signal with three sinusoids at 440, 460, and 480 Hz):
+The main demonstration script, `run_comparison.py`, provides a comprehensive overview of all major algorithm families.
 
 ```bash
 python examples/run_comparison.py
@@ -73,62 +73,17 @@ True Frequencies:   [440. 460. 480.] Hz
 True Amplitudes:    [1.20169263 0.55724751 1.33230241]
 True Phases:        [-1.04328679 -1.28130206  0.8902365 ] rad
 
---- Running Spectral MUSIC ---
-Analyzer Parameters:
-  Subspace Ratio: 0.3333
-  N Grids: 16384
-Elapsed Time: 0.7471 seconds
-
---- Estimation Results ---
-Est Frequencies: [440.29562612 460.26962506 479.18801542] Hz
-Est Amplitudes:  [1.18226426 0.54646144 1.31235668]
-Est Phases:      [-1.11323333 -1.2730893   1.13453565] rad
-
---- Estimation Errors ---
-Freq Errors:  [ 0.29562612  0.26962506 -0.81198458] Hz
-Amp Errors:   [-0.01942837 -0.01078606 -0.01994573]
-Phase Errors: [-0.06994654  0.00821276  0.24429915] rad
-
-
---- Running Root MUSIC ---
-Analyzer Parameters:
-  Subspace Ratio: 0.3333
-Elapsed Time: 8.6092 seconds
-
---- Estimation Results ---
-Est Frequencies: [440.01125456 460.01005004 480.00007988] Hz
-Est Amplitudes:  [1.1997484  0.55909151 1.33171398]
-Est Phases:      [-1.04718629 -1.28456043  0.89032596] rad
-
---- Estimation Errors ---
-Freq Errors:  [1.12545575e-02 1.00500421e-02 7.98815982e-05] Hz
-Amp Errors:   [-0.00194423  0.00184401 -0.00058843]
-Phase Errors: [-3.89949770e-03 -3.25836839e-03  8.94516719e-05] rad
-
-
---- Running ESPRIT (LS) ---
-Analyzer Parameters:
-  Subspace Ratio: 0.3333
-  Solver: LSEspritSolver
-Elapsed Time: 0.3819 seconds
-
---- Estimation Results ---
-Est Frequencies: [440.00286966 460.00606773 480.00657837] Hz
-Est Amplitudes:  [1.1999316  0.55884851 1.3318762 ]
-Est Phases:      [-1.04475685 -1.28417663  0.88852574] rad
-
---- Estimation Errors ---
-Freq Errors:  [0.00286966 0.00606773 0.00657837] Hz
-Amp Errors:   [-0.00176103  0.00160101 -0.00042621]
-Phase Errors: [-0.00147006 -0.00287457 -0.00171076] rad
-
+...
 
 --- Results Summary ---
-Method         | Time (s) | Freq RMSE (Hz) | Amp RMSE | Phase RMSE (rad)
----------------|----------|----------------|----------|-----------------
-Spectral MUSIC | 0.747131 | 0.522625       | 0.017240 | 0.146790        
-Root MUSIC     | 8.609160 | 0.008712       | 0.001584 | 0.002934        
-ESPRIT (LS)    | 0.381926 | 0.005426       | 0.001396 | 0.002110 
+Method               | Time (s) | Freq RMSE (Hz) | Amp RMSE | Phase RMSE (rad)
+---------------------|----------|----------------|----------|-----------------
+Spectral MUSIC       | 1.387943 | 0.501953       | 0.011414 | 0.151064        
+Root Min-Norm        | 2.458028 | 0.002653       | 0.000669 | 0.002292        
+Standard ESPRIT (LS) | 0.888946 | 0.001417       | 0.000651 | 0.001278        
+HOYW                 | 0.580181 | 2.296788       | 0.067188 | 0.699273        
+FFT-ESPRIT (LS)      | 0.041067 | 0.001444       | 0.000651 | 0.001262        
+RELAX                | 0.003753 | 0.002905       | 0.000697 | 0.002279 
 ```
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
