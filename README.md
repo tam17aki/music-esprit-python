@@ -122,6 +122,7 @@ These scripts are the best place to understand the subtle but important differen
 ### Command-Line Options
 
 All of the above experiments can be easily customized using a shared set of command-line arguments. This allows you to test the algorithms' performance with different signals and noise conditions.
+
 For example, to test with closely spaced frequencies at a lower SNR:
 
 ```bash
