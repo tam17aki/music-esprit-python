@@ -4,7 +4,7 @@
 This script runs a comparative analysis of high-resolution parameter estimation
 algorithms:
 - Nyström-based ESPRIT (LS/TLS)
-- FFT-based ESPRIT (LS, TLS, Woodbury LS)
+- FFT-based ESPRIT (LS/TLS/Woodbury-LS)
 
 For each method, it estimates the frequencies, amplitudes, and phases of
 sinusoidal components in a noisy signal and reports the estimation errors.
