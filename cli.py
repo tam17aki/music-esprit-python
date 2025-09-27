@@ -26,10 +26,8 @@ import argparse
 
 import numpy as np
 
-from analyzers.base import AnalyzerBase
+from analyzers.base import SUBSPACE_RATIO_UPPER_BOUND, AnalyzerBase
 from utils.data_models import ExperimentConfig, SinusoidParameters
-
-SUBSPACE_RATIO_UPPER_BOUND = 0.5
 
 
 def print_experiment_setup(
