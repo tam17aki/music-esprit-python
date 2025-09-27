@@ -384,9 +384,11 @@ class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
 
         # Calculates eigenvalues and returns frequencies
         try:
-            eigenvals = eigvals(rotation_operator)
+            eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
             warnings.warn("Eigenvalue decomposition failed in Woodbury solver.")
             return np.array([])
 
-        return np.angle(eigenvals).astype(np.float64)
+        # Recover normalized angular frequencies from eigenvalues
+        omegas = np.angle(eigenvalues).astype(np.float64)
+        return omegas
