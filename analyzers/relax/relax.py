@@ -27,7 +27,6 @@ from typing import final, override
 
 import numpy as np
 import numpy.typing as npt
-from scipy.linalg import LinAlgError
 
 from .._common import ZERO_LEVEL, estimate_freqs_iterative_fft
 from ..base import AnalyzerBase
@@ -162,18 +161,18 @@ class RelaxAnalyzer(AnalyzerBase):
         # 2. Solve complex amplitudes with least squares
         #    c = pinv(V) @ x
         #    pinv(vector) is equivalent to (vector^H * vector)^-1 * vector^H
-        try:
-            # For pinv calculations, using np.dot is faster
-            # when there is only one vector.
-            # c = (a^H * a)^-1 * a^H * x
-            a_h_a = np.dot(steering_vector.conj().T, steering_vector)
-            a_h_x = np.dot(steering_vector.conj().T, complex_signal)
-            if np.abs(a_h_a) < ZERO_LEVEL:
-                return 0.0, 0.0
-            _complex_amp = a_h_x / a_h_a
-            complex_amp: npt.NDArray[np.complex128] = _complex_amp.astype(np.complex128)
-        except LinAlgError:
+        #    For pinv calculations, using np.dot is faster
+        #    when there is only one vector.
+        #    c = (a^H * a)^-1 * a^H * x
+        a_h_a: npt.NDArray[np.complex128] = np.dot(
+            steering_vector.conj().T, steering_vector
+        )
+        if np.abs(a_h_a) < ZERO_LEVEL:
             return 0.0, 0.0
+        a_h_x: npt.NDArray[np.complex128] = np.dot(
+            steering_vector.conj().T, complex_signal
+        )
+        complex_amp = a_h_x / a_h_a
 
         # 3. Extract amplitude and phase
         amp = float(np.abs(complex_amp))
