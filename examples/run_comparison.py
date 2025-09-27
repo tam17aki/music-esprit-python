@@ -6,8 +6,8 @@ algorithms:
 - Spectral MUSIC
 - Root Min-Norm
 - Standard ESPRIT (LS)
+- FFT-based ESPRIT (LS)
 - HOYW
-- FFT-ESPRIT (LS)
 - RELAX
 
 For each method, it estimates the frequencies, amplitudes, and phases of
@@ -90,10 +90,10 @@ def main() -> None:
         "Standard ESPRIT (LS)": StandardEspritAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
-        "HOYW": HoywAnalyzer(config.fs, config.n_sinusoids, ar_order=args.ar_order),
-        "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
+        "FFT-based ESPRIT (LS)": FFTEspritAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
+        "HOYW": HoywAnalyzer(config.fs, config.n_sinusoids, ar_order=args.ar_order),
         "RELAX": RelaxAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
     }
 
