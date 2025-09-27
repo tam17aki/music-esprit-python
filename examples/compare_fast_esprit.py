@@ -4,7 +4,7 @@
 This script runs a comparative analysis of high-resolution parameter estimation
 algorithms:
 - Nyström-based ESPRIT (LS/TLS)
-- FFT-based ESPRIT (LS/TLS)
+- FFT-based ESPRIT (LS, TLS, Woodbury LS)
 
 For each method, it estimates the frequencies, amplitudes, and phases of
 sinusoidal components in a noisy signal and reports the estimation errors.
@@ -36,7 +36,11 @@ import numpy as np
 
 from analyzers.esprit.fft import FFTEspritAnalyzer
 from analyzers.esprit.nystrom import NystromEspritAnalyzer
-from analyzers.esprit.solvers import LSEspritSolver, TLSEspritSolver
+from analyzers.esprit.solvers import (
+    LSEspritSolver,
+    TLSEspritSolver,
+    WoodburyLSEspritSolver,
+)
 from cli import (
     compute_summary_row,
     parse_args,
@@ -71,23 +75,28 @@ def main() -> None:
     print_experiment_setup(config, true_params)
 
     analyzers_to_test = {
-        "Nyström-based ESPRIT (LS)": NystromEspritAnalyzer(
+        "Nyström-ESPRIT (LS)": NystromEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=LSEspritSolver(),
             nystrom_rank_factor=args.rank_factor,
         ),
-        "Nyström-based ESPRIT (TLS)": NystromEspritAnalyzer(
+        "Nyström-ESPRIT (TLS)": NystromEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=TLSEspritSolver(),
             nystrom_rank_factor=args.rank_factor,
         ),
-        "FFT-based ESPRIT (LS)": FFTEspritAnalyzer(
+        "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
-        "FFT-based ESPRIT (TLS)": FFTEspritAnalyzer(
+        "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
+        ),
+        "FFT-ESPRIT (Woodbury-LS)": FFTEspritAnalyzer(
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=WoodburyLSEspritSolver(),
         ),
     }
 
