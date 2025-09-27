@@ -33,7 +33,7 @@ from scipy.signal import fftconvolve
 from .._common import estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
 from .base import EspritAnalyzerBase
-from .solvers import LSEspritSolver, TLSEspritSolver
+from .solvers import LSEspritSolver, TLSEspritSolver, WoodburyLSEspritSolver
 
 
 @final
@@ -66,7 +66,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         self,
         fs: float,
         n_sinusoids: int,
-        solver: LSEspritSolver | TLSEspritSolver,
+        solver: LSEspritSolver | TLSEspritSolver | WoodburyLSEspritSolver,
         *,
         n_fft_iip: int | None = None,
     ):
@@ -75,7 +75,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            solver (LSEspritSolver | TLSEspritSolver):
+            solver (LSEspritSolver | TLSEspritSolver | WoodburyLSEspritSolver):
                 Solver to solve frequencies with the rotation operator.
             n_fft_iip (int): The length of iterative interpolation FFT.
         """
