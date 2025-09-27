@@ -70,20 +70,20 @@ Sampling Frequency: 44100.0 Hz
 Signal Duration:    100 ms
 SNR:                30.0 dB
 True Frequencies:   [440. 460. 480.] Hz
-True Amplitudes:    [0.62057795 1.16890745 1.25366922]
-True Phases:        [0.23535483 2.56233765 2.35966198] rad
+True Amplitudes:    [0.65281023 0.89046947 1.26003679]
+True Phases:        [-2.22177076 -2.68609286 -3.06060218] rad
 
 ...
 
 --- Results Summary ---
 Method               | Time (s) | Freq RMSE (Hz) | Amp RMSE | Phase RMSE (rad)
 ---------------------|----------|----------------|----------|-----------------
-Spectral MUSIC       | 0.906161 | 0.507835       | 0.026793 | 0.159457        
-Root Min-Norm        | 1.652714 | 0.009280       | 0.001139 | 0.003312        
-Standard ESPRIT (LS) | 0.595847 | 0.008989       | 0.001179 | 0.003089        
-HOYW                 | 0.366513 | 0.562851       | 0.036458 | 0.200168        
-FFT-ESPRIT (LS)      | 0.028067 | 0.008892       | 0.001176 | 0.003049        
-RELAX                | 0.002553 | 0.002672       | 0.001032 | 0.000719        
+Spectral MUSIC       | 0.934862 | 0.518516       | 0.034079 | 0.173284
+Root Min-Norm        | 1.637875 | 0.004859       | 0.001036 | 0.002197
+Standard ESPRIT (LS) | 0.584262 | 0.008371       | 0.001208 | 0.002004
+HOYW                 | 0.368163 | 1.925720       | 0.096096 | 4.740930
+FFT-ESPRIT (LS)      | 0.004423 | 0.008337       | 0.001207 | 0.001995
+RELAX                | 0.002155 | 0.003241       | 0.000904 | 0.002245              
 ```
 
 (Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
