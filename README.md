@@ -93,8 +93,8 @@ RELAX                | 0.002553 | 0.002672       | 0.001032 | 0.000719
 While `run_comparison.py` provides a great overview of the main algorithm families, you may want to dive deeper into the specific trade-offs within each family. The following scripts are dedicated to these focused comparisons.
 
 - `examples/compare_music_variants.py`:<br>This script focuses exclusively on the MUSIC family. It allows you to directly compare the performance and runtime of:
-    -   Spectral MUSIC vs. Root-MUSIC
-    -   Standard vs. Forward-Backward enhanced versions
+    -   Spectral MUSIC vs. Root-MUSIC vs. FAST MUSIC
+    -   Standard vs. Forward-Backward enhanced versions (for Spectral/Root)
  ```bash
     python examples/compare_music_variants.py
  ```
@@ -145,6 +145,7 @@ python examples/run_comparison.py --help
 | `--subspace_ratio` | The ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| 1/3|
 | `--complex` | If specified, generate a complex-valued signal instead of a<br>real-valued one.| False (Flag)|
 | `--n_grids` | Number of grid points for the Spectral MUSIC and <br>Spectral Min-Norm. | 16384|
+| `--min_freq_period`| Minimum frequency for periodicity search in the FAST MUSIC. | 20.0|
 | `--ar_order` | The order of the AutoRegressive (AR) model for the HOYW. | 512|
 | `--rank_factor` | A factor to determine the number of rows to sample for the <br>Nyström-based ESPRIT. | 10|
 
@@ -187,7 +188,7 @@ This project is organized into a modular, object-oriented structure to promote c
 - **`cli.py`**: A module dedicated to the Command-Line Interface. It handles argument parsing and the formatting of results for display.
 -  **`examples/`**: A directory containing example scripts that demonstrate how to use the library.
     - `run_comparison.py`: The main demonstration script that runs a comparative analysis of all major algorithm families.
-    - `compare_music_variants.py`: The demonstration script that runs a comparative analysis of Spectral and Root MUSIC algorithm, including their Forward-Backward enhanced versions.
+    - `compare_music_variants.py`: The demonstration script that runs a comparative analysis of Spectral MUSIC, Root MUSIC and FAST MUSIC algorithm, including their Forward-Backward enhanced versions (for Spectral/Root).
     - `compare_standard_esprit.py`: The demonstration script that runs a comparative analysis of Standard ESPRIT (LS/TLS) and Unitary ESPRIT (LS/TLS) algorithm.
     - `compare_fast_esprit.py`: The demonstration script that runs a comparative analysis of Nyström-based ESPRIT (LS/TLS) and FFT-ESPRIT (LS/TLS) algorithm.
     - `compare_minnorm_variants.py`: The demonstration script that runs a comparative analysis of Spectral and Root Min-Norm algorithm, including their Forward-Backward enhanced versions.
