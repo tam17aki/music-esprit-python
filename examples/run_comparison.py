@@ -90,7 +90,7 @@ def main() -> None:
         "Standard ESPRIT (LS)": StandardEspritAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
-        "FFT-based ESPRIT (LS)": FFTEspritAnalyzer(
+        "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
         "HOYW": HoywAnalyzer(config.fs, config.n_sinusoids, ar_order=args.ar_order),
