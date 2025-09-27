@@ -3,8 +3,12 @@
 
 This script runs a comparative analysis of high-resolution parameter estimation
 algorithms:
-- MUSIC (Spectral and Root)
-- ESPRIT (Standard LS)
+- Spectral MUSIC
+- Root Min-Norm
+- Standard ESPRIT (LS)
+- HOYW
+- FFT-ESPRIT (LS)
+- RELAX
 
 For each method, it estimates the frequencies, amplitudes, and phases of
 sinusoidal components in a noisy signal and reports the estimation errors.
@@ -34,10 +38,13 @@ import time
 
 import numpy as np
 
+from analyzers.esprit.fft import FFTEspritAnalyzer
 from analyzers.esprit.solvers import LSEspritSolver
 from analyzers.esprit.standard import StandardEspritAnalyzer
-from analyzers.music.root import RootMusicAnalyzer
+from analyzers.hoyw.hoyw import HoywAnalyzer
+from analyzers.minnorm.root import RootMinNormAnalyzer
 from analyzers.music.spectral import SpectralMusicAnalyzer
+from analyzers.relax.relax import RelaxAnalyzer
 from cli import (
     compute_summary_row,
     parse_args,
@@ -73,22 +80,21 @@ def main() -> None:
 
     analyzers_to_test = {
         "Spectral MUSIC": SpectralMusicAnalyzer(
-            fs=config.fs,
-            n_sinusoids=config.n_sinusoids,
-            n_grids=args.n_grids,
-            subspace_ratio=args.subspace_ratio,
+            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
-        "Root MUSIC": RootMusicAnalyzer(
+        "Root Min-Norm": RootMinNormAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             subspace_ratio=args.subspace_ratio,
         ),
-        "ESPRIT (LS)": StandardEspritAnalyzer(
-            fs=config.fs,
-            n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
-            subspace_ratio=args.subspace_ratio,
+        "Standard ESPRIT (LS)": StandardEspritAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
+        "HOYW": HoywAnalyzer(config.fs, config.n_sinusoids, ar_order=args.ar_order),
+        "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
+        ),
+        "RELAX": RelaxAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
     }
 
     results_summary: list[dict[str, str | float]] = []
