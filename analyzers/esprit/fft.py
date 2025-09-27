@@ -28,6 +28,7 @@ from typing import final, override
 import numpy as np
 import numpy.typing as npt
 from scipy.linalg import qr
+from scipy.signal import fftconvolve
 
 from .._common import estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
@@ -37,28 +38,28 @@ from .solvers import LSEspritSolver, TLSEspritSolver
 
 @final
 class FFTEspritAnalyzer(EspritAnalyzerBase):
-    """Analyzes sinusoidal parameters using the FFT-ESPRIT algorithm.
+    """Analyzes sinusoidal parameters using the Fast FFT-ESPRIT algorithm.
 
-    This analyzer provides a computationally efficient alternative to the
-    standard ESPRIT method. Instead of a full SVD/EVD on a covariance
-    matrix, it approximates the signal subspace using a kernel-based
-    approach leveraging the Fast Fourier Transform (FFT).
+    This analyzer provides a computationally efficient alternative to standard
+    ESPRIT, achieving a quasi-linear time complexity of O(N log N). Instead of
+    a full SVD/EVD, it approximates the signal subspace using a kernel-based
+    approach that leverages the Fast Fourier Transform (FFT).
 
     The process involves:
-    1. A rough, off-grid estimation of frequencies using an iterative
-       interpolated FFT method (similar to IIp-DFT).
-    2. Construction of a truncated DFT kernel (a Vandermonde-like matrix)
-       based on these rough frequency estimates.
-    3. Projecting the data onto this kernel to get a "cleaned" data matrix.
-    4. Estimating the signal subspace from this cleaned matrix via QR decomposition.
-    5. Applying the standard ESPRIT rotational invariance technique.
+    1. A rough, off-grid estimation of frequencies via an iterative FFT method.
+    2. Construction of a truncated DFT kernel from these rough estimates.
+    3. An efficient projection of the data onto this kernel using FFT-based
+       fast convolution (the "Fast Hankel Matrix-Matrix product").
+    4. Estimation of the signal subspace via QR decomposition.
+    5. Application of a standard ESPRIT solver to the approximated subspace.
 
-    This method can achieve quasi-linear time complexity O(N log N) and
-    can be more robust than standard ESPRIT in very low SNR regimes.
+    This method is particularly suitable for long signals or real-time
+    applications and can be more robust than standard ESPRIT in very low
+    SNR regimes.
 
     Reference:
         S. L. Kiser, et al., "Fast Kernel-based Signal Subspace Estimates for
-        Line Spectral Estimation," PREPRINT, 2023.
+        Line Spectral Estimation," PREPRINT, 2023. (Specifically, Algorithm 4)
     """
 
     def __init__(
@@ -82,6 +83,39 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         self.solver = solver
         self.n_fft_iip = n_fft_iip
 
+    def _fast_hankel_vandermonde_product(
+        self,
+        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        kernel_matrix: npt.NDArray[np.complex128],
+    ) -> npt.NDArray[np.complex128]:
+        """Computes the product of a Hankel data matrix and a kernel matrix.
+
+        This method efficiently calculates `Yp = X @ Ap` where `X` is the
+        Hankel matrix of the signal. It leverages the convolution theorem,
+        replacing the direct, computationally expensive matrix multiplication
+        with FFT-based convolution via `scipy.signal.fftconvolve`.
+
+        This corresponds to the "Fast Hankel Matrix-Matrix product"
+        (Algorithm 3) in the reference paper.
+
+        Args:
+            signal (np.ndarray): The input signal x, of length N.
+            kernel_matrix (np.ndarray): The Vandermonde-like kernel matrix Ap,
+                                        of shape (L, P).
+
+        Returns:
+            np.ndarray: The projected matrix Yp = X @ Ap, of shape (M, P).
+        """
+        n_components = kernel_matrix.shape[1]
+        projected_matrix = np.zeros(
+            (self.subspace_dim, n_components), dtype=np.complex128
+        )
+        for i in range(n_components):
+            kernel_vector = kernel_matrix[:, i]
+            conv_result = fftconvolve(signal, kernel_vector[::-1], mode="valid")
+            projected_matrix[:, i] = conv_result[: self.subspace_dim]
+        return projected_matrix
+
     @override
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
@@ -95,11 +129,8 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-        # 1. Build the data matrix X (Hankel matrix)
-        data_matrix = self._build_hankel_matrix(signal, self.subspace_dim)
-
-        # 2. Obtain a rough estimate of the frequency using an IIp-DFT-like
-        #    method (Alg. 2, Step 2 of the paper)
+        # 1. Obtain a rough estimate of the frequency using an IIp-DFT-like
+        #    method (Corresponds to Alg. 4, Step 1 of the paper)
         rough_freqs = estimate_freqs_iterative_fft(
             signal, self.n_sinusoids, self.fs, self.n_fft_iip
         )
@@ -114,19 +145,19 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
             # For complex signals, use only estimated frequencies
             kernel_freqs = -rough_freqs
 
-        # 3. Build a truncated DFT kernel (A_p_hat) from the coarse frequency
-        #    estimate (Step 3)
+        # 2. Build a truncated DFT kernel from the coarse frequency estimate.
+        #    (Corresponds to Alg. 4, Step 2)
         n_snapshots = signal.size - self.subspace_dim + 1
         kernel_matrix = self._build_vandermonde_matrix(
             kernel_freqs, n_snapshots, self.fs
         )
 
-        # 4. Project the data onto a matrix to obtain an approximate signal space
-        #    matrix Yp (Step 4)
-        projected_matrix = data_matrix @ kernel_matrix
+        # 3. Project data onto the kernel via fast convolution to get Yp.
+        #    (Corresponds to Alg. 4, Step 3, implemented with Alg. 3)
+        projected_matrix = self._fast_hankel_vandermonde_product(signal, kernel_matrix)
 
-        # 5. Obtain an orthonormal signal subspace Q from the QR decomposition of
-        #    Yp (Step 5)
+        # 4. Orthonormalize the approximated signal subspace via QR decomposition.
+        #    (Corresponds to Alg. 4, Step 4)
         try:
             # Performs efficient thin QR decomposition with "economic" mode
             _q_matrix, _ = qr(projected_matrix, mode="economic")
@@ -135,10 +166,11 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
             warnings.warn("QR decomposition failed in FFT-ESPRIT.")
             return np.array([])
 
-        # 6. Apply the standard ESPRIT solver to Q (Steps 6-8)
+        # 5. Apply a standard ESPRIT solver to the approximated subspace Q.
+        #    (Corresponds to Alg. 4, Steps 5-9)
         omegas = self.solver.solve(q_matrix)
 
-        # 7. Post-processing
+        # 6. Post-process the results to get final frequencies in Hz.
         est_freqs = self._postprocess_omegas(omegas)
         return est_freqs
 
