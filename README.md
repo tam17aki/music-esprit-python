@@ -169,7 +169,7 @@ This project is organized into a modular, object-oriented structure to promote c
     - `unitary.py`: Implements `UnitaryEspritAnalyzer` (inheriting from `EVDBasedEspritAnalyzer`), which operates on real-valued matrices.
     - `nystrom.py`: Implements `NystromEspritAnalyzer`, a fast variant that approximates the signal subspace using the Nyström method, reducing the complexity of the EVD step.
     - `fft.py`: Implements `FFTEspritAnalyzer`, a computationally efficient variant that approximates the signal subspace using an FFT-based kernel method instead of SVD/EVD.
-    - `solvers.py`: Defines a set of solver classes that encapsulate the specific mathematical procedures for solving the ESPRIT core equations. This demonstrates the Strategy design pattern, allowing different numerical methods (LS, TLS, Unitary LS/TLS) to be flexibly injected into the analyzers.
+    - `solvers.py`: Defines a set of solver classes that encapsulate the specific mathematical procedures for solving the ESPRIT core equations. This demonstrates the Strategy design pattern, allowing different numerical methods (LS, TLS, Unitary LS/TLS, Woodbury LS) to be flexibly injected into the analyzers.
   - **`minnorm/`**: A sub-package for Min-Norm algorithm variants.
     - `base.py`: Defines `MinNormAnalyzerBase`, containing the core logic for computing the minimum norm vector.
     - `spectral.py`: Implements `SpectralMinNormAnalyzer`, which estimates frequencies via spectral peak-picking.
