@@ -172,13 +172,13 @@ def parse_args() -> argparse.Namespace:
         nargs=2,
         default=[0.5, 1.5],
         metavar=("AMP_MIN", "AMP_MAX"),
-        help="Amplitude range for sinusoid generation (default: 0.5 1.5).",
+        help="Range for random generation of sinusoidal amplitudes (default: 0.5 1.5).",
     )
     parser.add_argument(
         "--subspace_ratio",
         type=float,
         default=1 / 3,
-        help="The ratio of the subspace dimension to the signal length "
+        help="Ratio of the subspace dimension to the signal length "
         + "(default: 1/3, which is approximately 0.333). "
         + "This value (L/N) determines the size of the covariance matrix. "
         + f"Must be in the range (0, {SUBSPACE_RATIO_UPPER_BOUND}].",
@@ -200,22 +200,22 @@ def parse_args() -> argparse.Namespace:
         "--min_freq_period",
         type=float,
         default=20.0,
-        help="Minimum frequency for periodicity search for the FAST MUSIC method "
+        help="Minimum frequency for periodicity search for FAST MUSIC method "
         + "(default: 20.0).",
     )
     parser.add_argument(
         "--ar_order",
         type=int,
         default=512,
-        help="The order of the AutoRegressive (AR) model "
-        + "for the HOYW method. (default: 512)",
+        help="Order of the AutoRegressive (AR) model "
+        + "for HOYW method. (default: 512)",
     )
     parser.add_argument(
         "--rank_factor",
         type=int,
         default=10,
-        help="A factor to determine the number of rows to sample "
-        + "for the Nyström-based ESPRIT method (default: 10).",
+        help="Factor to determine the number of rows to sample "
+        + "for Nyström-based ESPRIT method (default: 10).",
     )
     args = parser.parse_args()
     if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
