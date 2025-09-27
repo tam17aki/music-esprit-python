@@ -104,8 +104,9 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
  ```bash
     python examples/compare_standard_esprit.py
  ```
-- `examples/compare_fast_esprit.py`:<br>
-    This script focuses on the computationally efficient, approximation-based variants of ESPRIT. It compares the speed and accuracy of FFT-ESPRIT and Nyström-based ESPRIT, demonstrating their effectiveness as fast alternatives to the standard methods.
+- `examples/compare_fast_esprit.py`:<br>This script is dedicated to the approximation-based variants of ESPRIT family, comparing the trade-offs between:
+    - Nyström-based ESPRIT vs. FFT-ESPRIT
+    - Least Squares (LS) vs. Total Least Squares (TLS) solvers
     ```bash
     python examples/compare_fast_esprit.py
     ```
