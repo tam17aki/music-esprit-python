@@ -144,7 +144,7 @@ python examples/run_comparison.py --help
 | `--amp_range` | Range for random generation of sinusoidal amplitudes. | 0.5 1.5|
 | `--subspace_ratio` | Ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| 1/3|
 | `--complex` | If specified, generate a complex-valued signal instead of<br>a real-valued one.| False (Flag)|
-| `--n_grids` | Number of grid points for the Spectral MUSIC and Spectral<br>Min-Norm method. | 16384|
+| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral<br>Min-Norm method. | 16384|
 | `--min_freq_period`| Minimum frequency for periodicity search for FAST MUSIC<br>method. | 20.0|
 | `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | 512|
 | `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | 10|
