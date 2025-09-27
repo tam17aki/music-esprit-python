@@ -193,8 +193,8 @@ def parse_args() -> argparse.Namespace:
         "--n_grids",
         type=int,
         default=16384,
-        help="Number of frequency grid points for the MUSIC pseudospectrum "
-        + "(default: 16384).",
+        help="Number of frequency grid points for Spectral MUSIC and Spectral "
+        + "Min-Norm method (default: 16384).",
     )
     parser.add_argument(
         "--min_freq_period",
