@@ -3,10 +3,8 @@
 
 This script runs a comparative analysis of high-resolution parameter estimation
 algorithms:
-- ESPRIT (Standard LS/TLS)
-- ESPRIT (Unitary LS/TLS)
-- Nyström-based ESPRIT (LS/TLS)
-- FFT-ESPRIT (LS/TLS)
+- Standard ESPRIT (LS/TLS)
+- Unitary ESPRIT (LS/TLS)
 
 For each method, it estimates the frequencies, amplitudes, and phases of
 sinusoidal components in a noisy signal and reports the estimation errors.
@@ -36,8 +34,6 @@ import time
 
 import numpy as np
 
-from analyzers.esprit.fft import FFTEspritAnalyzer
-from analyzers.esprit.nystrom import NystromEspritAnalyzer
 from analyzers.esprit.solvers import (
     LSEspritSolver,
     LSUnitaryEspritSolver,
@@ -93,24 +89,6 @@ def main() -> None:
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=TLSUnitaryEspritSolver(),
-        ),
-        "Nyström-ESPRIT (LS)": NystromEspritAnalyzer(
-            fs=config.fs,
-            n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
-            nystrom_rank_factor=args.rank_factor,
-        ),
-        "Nyström-ESPRIT (TLS)": NystromEspritAnalyzer(
-            fs=config.fs,
-            n_sinusoids=config.n_sinusoids,
-            solver=TLSEspritSolver(),
-            nystrom_rank_factor=args.rank_factor,
-        ),
-        "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
-        ),
-        "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
         ),
     }
 
