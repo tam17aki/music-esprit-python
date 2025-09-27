@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines solver classes for Starndard ESPRIT and Unitary ESPRIT.
+"""Defines solver classes for ESPRIT variants.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -28,6 +28,8 @@ import numpy as np
 import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigvals, pinv, svd
 from scipy.sparse import csc_array, csr_array
+
+from .._common import ZERO_LEVEL
 
 
 # pylint: disable=too-few-public-methods
@@ -317,3 +319,74 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
         # Recover normalized angular frequencies from eigenvalues
         omegas: npt.NDArray[np.float64] = 2 * np.arctan(np.real(eigenvalues))
         return omegas
+
+
+class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
+    """Solves the ESPRIT LS problem via the fast Woodbury identity method.
+
+    This solver is specifically designed to work with an orthonormal signal
+    subspace matrix Q, as produced by the FFT-ESPRIT method's QR decomposition.
+    It can be more computationally efficient than a direct pseudo-inverse.
+
+    This corresponds to the solver described in Algorithm 4 of Kiser et al. (2023).
+    """
+
+    def solve(
+        self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+    ) -> npt.NDArray[np.float64]:
+        """Solves for rotational factors using the Woodbury-based LS method.
+
+        This method is a computationally efficient version of the standard LS
+        solver, specifically optimized for cases where the input signal subspace
+        is an orthonormal matrix (Q). It computes the solution via a rank-1
+        update based on the Sherman-Morrison formula, avoiding a direct
+        pseudo-inverse calculation.
+
+        Args:
+            signal_subspace (np.ndarray):
+                The orthonormal signal subspace matrix Q. Shape: (L, 2M).
+
+        Returns:
+            np.ndarray:
+                An array of estimated normalized angular frequencies (omegas).
+                Returns an empty array if estimation fails.
+        """
+        q_matrix = signal_subspace
+        q_upper = q_matrix[:-1, :]
+        q_lower = q_matrix[1:, :]
+
+        # 1. Extract q (the last row vector)
+        q_last_row = q_matrix[-1, :].reshape(1, -1)  # (1, 2M)
+
+        # 2. Calculate q^H*q (scalar)
+        #    Since q_matrix is orthonormal, ||q_last_row||^2 <= 1
+        q_h_q = np.dot(q_last_row, q_last_row.conj().T).item()  # .item() to scalar
+
+        # 3. Calculate the coefficients needed to calculate (I - q*q^H)^-1
+        #    Coefficient = 1 / (1 - q^H*q)
+        denominator = 1 - q_h_q
+        if abs(denominator) < ZERO_LEVEL:
+            warnings.warn("Denominator in Sherman-Morrison formula is close to zero.")
+            # In this case, (I - q*q^H) is a nearly singular matrix
+            # It is safe to fall back to the LS solution using pinv
+            rotation_operator = pinv(q_upper) @ q_lower
+        else:
+            # 4. Calculate (Q↑^H*Q↑)^-1
+            #    inv_matrix = I + q*q^H / (1 - q^H*q)
+            q_h = q_last_row.conj().T  # (2M, 1)
+            inv_matrix = np.eye(q_matrix.shape[1]) + (q_h @ q_last_row) / denominator
+
+            # 5. Calculate Q↑^H*Q↓
+            q_upper_h_q_lower = q_upper.conj().T @ q_lower
+
+            # 6. Calculate the final rotation operator Ψ
+            rotation_operator = inv_matrix @ q_upper_h_q_lower
+
+        # Calculates eigenvalues and returns frequencies
+        try:
+            eigenvals = eigvals(rotation_operator)
+        except LinAlgError:
+            warnings.warn("Eigenvalue decomposition failed in Woodbury solver.")
+            return np.array([])
+
+        return np.angle(eigenvals).astype(np.float64)
