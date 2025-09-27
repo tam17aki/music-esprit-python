@@ -200,7 +200,8 @@ def parse_args() -> argparse.Namespace:
         "--min_freq_period",
         type=float,
         default=20.0,
-        help="Minimum frequency for periodicity search in FAST MUSIC (default: 20.0).",
+        help="Minimum frequency for periodicity search for the FAST MUSIC method "
+        + "(default: 20.0).",
     )
     parser.add_argument(
         "--ar_order",
