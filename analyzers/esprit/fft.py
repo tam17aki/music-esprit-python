@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines FFTEspritAnalyzer class for FFT-ESPRIT algorithm.
+"""Defines FFTEspritAnalyzer class for Fast FFT-ESPRIT algorithm.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
