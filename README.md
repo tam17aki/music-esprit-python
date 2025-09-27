@@ -90,13 +90,19 @@ RELAX                | 0.003753 | 0.002905       | 0.000697 | 0.002279
 
 ### Running Focused Comparisons
 
-For more specific analyses, you can run other example scripts dedicated to each algorithm family:
+While `run_comparison.py` provides a great overview of the main algorithm families, you may want to dive deeper into the specific trade-offs within each family. The following scripts are dedicated to these focused comparisons.
 
-- `examples/compare_music_variants.py`: Focuses exclusively on the MUSIC family, comparing the performance of Spectral MUSIC, Root MUSIC, and their Forward-Backward enhanced versions.
+- `examples/compare_music_variants.py`:<br>This script focuses exclusively on the MUSIC family. It allows you to directly compare the performance and runtime of:
+    -   Spectral MUSIC vs. Root-MUSIC
+    -   Standard vs. Forward-Backward enhanced versions
+- `examples/compare_esprit_variants.py`:<br>This script is dedicated to the ESPRIT family, comparing the trade-offs between:
+    -   Standard vs. Unitary ESPRIT
+    -   Least Squares (LS) vs. Total Least Squares (TLS) solvers
+- `examples/compare_minnorm_variants.py`:<br>This script explores the Min-Norm family, comparing:
+    -   Spectral Min-Norm vs. Root Min-Norm
+    -   Standard vs. Forward-Backward enhanced versions
 
-- `examples/compare_esprit_variants.py`: Is dedicated to the ESPRIT family, comparing the performance of Standard ESPRIT, Unitary ESPRIT, Nyström-based ESPRIT and FFT-ESPRIT with both LS and TLS solvers.
-
-- `examples/compare_minnorm_variants.py`: Is dedicated to the Min-Norm family, comparing the performance of Spectral Min-Norm, Root Min-Norm`, and their Forward-Backward enhanced versions.
+These scripts are the best place to understand the subtle but important differences between the various implementations provided in this library.
 
 ### Command-Line Options
 
