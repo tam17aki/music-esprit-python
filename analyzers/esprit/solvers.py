@@ -148,7 +148,8 @@ class TLSEspritSolver:
         return omegas
 
 
-class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods
+class _UnitaryEspritHelpers:
     """A Mixin class providing helpers for Unitary ESPRIT solvers."""
 
     @staticmethod
@@ -333,7 +334,8 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
         return omegas
 
 
-class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
+# pylint: disable=too-few-public-methods
+class WoodburyLSEspritSolver:
     """A fast ESPRIT LS solver using the Woodbury matrix identity.
 
     This solver is specifically designed to work with an orthonormal
