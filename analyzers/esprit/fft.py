@@ -94,7 +94,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Estimates signal frequencies using the Fast FFT-ESPRIT method.
+        """Estimate signal frequencies using the Fast FFT-ESPRIT method.
 
         Args:
             signal (np.ndarray):
@@ -159,7 +159,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         kernel_matrix: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.complex128]:
-        """Efficiently computes the product of a Hankel and kernel matrix.
+        """Compute the product of a Hankel and kernel matrix efficiently.
 
         This method calculates `Yp = X @ Ap` where `X` is the Hankel
         matrix of the signal. It leverages the convolution theorem,
@@ -191,7 +191,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns hyperparameters, including solver name and FFT length.
+        """Return hyperparameters, including solver name and FFT length.
 
         Returns:
             AnalyzerParameters:
