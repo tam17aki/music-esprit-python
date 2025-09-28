@@ -48,7 +48,6 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
     Transform (FFT).
 
     The process involves:
-
     1. A rough, off-grid estimation of frequencies via an iterative FFT
        method.
     2. Construction of a truncated DFT kernel from these rough
