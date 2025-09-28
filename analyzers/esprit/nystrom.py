@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
-"""Defines NystromEspritAnalyzer class to solve frequencies via Nyström-based ESPRIT.
+"""Defines NystromEspritAnalyzer class for Nyström-based ESPRIT.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import warnings
@@ -37,7 +38,7 @@ from .solvers import LSEspritSolver, TLSEspritSolver
 
 @final
 class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
-    """A class to solve frequencies via Nyström-based ESPRIT algorithm."""
+    """A class to solve frequencies via Nyström-based ESPRIT."""
 
     def __init__(
         self,
@@ -50,9 +51,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         """Initialize the Nyström-ESPRIT analyzer.
 
         This implementation is based on the computationally efficient
-        Nyström method for subspace estimation, which avoids the expensive
-        EVD of the full covariance matrix. It approximates the signal
-        subspace from a smaller set of sampled rows and columns.
+        Nyström method for subspace estimation, which avoids the
+        expensive EVD of the full covariance matrix. It approximates the
+        signal subspace from a smaller set of sampled rows and columns.
 
         Args:
             fs (float): Sampling frequency in Hz.
@@ -60,14 +61,16 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
             solver (LSEspritSolver | TLSEspritSolver):
                 Solver to solve frequencies with the rotation operator.
             nystrom_rank_factor (int, optional):
-                A factor to determine the number of rows to sample for the
-                Nyström approximation (K = factor * 2M). A larger value
-                improves robustness at the cost of computation. Defaults to 10.
+                A factor to determine the number of rows to sample for
+                the Nyström approximation (K = factor * 2M). A larger
+                value improves robustness at the cost of
+                computation. Defaults to 10.
 
         Reference:
-            C. Qian, L. Huang, H.C. So, "Computationally efficient ESPRIT
-            algorithm for direction-of-arrival estimation based on Nyström
-            method," Signal Processing, vol. 94, pp. 74-80, 2014.
+            C. Qian, L. Huang, H.C. So, "Computationally efficient
+            ESPRIT algorithm for direction-of-arrival estimation based
+            on Nyström method," Signal Processing, vol. 94, pp. 74-80,
+            2014.
         """
         super().__init__(fs, n_sinusoids)
         self.solver: LSEspritSolver | TLSEspritSolver = solver
@@ -94,7 +97,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         # 2. Solve frequencies with the stored solver
         omegas = self.solver.solve(signal_subspace)
 
-        # 3. Post-processes raw angular frequencies to final frequency estimates
+        # 3. Post-processes raw angular frequencies to final frequency
+        #    estimates
         est_freqs = self._postprocess_omegas(omegas)
 
         return est_freqs
@@ -106,22 +110,25 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         """Approximate the signal subspace using the Nyström method.
 
         This method avoids the computationally expensive EVD of the full
-        covariance matrix. Instead, it constructs an approximation of the
-        signal subspace by performing EVD on smaller, sampled sub-matrices
-        (R11 and G^H*G), significantly reducing computational complexity.
+        covariance matrix. Instead, it constructs an approximation of
+        the signal subspace by performing EVD on smaller, sampled
+        sub-matrices (R11 and G^H*G), significantly reducing
+        computational complexity.
 
         Args:
             signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
             np.ndarray:
-                An orthonormal basis for the approximated signal subspace
-                (float64 or complex128). Returns None if estimation fails.
+                An orthonormal basis for the approximated signal
+                subspace (float64 or complex128).
+                Returns None if estimation fails.
         """
         # --- Step 1: Prepare the parameters ---
         # The number of complex exponential components
         if np.isrealobj(signal):
-            # For real signals, positive and negative frequency pairs are considered
+            # For real signals, positive and negative frequency pairs
+            # are considered
             n_complex_sinusoids = self.n_sinusoids * 2
         else:
             # For complex signals, the number of signals themselves
@@ -171,11 +178,12 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ]:
-        """Compute the R11 and R21 sub-matrices for the Nyström approximation.
+        """Compute the R11 and R21 sub-matrices.
 
-        This function partitions the data matrix into X1 (first `model_order` rows)
-        and X2 (remaining rows) and computes the sample covariance matrices
-        R11 = E[X1*X1^H] and R21 = E[X2*X1^H].
+        This function partitions the data matrix into X1 (first
+        `model_order` rows) and X2 (remaining rows) and computes the
+        sample covariance matrices R11 = E[X1*X1^H] and
+        R21 = E[X2*X1^H].
 
         Args:
             data_matrix (np.ndarray):
@@ -185,7 +193,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
-                A tuple containing the (R11, R21) matrices (float64 or complex128).
+                A tuple containing the (R11, R21) matrices
+                (float64 or complex128).
         """
         x1 = data_matrix[:model_order, :]
         x2 = data_matrix[model_order:, :]
@@ -205,21 +214,24 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         r11: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         r21: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-        """Build the intermediate matrix G based on the Nyström method formulation.
+        """Build the intermediate matrix G based on the Nyström method.
 
-        This corresponds to the matrix G in the proposition 1 in the reference paper,
-        which defines G = U @ Lambda^{1/2}. The matrix square root inverse is
-        calculated via eigenvalue decomposition for numerical stability.
+        This corresponds to the matrix G in the proposition 1 in the
+        reference paper, which defines G = U @ Lambda^{1/2}. The matrix
+        square root inverse is calculated via eigenvalue decomposition
+        for numerical stability.
 
         Args:
             r11 (np.ndarray):
                 The K x K sub-covariance matrix (float64 or complex128).
             r21 (np.ndarray):
-                The (L-K) x K sub-covariance matrix (float64 or complex128).
+                The (L-K) x K sub-covariance matrix
+                (float64 or complex128).
 
         Returns:
             np.ndarray:
                 The resulting L x K matrix G (float64 or complex128).
+
         """
         eigvals_r11, u11 = eigh(r11)
         idx = np.argsort(eigvals_r11)[::-1]
@@ -244,24 +256,26 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         """Compute the signal subspace from the G matrix.
 
         This function implements the proposition 1 from the reference
-        paper. It first performs an eigenvalue decomposition of G^H*G to find
-        the basis U_G and eigenvalues Lambda_G, and then computes the final
-        signal subspace Pi = G * U_G. The result is orthonormalized via
-        QR decomposition.
+        paper. It first performs an eigenvalue decomposition of G^H*G to
+        find the basis U_G and eigenvalues Lambda_G, and then computes
+        the final signal subspace Pi = G * U_G. The result is
+        orthonormalized via QR decomposition.
 
         Args:
             matrix_g (np.ndarray):
-                The intermediate matrix G of shape (L, K) (float64 or complex128).
+                The intermediate matrix G of shape (L, K)
+                (float64 or complex128).
             n_components (int):
-                The number of complex exponential components to estimate.
-                This value is typically `2 * n_sinusoids` for real-valued input
-                signals (to account for positive/negative frequency pairs)
-                and `n_sinusoids` for complex-valued signals.
+                The number of complex exponential components to
+                estimate.  This value is typically `2 * n_sinusoids` for
+                real-valued input signals (to account for
+                positive/negative frequency pairs) and `n_sinusoids` for
+                complex-valued signals.
 
         Returns:
             np.ndarray:
-                An orthonormal basis for the approximated signal subspace, Q
-                (float64 or complex128).
+                An orthonormal basis for the approximated signal
+                subspace, Q (float64 or complex128).
         """
         g_h_g = matrix_g.conj().T @ matrix_g
         eigvals_g, u_g = eigh(g_h_g)
@@ -279,12 +293,14 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     def get_params(self) -> AnalyzerParameters:
         """Return the analyzer's hyperparameters.
 
-        Extends the base implementation to include the name of the solver class
-        and the hyperparameter specific to the Nyström-based ESPRIT method.
+        Extends the base implementation to include the name of the
+        solver class and the hyperparameter specific to the
+        Nyström-based ESPRIT method.
 
         Returns:
             AnalyzerParameters:
-                A TypedDict containing both common and specific hyperparameters.
+                A TypedDict containing both common and method-specific
+                hyperparameters.
         """
         params = super().get_params()
         params["solver"] = self.solver.__class__.__name__
