@@ -39,7 +39,7 @@ from .solvers import LSEspritSolver, TLSEspritSolver, WoodburyLSEspritSolver
 
 @final
 class FFTEspritAnalyzer(EspritAnalyzerBase):
-    """Analyzes sinusoidal parameters via the Fast FFT-ESPRIT algorithm.
+    """Implements the Fast FFT-ESPRIT algorithm for parameter analysis.
 
     This analyzer provides a computationally efficient alternative to
     standard ESPRIT, achieving a quasi-linear time complexity of O(N log
@@ -94,14 +94,16 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Estimate the signal subspace using eigenvalue decomposition.
+        """Estimates signal frequencies using the Fast FFT-ESPRIT method.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (np.ndarray):
+                Input signal (float64 or complex128).
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
-                Returns empty arrays if estimation fails.
+            np.ndarray:
+                An array of estimated frequencies in Hz (float64).
+                Returns an empty array on failure.
         """
         # 1. Obtain a rough estimate of the frequency using an
         #    IIp-DFT-like method
@@ -157,13 +159,12 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         kernel_matrix: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.complex128]:
-        """Compute the product of a Hankel matrix and a kernel matrix.
+        """Efficiently computes the product of a Hankel and kernel matrix.
 
-        This method efficiently calculates `Yp = X @ Ap` where `X` is
-        the Hankel matrix of the signal. It leverages the convolution
-        theorem, replacing the direct, computationally expensive matrix
-        multiplication with FFT-based convolution via
-        `scipy.signal.fftconvolve`.
+        This method calculates `Yp = X @ Ap` where `X` is the Hankel
+        matrix of the signal. It leverages the convolution theorem,
+        replacing direct matrix multiplication with FFT-based convolution
+        via `scipy.signal.fftconvolve`.
 
         This corresponds to the "Fast Hankel Matrix-Matrix product"
         (Algorithm 3) in the reference paper.
@@ -190,10 +191,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Return the analyzer's hyperparameters.
-
-        Extends the base implementation to include the name of the
-        solver class and the length of iterative interpolation FFT.
+        """Returns hyperparameters, including solver name and FFT length.
 
         Returns:
             AnalyzerParameters:
