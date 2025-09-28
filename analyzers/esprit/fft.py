@@ -190,7 +190,10 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Return hyperparameters, including solver name and FFT length.
+        """Return the analyzer's hyperparameters.
+
+        Extends the base implementation to include the name of the
+        solver class and the length of iterative interpolation FFT.
 
         Returns:
             AnalyzerParameters:
