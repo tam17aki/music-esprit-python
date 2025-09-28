@@ -35,12 +35,12 @@ from .._common import ZERO_LEVEL
 
 # pylint: disable=too-few-public-methods
 class LSEspritSolver:
-    """A solver class for the ESPRIT rotational operator using the Least Squares."""
+    """A solver for the ESPRIT problem via Least Squares."""
 
     def solve(
         self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solve for rotational factors using the Least Squares (LS) method.
+        """Solves for rotational operator using the LS method.
 
         This method estimates the rotation operator Psi from the
         equation `subspace_upper @ Psi = subspace_lower` by solving a
@@ -82,12 +82,12 @@ class LSEspritSolver:
 
 # pylint: disable=too-few-public-methods
 class TLSEspritSolver:
-    """A solver class for the ESPRIT rotational operator using the Total LS."""
+    """A solver for the ESPRIT problem via Total Least Squares."""
 
     def solve(
         self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solve for rotational factors using the Total Least Squares (TLS) method.
+        """Solves for rotational operator using the TLS method.
 
         This method formulates the problem as `[subspace_upper,
         subspace_lower]` and solves for the rotational operator Psi via
@@ -149,7 +149,7 @@ class TLSEspritSolver:
 
 
 class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
-    """A Mixin class to provide helper methods for Unitary ESPRIT solvers."""
+    """A Mixin class providing helpers for Unitary ESPRIT solvers."""
 
     @staticmethod
     def _get_unitary_transform_matrix(subspace_dim: int) -> npt.NDArray[np.complex128]:
@@ -216,7 +216,7 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
 
 # pylint: disable=too-few-public-methods
 class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
-    """A solver class for the real-valued Unitary ESPRIT problem using least squares.
+    """A solver for the real-valued Unitary ESPRIT problem using LS.
 
     This solver takes a real-valued signal subspace and solves a
     generalized eigenvalue problem to find the frequencies based on
@@ -226,7 +226,7 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
     def solve(
         self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
-        """Solve the real-valued Unitary ESPRIT problem using Least Squares.
+        """Solves the real-valued Unitary ESPRIT problem using LS.
 
         This method constructs real-valued selection matrices K1 and K2,
         and solves the system `(K1 @ Es) @ Y = (K2 @ Es)` for Y using a
@@ -269,7 +269,7 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
 
 # pylint: disable=too-few-public-methods
 class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
-    """A solver class for the real-valued ESPRIT problem using total least squares.
+    """A solver for the real-valued Unitary ESPRIT problem using TLS.
 
     This solver takes a real-valued signal subspace and solves a
     generalized eigenvalue problem to find the frequencies based on
@@ -279,7 +279,7 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
     def solve(
         self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
-        """Solve the real-valued Unitary ESPRIT problem using Total Least Squares.
+        """Solves the real-valued Unitary ESPRIT problem using TLS.
 
         This method constructs real-valued matrices T1 and T2 from the
         real signal subspace, and solves the system `T1 @ Y ≈ T2` using
@@ -334,7 +334,7 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
 
 
 class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
-    """Solves the ESPRIT LS problem via the fast Woodbury identity method.
+    """A fast ESPRIT LS solver using the Woodbury matrix identity.
 
     This solver is specifically designed to work with an orthonormal
     signal subspace matrix Q, as produced by the FFT-ESPRIT method's QR
@@ -348,7 +348,7 @@ class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
     def solve(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solves for rotational factors using the Woodbury-based LS method.
+        """Solves for rotational operator using the Woodbury-based LS.
 
         This method is a computationally efficient version of the
         standard LS solver, specifically optimized for cases where the
