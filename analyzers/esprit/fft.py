@@ -199,7 +199,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
 
         Returns:
             AnalyzerParameters:
-                A TypedDict containing both common and specific
+                A TypedDict containing both common and method-specific
                 hyperparameters.
         """
         params = super().get_params()
