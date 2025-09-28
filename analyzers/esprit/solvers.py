@@ -3,23 +3,24 @@
 
 Copyright (C) 2025 by Akira TAMAMORI
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 import warnings
@@ -41,19 +42,20 @@ class LSEspritSolver:
     ) -> npt.NDArray[np.float64]:
         """Solve for rotational factors using the Least Squares (LS) method.
 
-        This method estimates the rotation operator Psi from the equation
-        `subspace_upper @ Psi = subspace_lower` by solving a least squares
-        problem. The normalized angular frequencies are then computed from
-        the phase angles of the eigenvalues of Psi.
+        This method estimates the rotation operator Psi from the
+        equation `subspace_upper @ Psi = subspace_lower` by solving a
+        least squares problem. The normalized angular frequencies are
+        then computed from the phase angles of the eigenvalues of Psi.
 
         Args:
             signal_subspace (np.ndarray):
-                The signal subspace `Es` (float64 or complex128). Shape: (L, 2M).
+                The signal subspace `Es` (float64 or complex128).
+                Shape: (L, 2M).
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies (omegas)
-                in radians per sample (float64 or complex128). Shape: (2M,).
+                An array of estimated normalized angular frequencies
+                (omegas) in radians per sample (float64). Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
         subspace_upper = signal_subspace[:-1, :]
@@ -87,20 +89,22 @@ class TLSEspritSolver:
     ) -> npt.NDArray[np.float64]:
         """Solve for rotational factors using the Total Least Squares (TLS) method.
 
-        This method formulates the problem as `[subspace_upper, subspace_lower]`
-        and solves for the rotational operator Psi via Singular Value
-        Decomposition (SVD). This approach is generally more robust in noisy
-        conditions than the LS method. The normalized angular frequencies are
-        computed from the phase angles of the eigenvalues of Psi.
+        This method formulates the problem as `[subspace_upper,
+        subspace_lower]` and solves for the rotational operator Psi via
+        Singular Value Decomposition (SVD). This approach is generally
+        more robust in noisy conditions than the LS method. The
+        normalized angular frequencies are computed from the phase
+        angles of the eigenvalues of Psi.
 
         Args:
             signal_subspace (np.ndarray):
-                The signal subspace `Es` (float64 or complex128). Shape: (L, 2M).
+                The signal subspace `Es` (float64 or complex128).
+                Shape: (L, 2M).
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies (omegas)
-                in radians per sample (float64 or complex128). Shape: (2M,).
+                An array of estimated normalized angular frequencies
+                (omegas) in radians per sample (float64). Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
         # Form the augmented matrix for SVD
@@ -152,10 +156,10 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
         """Construct the unitary matrix Q for real-valued transform.
 
         Args:
-           subspace_dim (int): Dimension of signal subspace.
+            subspace_dim (int): Dimension of signal subspace.
 
         Returns:
-           np.ndarray: Unitary matrix for the tranform (complex128).
+            np.ndarray: Unitary matrix for the tranform (complex128).
         """
         p = subspace_dim // 2
         identity = np.eye(p, dtype=np.complex128)
@@ -180,14 +184,16 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
         """Construct the real-valued selection matrices K1 and K2.
 
         Args:
-           subspace_dim (int): Dimension of signal subspace.
+            subspace_dim (int): Dimension of signal subspace.
 
         Returns:
-           tuple[np.ndarray, np.ndarray]: The selection matrices K1 and K2 (float64).
+            tuple[np.ndarray, np.ndarray]:
+                The selection matrices K1 and K2 (float64).
         """
         m_prime = subspace_dim - 1  # Subarray size
 
-        # 1. Build a complex selection matrix J1 (select the first m' rows)
+        # 1. Build a complex selection matrix J1
+        #    (select the first m' rows)
         j1 = np.eye(subspace_dim, dtype=np.complex128)[:m_prime, :]
 
         # 2. Build unitary transformation matrix Q
@@ -212,8 +218,9 @@ class _UnitaryEspritHelpers:  # pylint: disable=too-few-public-methods
 class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
     """A solver class for the real-valued Unitary ESPRIT problem using least squares.
 
-    This solver takes a real-valued signal subspace and solves a generalized
-    eigenvalue problem to find the frequencies based on least squares approach.
+    This solver takes a real-valued signal subspace and solves a
+    generalized eigenvalue problem to find the frequencies based on
+    least squares approach.
     """
 
     def solve(
@@ -223,17 +230,19 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
 
         This method constructs real-valued selection matrices K1 and K2,
         and solves the system `(K1 @ Es) @ Y = (K2 @ Es)` for Y using a
-        least squares approach. The normalized angular frequencies (omegas) are
-        recovered from the eigenvalues of Y using the arctangent function.
+        least squares approach. The normalized angular frequencies
+        (omegas) are recovered from the eigenvalues of Y using the
+        arctangent function.
 
         Args:
             signal_subspace (np.ndarray):
-                The real-valued signal subspace `Es_real` (float64). Shape: (L, 2M).
+                The real-valued signal subspace `Es_real` (float64).
+                Shape: (L, 2M).
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies (omegas)
-                in radians per sample (float64). Shape: (M,).
+                An array of estimated normalized angular frequencies
+                (omegas) in radians per sample (float64). Shape: (M,).
                 Returns an empty array if estimation fails.
         """
         subspace_dim = signal_subspace.shape[0]
@@ -262,8 +271,9 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
 class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
     """A solver class for the real-valued ESPRIT problem using total least squares.
 
-    This solver takes a real-valued signal subspace and solves a generalized
-    eigenvalue problem to find the frequencies based on total least squares approach.
+    This solver takes a real-valued signal subspace and solves a
+    generalized eigenvalue problem to find the frequencies based on
+    total least squares approach.
     """
 
     def solve(
@@ -271,20 +281,22 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
     ) -> npt.NDArray[np.float64]:
         """Solve the real-valued Unitary ESPRIT problem using Total Least Squares.
 
-        This method constructs real-valued matrices T1 and T2 from the real
-        signal subspace, and solves the system `T1 @ Y ≈ T2` using a more
-        robust Total Least Squares approach via SVD. The normalized angular
-        frequencies (omegas) are recovered from the eigenvalues of the resulting
-        solution matrix Y_TLS using the arctangent function.
+        This method constructs real-valued matrices T1 and T2 from the
+        real signal subspace, and solves the system `T1 @ Y ≈ T2` using
+        a more robust Total Least Squares approach via SVD. The
+        normalized angular frequencies (omegas) are recovered from the
+        eigenvalues of the resulting solution matrix Y_TLS using the
+        arctangent function.
 
         Args:
             signal_subspace (np.ndarray):
-                The real-valued signal subspace `Es_real` (float64). Shape: (L, 2M).
+                The real-valued signal subspace `Es_real` (float64).
+                Shape: (L, 2M).
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies (omegas)
-                in radians per sample (float64). Shape: (M,).
+                An array of estimated normalized angular frequencies
+                (omegas) in radians per sample (float64). Shape: (M,).
                 Returns an empty array if estimation fails.
         """
         subspace_dim = signal_subspace.shape[0]
@@ -324,31 +336,35 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
 class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
     """Solves the ESPRIT LS problem via the fast Woodbury identity method.
 
-    This solver is specifically designed to work with an orthonormal signal
-    subspace matrix Q, as produced by the FFT-ESPRIT method's QR decomposition.
-    It can be more computationally efficient than a direct pseudo-inverse.
+    This solver is specifically designed to work with an orthonormal
+    signal subspace matrix Q, as produced by the FFT-ESPRIT method's QR
+    decomposition.  It can be more computationally efficient than a
+    direct pseudo-inverse.
 
-    This corresponds to the solver described in Algorithm 4 of Kiser et al. (2023).
+    This corresponds to the solver described in Algorithm 4 of Kiser et
+    al. (2023).
     """
 
     def solve(
-        self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+        self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
         """Solves for rotational factors using the Woodbury-based LS method.
 
-        This method is a computationally efficient version of the standard LS
-        solver, specifically optimized for cases where the input signal subspace
-        is an orthonormal matrix (Q). It computes the solution via a rank-1
-        update based on the Sherman-Morrison formula, avoiding a direct
-        pseudo-inverse calculation.
+        This method is a computationally efficient version of the
+        standard LS solver, specifically optimized for cases where the
+        input signal subspace is an orthonormal matrix (Q). It computes
+        the solution via a rank-1 update based on the Sherman-Morrison
+        formula, avoiding a direct pseudo-inverse calculation.
 
         Args:
             signal_subspace (np.ndarray):
-                The orthonormal signal subspace matrix Q. Shape: (L, 2M).
+                The orthonormal signal subspace matrix Q (complex128).
+                Shape: (L, 2M).
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies (omegas).
+                An array of estimated normalized angular frequencies
+                (omegas) in radians per sample (float64). Shape: (M,).
                 Returns an empty array if estimation fails.
         """
         q_matrix = signal_subspace
@@ -362,8 +378,8 @@ class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
         #    Since q_matrix is orthonormal, ||q_last_row||^2 <= 1
         q_q_h = np.dot(q_last_row, q_last_row.conj().T).item()  # .item() to scalar
 
-        # 3. Calculate the coefficients needed to calculate (I - q^H*q)^-1
-        #    Coefficient = 1 / (1 - q*q^H)
+        # 3. Calculate the coefficients needed to calculate
+        #    (I - q^H*q)^-1. Coefficient = 1 / (1 - q*q^H)
         denominator = 1 - q_q_h
         if abs(denominator) < ZERO_LEVEL:
             warnings.warn("Denominator in Sherman-Morrison formula is close to zero.")
