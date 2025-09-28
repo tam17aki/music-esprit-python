@@ -40,7 +40,7 @@ from .solvers import LSEspritSolver, TLSEspritSolver, WoodburyLSEspritSolver
 
 @final
 class FFTEspritAnalyzer(EspritAnalyzerBase):
-    """Analyzes sinusoidal parameters using the Fast FFT-ESPRIT algorithm.
+    """Analyzes sinusoidal parameters via the Fast FFT-ESPRIT algorithm.
 
     This analyzer provides a computationally efficient alternative to
     standard ESPRIT, achieving a quasi-linear time complexity of O(N log
@@ -52,7 +52,8 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
 
     1. A rough, off-grid estimation of frequencies via an iterative FFT
        method.
-    2. Construction of a truncated DFT kernel from these rough estimates.
+    2. Construction of a truncated DFT kernel from these rough
+       estimates.
     3. An efficient projection of the data onto this kernel using
        FFT-based fast convolution (the "Fast Hankel Matrix-Matrix
        product").
@@ -158,7 +159,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         kernel_matrix: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.complex128]:
-        """Computes the product of a Hankel data matrix and a kernel matrix.
+        """Compute the product of a Hankel matrix and a kernel matrix.
 
         This method efficiently calculates `Yp = X @ Ap` where `X` is
         the Hankel matrix of the signal. It leverages the convolution
@@ -191,7 +192,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Returns the analyzer's hyperparameters.
+        """Return the analyzer's hyperparameters.
 
         Extends the base implementation to include the name of the
         solver class and the length of iterative interpolation FFT.
