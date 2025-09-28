@@ -367,8 +367,8 @@ class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
         denominator = 1 - q_q_h
         if abs(denominator) < ZERO_LEVEL:
             warnings.warn("Denominator in Sherman-Morrison formula is close to zero.")
-            # In this case, (I - q^H*q) is a nearly singular matrix
-            # It is safe to fall back to the LS solution using pinv
+            # In this case, (I - q^H*q) is a nearly singular matrix.
+            # It is safe to fall back to the LS solution using pinv.
             rotation_operator = pinv(q_upper) @ q_lower
         else:
             # 4. Calculate (Q↑^H*Q↑)^-1
