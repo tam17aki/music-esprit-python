@@ -37,7 +37,17 @@ from .solvers import LSEspritSolver, TLSEspritSolver
 
 @final
 class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
-    """A class to solve frequencies via Nyström-based ESPRIT."""
+    """Implements the Nyström-based ESPRIT algorithm.
+
+    This analyzer uses the Nyström method to efficiently approximate
+    the signal subspace from a smaller, sampled portion of the
+    covariance matrix. This avoids the expensive EVD of the full
+    matrix, making it suitable for large datasets.
+
+    Reference:
+        C. Qian, et al., "Computationally efficient ESPRIT algorithm...
+        based on Nyström method," Signal Processing, 2014.
+    """
 
     def __init__(
         self,
@@ -49,27 +59,15 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     ) -> None:
         """Initialize the Nyström-ESPRIT analyzer.
 
-        This implementation is based on the computationally efficient
-        Nyström method for subspace estimation, which avoids the
-        expensive EVD of the full covariance matrix. It approximates the
-        signal subspace from a smaller set of sampled rows and columns.
-
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
             solver (LSEspritSolver | TLSEspritSolver):
                 Solver to solve frequencies with the rotation operator.
-            nystrom_rank_factor (int, optional):
-                A factor to determine the number of rows to sample for
-                the Nyström approximation (K = factor * 2M). A larger
-                value improves robustness at the cost of
-                computation. Defaults to 10.
-
-        Reference:
-            C. Qian, L. Huang, H.C. So, "Computationally efficient
-            ESPRIT algorithm for direction-of-arrival estimation based
-            on Nyström method," Signal Processing, vol. 94, pp. 74-80,
-            2014.
+            nystrom_rank_factor (int, optional): A factor to determine
+                the number of rows to sample for the Nyström
+                approximation (K = factor * 2M). A larger value improves
+                robustness at the cost of computation. Defaults to 10.
         """
         super().__init__(fs, n_sinusoids)
         self.solver: LSEspritSolver | TLSEspritSolver = solver
@@ -79,14 +77,15 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Estimate frequencies of multiple sinusoids.
+        """Estimate signal frequencies using the Nyström-ESPRIT method.
 
         Args:
             signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
-                Returns empty arrays if estimation fails.
+            np.ndarray:
+                An array of estimated frequencies in Hz (float64).
+                Returns an empty array on failure.
         """
         # 1. Estimate the signal subspace
         signal_subspace = self._estimate_signal_subspace(signal)
@@ -108,17 +107,15 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
         """Approximate the signal subspace using the Nyström method.
 
-        This method avoids the computationally expensive EVD of the full
-        covariance matrix. Instead, it constructs an approximation of
-        the signal subspace by performing EVD on smaller, sampled
-        sub-matrices (R11 and G^H*G), significantly reducing
-        computational complexity.
+        This method avoids a full covariance EVD by approximating the
+        subspace from smaller, sampled sub-matrices. This significantly
+        reduces computational complexity compared to standard ESPRIT.
 
         Args:
             signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
-            np.ndarray:
+            np.ndarray | None:
                 An orthonormal basis for the approximated signal
                 subspace (float64 or complex128).
                 Returns None if estimation fails.
@@ -215,10 +212,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Build the intermediate matrix G based on the Nyström method.
 
-        This corresponds to the matrix G in the proposition 1 in the
-        reference paper, which defines G = U @ Lambda^{1/2}. The matrix
-        square root inverse is calculated via eigenvalue decomposition
-        for numerical stability.
+        This corresponds to G = U @ Lambda^{1/2} in the proposition 1 in
+        the reference paper. The matrix square root inverse is
+        calculated via a stable eigenvalue decomposition of R11.
 
         Args:
             r11 (np.ndarray):
@@ -230,7 +226,6 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         Returns:
             np.ndarray:
                 The resulting L x K matrix G (float64 or complex128).
-
         """
         eigvals_r11, u11 = eigh(r11)
         idx = np.argsort(eigvals_r11)[::-1]
@@ -254,33 +249,32 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Compute the signal subspace from the G matrix.
 
-        This function implements the proposition 1 from the reference
-        paper. It first performs an eigenvalue decomposition of G^H*G to
-        find the basis U_G and eigenvalues Lambda_G, and then computes
-        the final signal subspace Pi = G * U_G. The result is
-        orthonormalized via QR decomposition.
+        This function implements Proposition 1 from the reference paper.
+        It performs an EVD of G^H*G and computes the final subspace Pi =
+        G * U_G, which is then orthonormalized via QR decomposition.
 
         Args:
             matrix_g (np.ndarray):
                 The intermediate matrix G of shape (L, K)
                 (float64 or complex128).
+
             n_components (int):
-                The number of complex exponential components to
-                estimate.  This value is typically `2 * n_sinusoids` for
-                real-valued input signals (to account for
-                positive/negative frequency pairs) and `n_sinusoids` for
-                complex-valued signals.
+                Number of complex exponential components to estimate.
+                This is `2 * n_sinusoids` for real signals (to account
+                for +/- frequency pairs) and `n_sinusoids` for complex
+                signals.
 
         Returns:
             np.ndarray:
                 An orthonormal basis for the approximated signal
                 subspace, Q (float64 or complex128).
+
         """
         g_h_g = matrix_g.conj().T @ matrix_g
-        eigvals_g, u_g = eigh(g_h_g)
+        eigvals_g, u_g = eigh(g_h_g)  # eigenvalues Lambda_G, basis U_G
         idx = np.argsort(eigvals_g)[::-1]
         u_g = u_g[:, idx]
-        signal_subspace_unortho = (matrix_g @ u_g)[:, :n_components]
+        signal_subspace_unortho = (matrix_g @ u_g)[:, :n_components]  #  Pi = G * U_G
         _q_matrix, _ = qr(signal_subspace_unortho, mode="economic")
         if np.isrealobj(_q_matrix):
             q_matrix_float: npt.NDArray[np.float64] = _q_matrix.astype(np.float64)
