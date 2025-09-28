@@ -41,13 +41,10 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         """Finalizes frequency estimates from raw angular frequencies.
 
         This method performs a series of finalization steps:
-            1. Converts normalized angular frequencies (omegas) to
-               physical frequencies (Hz).
-            2. Takes the positive frequencies from positive/negative
-               frequency pairs.
-            3. Sorts the frequencies in ascending order.
-            4. Filters out closely spaced frequencies to return unique
-               components.
+            1. Convert angular frequencies from rad/sample to Hz.
+            2. Extract positive frequencies from their +/- pairs.
+            3. Sort frequencies in ascending order.
+            4. Filter closely spaced frequencies to ensure uniqueness.
 
         Args:
             raw_omegas (np.ndarray):
