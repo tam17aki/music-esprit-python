@@ -268,7 +268,6 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
             np.ndarray:
                 An orthonormal basis for the approximated signal
                 subspace, Q (float64 or complex128).
-
         """
         g_h_g = matrix_g.conj().T @ matrix_g
         eigvals_g, u_g = eigh(g_h_g)  # eigenvalues Lambda_G, basis U_G
