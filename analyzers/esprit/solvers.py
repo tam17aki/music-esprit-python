@@ -358,23 +358,23 @@ class WoodburyLSEspritSolver:  # pylint: disable=too-few-public-methods
         # 1. Extract q (the last row vector)
         q_last_row = q_matrix[-1, :].reshape(1, -1)  # (1, 2M)
 
-        # 2. Calculate q^H*q (scalar)
+        # 2. Calculate q*q^H (scalar)
         #    Since q_matrix is orthonormal, ||q_last_row||^2 <= 1
-        q_h_q = np.dot(q_last_row, q_last_row.conj().T).item()  # .item() to scalar
+        q_q_h = np.dot(q_last_row, q_last_row.conj().T).item()  # .item() to scalar
 
-        # 3. Calculate the coefficients needed to calculate (I - q*q^H)^-1
-        #    Coefficient = 1 / (1 - q^H*q)
-        denominator = 1 - q_h_q
+        # 3. Calculate the coefficients needed to calculate (I - q^H*q)^-1
+        #    Coefficient = 1 / (1 - q*q^H)
+        denominator = 1 - q_q_h
         if abs(denominator) < ZERO_LEVEL:
             warnings.warn("Denominator in Sherman-Morrison formula is close to zero.")
-            # In this case, (I - q*q^H) is a nearly singular matrix
+            # In this case, (I - q^H*q) is a nearly singular matrix
             # It is safe to fall back to the LS solution using pinv
             rotation_operator = pinv(q_upper) @ q_lower
         else:
             # 4. Calculate (Q↑^H*Q↑)^-1
-            #    inv_matrix = I + q*q^H / (1 - q^H*q)
-            q_h = q_last_row.conj().T  # (2M, 1)
-            inv_matrix = np.eye(q_matrix.shape[1]) + (q_h @ q_last_row) / denominator
+            #    inv_matrix = I + q^H*q / (1 - q*q^H)
+            q_h_q = q_last_row.conj().T @ q_last_row
+            inv_matrix = np.eye(q_matrix.shape[1]) + q_h_q / denominator
 
             # 5. Calculate Q↑^H*Q↓
             q_upper_h_q_lower = q_upper.conj().T @ q_lower
