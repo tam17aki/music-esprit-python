@@ -35,17 +35,17 @@ from .._common import ZERO_LEVEL
 
 # pylint: disable=too-few-public-methods
 class LSEspritSolver:
-    """A solver for the ESPRIT problem via Least Squares."""
+    """Solves the ESPRIT rotational invariance equation using LS."""
 
     def solve(
         self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solves for rotational operator using the LS method.
+        """Estimate angular frequencies from a signal subspace via LS.
 
-        This method estimates the rotation operator Psi from the
-        equation `subspace_upper @ Psi = subspace_lower` by solving a
-        least squares problem. The normalized angular frequencies are
-        then computed from the phase angles of the eigenvalues of Psi.
+        This method solves for the rotational operator Psi in the
+        equation `subspace_upper @ Psi = subspace_lower` using a
+        least-squares fit. Angular frequencies (omegas) are then derived
+        from the phase angles of Psi's eigenvalues.
 
         Args:
             signal_subspace (np.ndarray):
@@ -54,8 +54,8 @@ class LSEspritSolver:
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies
-                (omegas) in radians per sample (float64). Shape: (2M,).
+                Estimated normalized angular frequencies in rad/sample
+                (float64). Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
         subspace_upper = signal_subspace[:-1, :]
@@ -82,19 +82,18 @@ class LSEspritSolver:
 
 # pylint: disable=too-few-public-methods
 class TLSEspritSolver:
-    """A solver for the ESPRIT problem via Total Least Squares."""
+    """Solves the ESPRIT rotational invariance equation using TLS."""
 
     def solve(
         self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solves for rotational operator using the TLS method.
+        """Estimate angular frequencies from a signal subspace via TLS.
 
-        This method formulates the problem as `[subspace_upper,
-        subspace_lower]` and solves for the rotational operator Psi via
-        Singular Value Decomposition (SVD). This approach is generally
-        more robust in noisy conditions than the LS method. The
-        normalized angular frequencies are computed from the phase
-        angles of the eigenvalues of Psi.
+        This method solves for the rotational operator Psi by
+        formulating the problem for a Total Least Squares fit,
+        typically solved via SVD. This approach can be more robust
+        to noise than standard LS. Frequencies are derived from the
+        eigenvalues of Psi.
 
         Args:
             signal_subspace (np.ndarray):
@@ -103,8 +102,8 @@ class TLSEspritSolver:
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies
-                (omegas) in radians per sample (float64). Shape: (2M,).
+                Estimated normalized angular frequencies in rad/sample
+                (float64). Shape: (2M,).
                 Returns an empty array if estimation fails.
         """
         # Form the augmented matrix for SVD
@@ -150,7 +149,7 @@ class TLSEspritSolver:
 
 # pylint: disable=too-few-public-methods
 class _UnitaryEspritHelpers:
-    """A Mixin class providing helpers for Unitary ESPRIT solvers."""
+    """Mixin class providing helpers for Unitary ESPRIT solvers."""
 
     @staticmethod
     def _get_unitary_transform_matrix(subspace_dim: int) -> npt.NDArray[np.complex128]:
@@ -217,7 +216,7 @@ class _UnitaryEspritHelpers:
 
 # pylint: disable=too-few-public-methods
 class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
-    """A solver for the real-valued Unitary ESPRIT problem using LS.
+    """Solves the real-valued Unitary ESPRIT problem via LS.
 
     This solver takes a real-valued signal subspace and solves a
     generalized eigenvalue problem to find the frequencies based on
@@ -227,7 +226,7 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
     def solve(
         self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
-        """Solves the real-valued Unitary ESPRIT problem using LS.
+        """Estimate omegas from real subspace via Unitary ESPRIT (LS).
 
         This method constructs real-valued selection matrices K1 and K2,
         and solves the system `(K1 @ Es) @ Y = (K2 @ Es)` for Y using a
@@ -242,8 +241,8 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies
-                (omegas) in radians per sample (float64). Shape: (M,).
+                Estimated normalized angular frequencies in rad/sample
+                (float64). Shape: (M,).
                 Returns an empty array if estimation fails.
         """
         subspace_dim = signal_subspace.shape[0]
@@ -270,7 +269,7 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
 
 # pylint: disable=too-few-public-methods
 class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
-    """A solver for the real-valued Unitary ESPRIT problem using TLS.
+    """Solves the real-valued Unitary ESPRIT problem via TLS.
 
     This solver takes a real-valued signal subspace and solves a
     generalized eigenvalue problem to find the frequencies based on
@@ -280,14 +279,13 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
     def solve(
         self, signal_subspace: npt.NDArray[np.float64]
     ) -> npt.NDArray[np.float64]:
-        """Solves the real-valued Unitary ESPRIT problem using TLS.
+        """Estimate omegas from real subspace via Unitary ESPRIT (TLS).
 
         This method constructs real-valued matrices T1 and T2 from the
-        real signal subspace, and solves the system `T1 @ Y ≈ T2` using
-        a more robust Total Least Squares approach via SVD. The
-        normalized angular frequencies (omegas) are recovered from the
-        eigenvalues of the resulting solution matrix Y_TLS using the
-        arctangent function.
+        subspace and solves the system `T1 @ Y ≈ T2` using a robust
+        Total Least Squares approach via SVD. Normalized angular
+        frequencies are recovered from the eigenvalues of the solution
+        matrix Y_TLS using the arctangent function.
 
         Args:
             signal_subspace (np.ndarray):
@@ -296,9 +294,10 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies
-                (omegas) in radians per sample (float64). Shape: (M,).
+                Estimated normalized angular frequencies in rad/sample
+                (float64). Shape: (M,).
                 Returns an empty array if estimation fails.
+
         """
         subspace_dim = signal_subspace.shape[0]
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
@@ -336,27 +335,24 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
 
 # pylint: disable=too-few-public-methods
 class WoodburyLSEspritSolver:
-    """A fast ESPRIT LS solver using the Woodbury matrix identity.
+    """Implements a fast LS-ESPRIT solver using the Woodbury formula.
 
-    This solver is specifically designed to work with an orthonormal
-    signal subspace matrix Q, as produced by the FFT-ESPRIT method's QR
-    decomposition.  It can be more computationally efficient than a
-    direct pseudo-inverse.
-
-    This corresponds to the solver described in Algorithm 4 of Kiser et
-    al. (2023).
+    This solver is optimized for orthonormal signal subspaces (Q), such
+    as those produced by FFT-ESPRIT's QR decomposition. It avoids a
+    direct pseudo-inverse, offering higher computational
+    efficiency. Corresponds to the solver described in Algorithm 4 in
+    Kiser et al. (2023).
     """
 
     def solve(
         self, signal_subspace: npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Solves for rotational operator using the Woodbury-based LS.
+        """Solve the LS problem for an orthonormal subspace efficiently.
 
-        This method is a computationally efficient version of the
-        standard LS solver, specifically optimized for cases where the
-        input signal subspace is an orthonormal matrix (Q). It computes
-        the solution via a rank-1 update based on the Sherman-Morrison
-        formula, avoiding a direct pseudo-inverse calculation.
+        This method implements a fast version of the LS solver by
+        applying the Sherman-Morrison formula (a rank-1 update) to avoid
+        a direct pseudo-inverse calculation. It is tailored for cases
+        where the input signal subspace is orthonormal.
 
         Args:
             signal_subspace (np.ndarray):
@@ -365,8 +361,8 @@ class WoodburyLSEspritSolver:
 
         Returns:
             np.ndarray:
-                An array of estimated normalized angular frequencies
-                (omegas) in radians per sample (float64). Shape: (M,).
+                Estimated normalized angular frequencies in rad/sample
+                (float64). Shape: (M,).
                 Returns an empty array if estimation fails.
         """
         q_matrix = signal_subspace
