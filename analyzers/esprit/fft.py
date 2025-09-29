@@ -111,8 +111,8 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
                 Returns an empty array on failure.
         """
         # 1. Obtain a rough estimate of the frequency using an
-        #    IIp-DFT-like method
-        #    (Corresponds to Alg. 4, Step 1 of the paper)
+        #    IIp-DFT-like method. (Corresponds to Alg. 4, Step 1 of the
+        #    paper)
         rough_freqs = estimate_freqs_iterative_fft(
             signal, self.n_sinusoids, self.fs, self.n_fft_iip
         )
@@ -129,7 +129,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
             kernel_freqs = -rough_freqs
 
         # 2. Build a truncated DFT kernel from the coarse frequency
-        #    estimate.  (Corresponds to Alg. 4, Step 2)
+        #    estimate. (Corresponds to Alg. 4, Step 2)
         n_snapshots = signal.size - self.subspace_dim + 1
         kernel_matrix = self._build_vandermonde_matrix(
             kernel_freqs, n_snapshots, self.fs
