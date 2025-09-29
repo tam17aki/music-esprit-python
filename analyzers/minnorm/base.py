@@ -39,14 +39,15 @@ class MinNormAnalyzerBase(MusicAnalyzerBase, ABC):
     def _calculate_min_norm_vector(
         noise_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
-        """Calculate the minimum norm vector 'd' from the noise subspace E_n.
+        """Calculate the minimum norm vector from the noise subspace.
 
         Args:
             noise_subspace (np.ndarray):
                 The noise subspace matrix E_n (float64 or complex128).
 
         Returns:
-            np.ndarray: The minimum norm vector (float64 or complex128).
+            np.ndarray | None:
+                The minimum norm vector (float64 or complex128).
                 Returns None if estimation fails.
         """
         # Extract the first row vector of the noise subspace E_n
@@ -58,9 +59,10 @@ class MinNormAnalyzerBase(MusicAnalyzerBase, ABC):
             warnings.warn("The first row of the noise subspace is close to zero.")
             return None
 
-        # d is a linear combination of the column vectors of E_n, d = E_n * w
-        # The constraint that the first element is 1 can be written as e1^H * d = 1
-        # e1 is [1, 0, ..., 0]^T
+        # d is a linear combination of the column vectors of E_n,
+        # d = E_n * w.
+        # The constraint that the first element is 1 can be
+        # written as e1^H * d = 1, e1 is [1, 0, ..., 0]^T.
         # (first row vector of E_n) * w = 1
         # w = (first row of E_n)^H / ||first row of E_n||^2
 
