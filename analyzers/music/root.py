@@ -68,7 +68,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         # 1. Estimate the noise subspace
         noise_subspace = self._estimate_noise_subspace(signal)
         if noise_subspace is None:
-            warnings.warn("Failed to estimate noise subspace. Returning empty result.")
+            warnings.warn("Failed to estimate noise subspace.")
             return np.array([])
 
         # 2. Calculate the coefficients of the Root MUSIC polynomial
