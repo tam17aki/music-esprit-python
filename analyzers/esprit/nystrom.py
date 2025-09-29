@@ -125,7 +125,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         if np.isrealobj(signal):
             # For real signals, positive and negative frequency pairs
             # are considered
-            n_complex_sinusoids = self.n_sinusoids * 2
+            n_complex_sinusoids = 2 * self.n_sinusoids
         else:
             # For complex signals, the number of signals themselves
             n_complex_sinusoids = self.n_sinusoids
