@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines the Command-Line Interface (CLI) for the demonstration script.
+"""Defines the Command-Line Interface (CLI) for the demo script.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -43,8 +43,8 @@ def print_experiment_setup(
         config (ExperimentConfig):
             An object containing the overall experimental configuration.
         true_params (SinusoidParameters):
-            An object containing the ground truth parameters (frequencies,
-            amplitudes, phases) of the signal sources.
+            An object containing the ground truth parameters
+            (frequencies, amplitudes, phases) of the signal sources.
     """
     sort_indices = np.argsort(true_params.frequencies)
     print("--- Experiment Setup ---")
@@ -57,16 +57,18 @@ def print_experiment_setup(
 
 
 def print_analyzer_info(analyzer: AnalyzerBase) -> None:
-    """Print the specific hyperparameters of a given analyzer instance.
+    """Print the hyperparameters of a given analyzer instance.
 
-    This function retrieves the configuration parameters from an analyzer
-    using its `get_params()` method and displays them in a human-readable
-    format. It is used to report the settings for each analysis run.
+    This function retrieves the configuration parameters from an
+    analyzer using its `get_params()` method and displays them in a
+    human-readable format. It is used to report the settings for each
+    analysis run.
 
     Args:
         analyzer (AnalyzerBase):
-            The analyzer instance whose parameters are to be printed.
-            Must be an instance of a class inheriting from `AnalyzerBase`.
+            The analyzer instance whose parameters are to be
+            printed. Must be an instance of a class inheriting from
+            `AnalyzerBase`.
     """
     params = analyzer.get_params()
     print("Analyzer Parameters:")
@@ -85,18 +87,19 @@ def print_analyzer_info(analyzer: AnalyzerBase) -> None:
 def print_results(analyzer: AnalyzerBase, true_params: SinusoidParameters) -> None:
     """Print the estimation results and errors from a fitted analyzer.
 
-    This function takes a fitted analyzer object, retrieves the estimated
-    parameters via its public properties (e.g., .frequencies), and
-    displays them in a formatted table alongside the estimation errors
-    calculated against the ground truth.
+    This function retrieves estimated parameters from a fitted analyzer
+    (e.g., via its `.frequencies` property) and displays them in a
+    formatted table, alongside estimation errors calculated against the
+    ground truth.
 
     Args:
         analyzer (AnalyzerBase):
-            A fitted analyzer object. It must be an instance of a class
-            that inherits from AnalyzerBase and has been run with .fit().
+            A fitted analyzer object.
+            It must be an instance of a class that inherits from
+            AnalyzerBase and has been run with .fit().
         true_params (SinusoidParameters):
-            An object containing the ground truth parameters for calculating
-            the estimation errors.
+            An object containing the ground truth parameters for
+            calculating the estimation errors.
     """
     if analyzer.est_params is None:
         print("MusicAnalyzer is not fitted.")
@@ -125,15 +128,15 @@ def print_results(analyzer: AnalyzerBase, true_params: SinusoidParameters) -> No
 
 
 def parse_args() -> argparse.Namespace:
-    """Parse and validates command-line arguments for the main demo script.
+    """Parse and validate command-line arguments for the demo script.
 
-    Configures an ArgumentParser to accept settings for the signal synthesis
-    (e.g., SNR, frequencies) and for the various analyzer algorithms
-    (e.g., subspace ratio, number of grids).
+    Configures an ArgumentParser to accept settings for the signal
+    synthesis (e.g., SNR, frequencies) and for the various analyzer
+    algorithms (e.g., subspace ratio, number of grids).
 
     Returns:
         argparse.Namespace:
-            An object containing the parsed and validated command-line arguments.
+            An object containing the parsed and validated arguments.
     """
     parser = argparse.ArgumentParser(
         description="Parameter estimation demo using MUSIC algorithm."
@@ -280,7 +283,9 @@ def print_summary_table(results: list[dict[str, str | float]]) -> None:
     """Print a summary table of the estimation results.
 
     Args:
-        results (list[dict[str, str | float]]): The rows of summary table.
+        results (list[dict[str, str | float]]):
+            A list of result rows, where each row is a dictionary
+            produced by `compute_summary_row`.
     """
     if not results:
         print("\n--- No results to summarize. ---")
