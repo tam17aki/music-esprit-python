@@ -40,23 +40,23 @@ from .base import MusicAnalyzerBase
 
 @final
 class FastMusicAnalyzer(MusicAnalyzerBase):
-    """Analyzes sinusoidal parameters using the FAST MUSIC algorithm.
+    """Implements the FAST MUSIC algorithm for frequency estimation.
 
-    This analyzer is specialized for periodic or approximately periodic signals.
-    It leverages the property that the autocorrelation matrix of a periodic
-    signal can be approximated by a circulant matrix, which allows replacing
-    the computationally expensive eigenvalue decomposition (EVD) with a
-    Fast Fourier Transform (FFT).
+    This analyzer is specialized for periodic or approximately periodic
+    signals.  It leverages the property that the autocorrelation matrix
+    of a periodic signal can be approximated by a circulant matrix,
+    allowing the computationally expensive eigenvalue decomposition
+    (EVD) to be replaced by an FFT.
 
-    This approach can be significantly faster than standard MUSIC methods
-    for signals with a detectable periodicity, such as musical tones or
-    voiced speech.
+    This approach can be significantly faster than standard MUSIC
+    methods for signals with a detectable periodicity, such as musical
+    tones or voiced speech.
 
     Reference:
         O. Das, J. S. Abel, J. O. Smith III, "FAST MUSIC - An Efficient
-        Implementation of The Music Algorithm For Frequency Estimation of
-        Approximately Periodic Signals," International Conference on Digital
-        Audio Effects (DAFx), vol.21, pp.342-348, 2018.
+        Implementation of The Music Algorithm For Frequency Estimation
+        of Approximately Periodic Signals," International Conference on
+        Digital Audio Effects (DAFx), vol.21, pp.342-348, 2018.
     """
 
     def __init__(
@@ -73,12 +73,13 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
             n_grids (int, optional):
-                The number of points for the final pseudospectrum search grid.
-                Defaults to 16384.
+                The number of points for the final pseudospectrum search
+                grid.  Defaults to 16384.
             min_freq_period (float, optional):
-                The minimum frequency in Hz to consider when searching for the
-                signal's fundamental period. This helps constrain the search
-                range of the periodicity detection. Defaults to 20.0.
+                The minimum frequency in Hz to consider when searching
+                for the signal's fundamental period. This helps
+                constrain the search range of the periodicity
+                detection. Defaults to 20.0.
         """
         super().__init__(fs, n_sinusoids)
         self.n_grids = n_grids
@@ -97,7 +98,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
             np.ndarray: Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
-        # 0. Convert the signal to real (FAST MUSIC often assumes real signals)
+        # 0. Convert the signal to real (FAST MUSIC often assumes real
+        #    signals)
         if np.iscomplexobj(signal):
             warnings.warn(
                 "FastMusicAnalyzer received a complex-valued signal. "
@@ -121,7 +123,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         num_unique_bins = period_m // 2 + 1
         half_spectrum = amplitude_spectrum[:num_unique_bins]
 
-        # 4. Search peaks on the spectrum and identify the signal space indices
+        # 4. Search peaks on the spectrum and identify the signal space
+        #    indices
         signal_space_indices = find_peak_indices_from_spectrum(
             half_spectrum, self.n_sinusoids
         )
@@ -154,8 +157,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         if min_period >= max_period:
             warnings.warn(
                 "Invalid search range for period detection: "
-                + f"min_period ({min_period}) must be less than max_"
-                + f"period ({max_period}). Falling back to midpoint."
+                + f"min_period ({min_period}) must be less than "
+                + f"max_period ({max_period}). Falling back to midpoint."
             )
             return (min_period + max_period) // 2
 
@@ -180,11 +183,18 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
     def _calculate_fast_music_spectrum(
         self, period_m: int, signal_space_indices: npt.NDArray[np.int_]
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
-        """Calculate the FAST MUSIC pseudospectrum using a closed-form expression.
+        """Calculates the FAST MUSIC pseudospectrum.
 
-        Instead of a direct spectral search, this method computes the
-        pseudospectrum using a sum of squared aliased sinc functions, based on
-        the signal eigenvector frequencies identified from the ACF's power spectrum.
+        This method implements the core of the FAST MUSIC
+        algorithm. Instead of performing a computationally expensive
+        spectral search, it calculates the pseudospectrum directly using
+        a closed-form formula derived from the properties of circulant
+        matrices.
+
+        The formula is based on a sum of squared aliased sinc functions,
+        which are evaluated using the signal space indices (approximated
+        eigenvector frequencies) identified from the power spectrum of
+        the ACF.
 
         Args:
             period_m (int):
@@ -195,8 +205,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
-                A tuple containing the frequency grid (in Hz) and the
-                calculated FAST MUSIC pseudospectrum (float64 and float64).
+                A tuple containing the frequency grid in Hz and the FAST
+                MUSIC pseudospectrum (float64 and float64).
         """
         k = np.arange(self.n_grids).reshape(1, -1)  # (1, N_search)
         mi = signal_space_indices.reshape(-1, 1)  # (M, 1)
@@ -212,15 +222,18 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
     def _asinc(x: npt.NDArray[np.float64], m: int) -> npt.NDArray[np.float64]:
         """Calculate the aliased sinc function (Dirichlet kernel).
 
-        This function is defined as sin(pi*m*x) / sin(pi*x). It handles the
+        Defined as sin(pi*m*x) / sin(pi*x), this function handles the
         singularity at x = 0, where the value is m.
 
         Args:
-            x (np.ndarray): Input array (float64).
-            m (int): The length of the sequence (period).
+            x (np.ndarray):
+                Input array (float64).
+            m (int):
+                The length of the sequence (period).
 
         Returns:
-            np.ndarray: The result of the aliased sinc function (float64).
+            np.ndarray:
+                The result of the aliased sinc function (float64).
         """
         numerator = np.sin(np.pi * m * x)
         denominator = np.sin(np.pi * x)
@@ -233,14 +246,15 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Return the analyzer's hyperparameters.
+        """Returns the analyzer's hyperparameters.
 
-        Extends the base implementation to include the 'n_grids' parameter
-        specific to the FAST MUSIC method.
+        Extends the base implementation to include the 'n_grids'
+        parameter specific to the FAST MUSIC method.
 
         Returns:
             AnalyzerParameters:
-                A TypedDict containing both common and specific hyperparameters.
+                A TypedDict containing both common and method-specific
+                hyperparameters.
         """
         params = super().get_params()
         params.pop("subspace_ratio", None)
