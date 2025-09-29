@@ -45,8 +45,9 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            subspace_ratio (float, optional): The ratio of the subspace dimension
-                to the signal length. Must be between 0 and 0.5. Defaults to 1/3.
+            subspace_ratio (float, optional):
+                The ratio of the subspace dimension to the signal
+                length.  Must be between 0 and 0.5. Defaults to 1/3.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio)
 
@@ -60,8 +61,9 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
             signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
-                Returns empty arrays if estimation fails.
+            np.ndarray:
+                Estimated frequencies in Hz (float64).
+                Returns an empty array on failure.
         """
         # 1. Estimate the noise subspace
         noise_subspace = self._estimate_noise_subspace(signal)
@@ -88,7 +90,9 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
                 The noise subspace matrix E_n (float64 or complex128).
 
         Returns:
-            np.ndarray: A vector of polynomial coefficients (float64 or complex128).
+            np.ndarray:
+                A vector of polynomial coefficients
+                (float64 or complex128).
         """
         # C = E_n * E_n^H
         projector_onto_noise = noise_subspace @ noise_subspace.conj().T
@@ -105,7 +109,8 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         coefficients = np.array(_coefficients)
         coefficients = np.concatenate([coefficients[::-1], coefficients[1:]])
 
-        # Notice: The polynomial coefficients are arranged in descending order of powers
+        # Notice: The polynomial coefficients are arranged in descending
+        #         order of powers
         if np.isrealobj(noise_subspace):
             return coefficients.astype(np.float64)
         return coefficients.astype(np.complex128)
@@ -115,5 +120,6 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
 class RootMusicAnalyzerFB(ForwardBackwardMixin, RootMusicAnalyzer):
     """Root MUSIC analyzer enhanced with Forward-Backward averaging.
 
-    Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
+    Inherits from ForwardBackwardMixin to override the covariance matrix
+    calculation.
     """
