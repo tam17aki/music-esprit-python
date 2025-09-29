@@ -230,5 +230,6 @@ class HoywAnalyzer(AnalyzerBase):
                 hyperparameters.
         """
         params = super().get_params()
+        params.pop("subspace_ratio", None)
         params["ar_order"] = self.ar_order
         return params
