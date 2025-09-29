@@ -48,8 +48,9 @@ class AnalyzerBase(ABC):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            subspace_ratio (float, optional): The ratio of the subspace dimension
-                to the signal length. Must be between 0 and 0.5. Defaults to 1/3.
+            subspace_ratio (float, optional):
+                The ratio of the subspace dimension to the signal
+                length. Must be between 0 and 0.5. Defaults to 1/3.
         """
         if not 0 < subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
             raise ValueError(
@@ -66,9 +67,9 @@ class AnalyzerBase(ABC):
     def fit(self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]) -> Self:
         """Run the full parameter estimation process.
 
-        This method takes an input signal, runs the complete estimation workflow
-        defined by the specific analyzer subclass, and stores the results in
-        the `est_params` attribute.
+        This method takes an input signal, runs the complete estimation
+        workflow defined by the specific analyzer subclass, and stores
+        the results in the `est_params` attribute.
 
         Args:
             signal (np.ndarray): Input signal (float64 or complex128).
@@ -165,16 +166,18 @@ class AnalyzerBase(ABC):
         signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         estimated_freqs: npt.NDArray[np.float64],
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
-        """Estimate amplitudes and phases from frequencies using least squares.
+        """Estimate amplitudes and phases from frequencies using LS.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
-            estimated_freqs (np.ndarray): Array of estimated frequencies in Hz.
+            signal (np.ndarray):
+                Input signal (float64 or complex128).
+            estimated_freqs (np.ndarray):
+                An array of estimated frequencies in Hz.
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
-                - estimated_amps (np.ndarray): Estimated amplitudes (float64).
-                - estimated_phases (np.ndarray): Estimated phases in radians (float64).
+                - estimated_amps: Estimated amplitudes (float64).
+                - estimated_phases: Estimated phases in rad (float64).
         """
         # 1. Build the Vandermonde matrix V
         vandermonde_matrix = self._build_vandermonde_matrix(
@@ -192,9 +195,10 @@ class AnalyzerBase(ABC):
         # 3. Extract amplitudes and phases
         estimated_amps = np.abs(complex_amps).astype(np.float64)
         if np.isrealobj(signal):
-            # For a real-valued sinusoid A*cos(2*pi*f*t + phi), the complex amplitude
-            # estimated using only the positive frequency is (A/2)*exp(j*phi).
-            # Therefore, we need to multiply the magnitude by 2.
+            # For a real-valued sinusoid A*cos(2*pi*f*t + phi), the
+            # complex amplitude estimated using only the positive
+            # frequency is (A/2)*exp(j*phi). Therefore, we need to
+            # multiply the magnitude by 2.
             estimated_amps *= 2
         estimated_phases = np.angle(complex_amps).astype(np.float64)
 
@@ -206,14 +210,14 @@ class AnalyzerBase(ABC):
     def get_params(self) -> AnalyzerParameters:
         """Return a dictionary of the analyzer's hyperparameters.
 
-        This method provides a standardized way to inspect the configuration
-        of an analyzer instance. Subclasses should override this method to
-        add their specific parameters.
+        This method provides a standardized way to inspect the
+        configuration of an analyzer instance. Subclasses should
+        override this method to add their specific parameters.
 
         Returns:
             AnalyzerParameters:
-                A TypedDict containing the common hyperparameters. At minimum,
-                this includes 'subspace_ratio'.
+                A TypedDict containing the common hyperparameters. At
+                minimum, this includes 'subspace_ratio'.
         """
         return AnalyzerParameters(subspace_ratio=self.subspace_ratio)
 
