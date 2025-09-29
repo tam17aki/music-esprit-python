@@ -61,8 +61,16 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         # The noise subspace is the set of vectors corresponding to the
         # smaller eigenvalues.  Since it is in ascending order, select
         # (subspace_dim - model_order) vectors from the beginning, where
-        # model_order = 2 * n_sinusoids
-        n_noise_vectors = self.subspace_dim - 2 * self.n_sinusoids
+        # model_order = 2 * n_sinusoids if signal is real-valued, else
+        # model_order = n_sinusoids if signal is complex-valued.
+        if np.isrealobj(signal):
+            # For real signals, positive and negative frequency pairs
+            # are considered
+            model_order = 2 * self.n_sinusoids
+        else:
+            # For complex signals, the number of signals themselves
+            model_order = self.n_sinusoids
+        n_noise_vectors = self.subspace_dim - model_order
         noise_subspace = eigenvectors[:, :n_noise_vectors]
         if np.isrealobj(noise_subspace):
             return noise_subspace.astype(np.float64)
