@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A mixin class providing Forward-Backward averaging for covariance matrix estimation.
+"""Defines a mixin for Forward-Backward covariance matrix estimation.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -28,10 +28,11 @@ from scipy.linalg import hankel
 
 
 class ForwardBackwardMixin:
-    """A mixin class providing Forward-Backward averaging for cov. matrix estimation.
+    """Provide Forward-Backward averaging for cov. matrix estimation.
 
-    This mixin overrides the `_build_covariance_matrix` method to enhance estimation
-    accuracy, especially for short data records or low SNR scenarios.
+    This mixin overrides the `_build_covariance_matrix` method to
+    enhance estimation accuracy, especially for short data records or
+    low SNR scenarios.
     """
 
     @staticmethod
@@ -46,7 +47,7 @@ class ForwardBackwardMixin:
 
         Returns:
             np.ndarray:
-                The forward-backward averaged covariance matrix (float64 or complex128).
+                The averaged covariance matrix (float64 or complex128).
         """
         # 1. Standard forward covariance matrix
         n_samples = signal.size
