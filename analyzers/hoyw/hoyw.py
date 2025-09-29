@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines HoywAnalyzer class for Higher-Order Yule-Walker (HOYW) method.
+"""Defines HoywAnalyzer class for Higher-Order Yule-Walker (HOYW).
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -37,7 +37,7 @@ from ..models import AnalyzerParameters
 
 @final
 class HoywAnalyzer(AnalyzerBase):
-    """Parameter analyzer using the Higher-Order Yule-Walker (HOYW) method."""
+    """Implements the Higher-Order Yule-Walker (HOYW) method."""
 
     def __init__(
         self, fs: float, n_sinusoids: int, *, ar_order: int | None = None
@@ -89,7 +89,8 @@ class HoywAnalyzer(AnalyzerBase):
             warnings.warn(f"Failed to build Yule-Walker matrices: {e}")
             return np.array([])
 
-        # 3. Estimate AR coefficients by solving the reduced-rank HOYW equations
+        # 3. Estimate AR coefficients by solving the reduced-rank HOYW
+        #    equations
         ar_coeffs = self._solve_hoyw_equation(acorr_mat, acorr_vec)
 
         # 4. Estimate frequency by finding roots from AR coefficients
@@ -108,11 +109,12 @@ class HoywAnalyzer(AnalyzerBase):
             signal (np.ndarray):
                 Input signal (float64 or complex128).
             n_lags (int):
-                The number of autocorrelation lags to compute (including lag 0).
+                Number of autocorrelation lags to compute.
 
         Returns:
             np.ndarray:
-                A vector of autocorrelation values [r(0), r(1), ..., r(num_lags-1)].
+                A vector of autocorrelation values
+                [r(0), r(1), ..., r(n_lags-1)].
         """
         n_samples = signal.size
         corr_full = correlate(signal, signal)
@@ -133,12 +135,14 @@ class HoywAnalyzer(AnalyzerBase):
             p (int):
                 The order of the AR model.
             m (int):
-                A parameter determining the number of equations, which should
-                be greater than p. The total number of lags used is p + m.
+                A parameter determining the number of equations, which
+                should be greater than p. The total number of lags used
+                is p + m.
 
         Returns:
             np.ndarray:
-                The (m x p) autocorrelation matrix R (float64 or complex128).
+                The autocorrelation matrix R of shape (m x p)
+                (float64 or complex128).
         """
         column = autocorr[p : p + m]
         row = autocorr[p:0:-1]
@@ -159,12 +163,14 @@ class HoywAnalyzer(AnalyzerBase):
             p (int):
                 The order of the AR model.
             m (int):
-                A parameter determining the number of equations, which should
-                be greater than p. The total number of lags used is p + m.
+                A parameter determining the number of equations, which
+                should be greater than p. The total number of lags used
+                is p + m.
 
         Returns:
             np.ndarray:
-                The (m x 1) autocorrelation vector r (float64 or complex128).
+                The autocorrelation vector r of shape (m x 1)
+                (float64 or complex128).
         """
         return autocorr[p + 1 : p + m + 1]
 
@@ -173,19 +179,20 @@ class HoywAnalyzer(AnalyzerBase):
         acorr_mat: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         acorr_vec: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-        """Solve the reduced-rank HOYW equations to estimate the AR coefficients.
+        """Solve the HOYW equations to estimate the AR coefficients.
 
         Args:
             acorr_mat (np.ndarray):
-                The sample autocorrelation matrix (float64 or complex128);
-                lhs of Stoica 4.4.8
+                The sample autocorrelation matrix (float64 or
+                complex128); lhs of Stoica 4.4.8
             acorr_vec (np.ndarray):
-                The sample autocorrelation vector (float64 or complex128);
-                rhs of Stoica 4.4.8
+                The sample autocorrelation vector (float64 or
+                complex128); rhs of Stoica 4.4.8
 
         Returns:
-            np.ndarray: The AR coefficients (float64 or complex128).
-                Returns empty arrays if estimation fails.
+            np.ndarray:
+                The AR coefficients (float64 or complex128).
+                Returns an empty array on failure.
         """
         # Performs SVD of matrix R (Stoica 4.4.12)
         try:
@@ -206,14 +213,14 @@ class HoywAnalyzer(AnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Return the analyzer's hyperparameters, including spectral-specific ones.
+        """Return the analyzer's hyperparameters..
 
-        Extends the base implementation to include the 'ar_order' parameter
-        specific to the HOYW method.
+        Extends the base implementation to include the 'ar_order'
+        parameter specific to the HOYW method.
 
         Returns:
             AnalyzerParameters:
-                A TypedDict containing both common and spectral-specific
+                A TypedDict containing both common and method-specific
                 hyperparameters.
         """
         params = super().get_params()
