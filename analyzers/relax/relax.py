@@ -118,7 +118,8 @@ class RelaxAnalyzer(AnalyzerBase):
                 A flag indicating whether the sinusoid is real-valued.
 
         Returns:
-            np.ndarray: Re-synthesized single sinusoid (float64 or complex128).
+            np.ndarray:
+                Re-synthesized single sinusoid (float64 or complex128).
         """
         t = np.arange(n_samples) / fs
         argument = 2 * np.pi * params.frequency * t + params.phase
@@ -135,20 +136,23 @@ class RelaxAnalyzer(AnalyzerBase):
         signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
         freq: float,
     ) -> tuple[float, float]:
-        """Estimate the amplitude and phase of a single sinusoidal component.
+        """Estimate the amplitude and phase of a single sinusoid.
 
         This method solves a least-squares problem to find the best fit
         of a single sinusoid at the given frequency to the signal.
 
         Args:
-            signal (np.ndarray): The input signal (float64 or complex128).
-            freq (float): The frequency of the component to estimate, in Hz.
+            signal (np.ndarray):
+                The input signal (float64 or complex128).
+            freq (float):
+                The frequency of the component to estimate, in Hz.
 
         Returns:
             tuple[float, float]: A tuple containing the estimated
                                  (amplitude, phase in radians).
         """
-        # 1. Construct a single steering vector (one column of the Vandermonde matrix)
+        # 1. Construct a single steering vector (one column of the
+        #    Vandermonde matrix)
         n_samples = signal.size
         t_vector = np.arange(n_samples).reshape(-1, 1) / self.fs
 
@@ -158,12 +162,11 @@ class RelaxAnalyzer(AnalyzerBase):
         # Internal calculations are done with complex numbers
         complex_signal = signal.astype(np.complex128)
 
-        # 2. Solve complex amplitudes with least squares
-        #    c = pinv(V) @ x
-        #    pinv(vector) is equivalent to (vector^H * vector)^-1 * vector^H
-        #    For pinv calculations, using np.dot is faster
-        #    when there is only one vector.
-        #    c = (a^H * a)^-1 * a^H * x
+        # 2. Solve complex amplitudes with least squares c = pinv(V) @ x
+        #    pinv(vector) is equivalent to
+        #    (vector^H * vector)^-1 * vector^H
+        #    For pinv calculations, using np.dot is faster when
+        #    there is only one vector.  c = (a^H * a)^-1 * a^H * x
         a_h_a: npt.NDArray[np.complex128] = np.dot(
             steering_vector.conj().T, steering_vector
         )
@@ -188,12 +191,13 @@ class RelaxAnalyzer(AnalyzerBase):
     def get_params(self) -> AnalyzerParameters:
         """Return the analyzer's hyperparameters.
 
-        Extends the base implementation to include the length of iterative
-        interpolation FFT.
+        Extends the base implementation to include the length of
+        iterative interpolation FFT.
 
         Returns:
             AnalyzerParameters:
-                A TypedDict containing both common and specific hyperparameters.
+                A TypedDict containing both common and method-specific
+                hyperparameters.
         """
         params = super().get_params()
         params.pop("subspace_ratio", None)
