@@ -7,7 +7,8 @@ estimation algorithms:
 - FFT-based ESPRIT (LS/Woodbury-LS/TLS)
 
 For each method, it estimates the frequencies, amplitudes, and phases of
-sinusoidal components in a noisy signal and reports the estimation errors.
+sinusoidal components in a noisy signal and reports the estimation
+errors.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
