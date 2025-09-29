@@ -48,10 +48,8 @@ def _generate_amps_phases(
 
     Returns:
         tuple[np.ndarray, np.ndarray]:
-            - amps: Random amplitudes assigned to each sinusoid
-                    (float64).
-            - phases: Random phases assigned to each sinusoid
-                    (float64).
+            - amps: An array of random amplitudes (float64).
+            - phases: An array of random phases (float64).
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -70,7 +68,7 @@ def create_true_parameters(
         rng (np.random.Generator, optional): Random generator.
 
     Returns:
-        SinusoidParameters: Parameters of multiple sinusoids.
+        SinusoidParameters: An object containing the true signal params.
     """
     # Generate the random parts of the parameters
     amps_true, phases_true = _generate_amps_phases(
@@ -91,16 +89,15 @@ def synthesize_sinusoids(
     *,
     is_complex: bool = False,
 ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-    """Generate a clean signal from multiple sinusoids.
+    """Synthesize a clean signal from multiple sinusoids.
 
     Args:
         fs (float): Sampling frequency in Hz.
         duration (float): Signal duration in seconds.
         params (SinusoidParameters): Parametes of mutiple sinusoids.
         is_complex (bool, optional):
-            If True, generate a complex exponential signal.
-            If False, generate a real-valued cosine signal.
-            Defaults to False.
+            If True, generate a complex exponential signal. If False,
+            generate a real-valued cosine signal. Defaults to False.
 
     Returns:
         np.ndarray: Sum of multiple sinusoids (float64 or complex128).
@@ -152,7 +149,10 @@ def generate_test_signal(
     *,
     is_complex: bool = False,
 ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-    """Generate a test signal consisting of multi-sinusoids and AWGN.
+    """Generate a noisy test signal of multiple sinusoids.
+
+    This is a convenience wrapper that combines sinusoid synthesis and
+    noise addition into a single step.
 
     Args:
         fs (float): Sampling frequency in Hz.
@@ -166,8 +166,8 @@ def generate_test_signal(
 
     Returns:
         np.ndarray:
-            The generated test signal. The dtype of the array
-            (float64 or complex128) depends on the `is_complex` flag.
+            The generated noisy test signal (float64 or complex128),
+            depending on the `is_complex` flag.
     """
     clean_signal = synthesize_sinusoids(fs, duration, params, is_complex=is_complex)
     noisy_signal = add_awgn(clean_signal, snr_db)
