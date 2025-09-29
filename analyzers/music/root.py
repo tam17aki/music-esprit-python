@@ -107,7 +107,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         for k in range(1, poly_degree + 1):
             _coefficients.append(np.sum(np.diag(projector_onto_noise, k=k)))
         coefficients = np.array(_coefficients)
-        coefficients = np.concatenate([coefficients[::-1], coefficients[1:]])
+        coefficients = np.concatenate([coefficients[::-1], coefficients[1:].conj()])
 
         # Notice: The polynomial coefficients are arranged in descending
         #         order of powers
