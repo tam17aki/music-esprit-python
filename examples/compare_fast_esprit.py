@@ -4,7 +4,7 @@
 This script runs a comparative analysis of high-resolution parameter
 estimation algorithms:
 - Nyström-based ESPRIT (LS/TLS)
-- FFT-based ESPRIT (LS/Woodbury-LS/TLS)
+- FFT-based ESPRIT (LS/TLS/Woodbury-LS)
 
 For each method, it estimates the frequencies, amplitudes, and phases of
 sinusoidal components in a noisy signal and reports the estimation
@@ -91,13 +91,13 @@ def main() -> None:
         "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
+        "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
+        ),
         "FFT-ESPRIT (Woodbury-LS)": FFTEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=WoodburyLSEspritSolver(),
-        ),
-        "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
         ),
     }
 
