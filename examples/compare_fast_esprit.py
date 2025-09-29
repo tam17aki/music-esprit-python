@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """A demonstration script to compare variants of the ESPRIT algorithm.
 
-This script runs a comparative analysis of high-resolution parameter estimation
-algorithms:
+This script runs a comparative analysis of high-resolution parameter
+estimation algorithms:
 - Nyström-based ESPRIT (LS/TLS)
 - FFT-based ESPRIT (LS/TLS/Woodbury-LS)
 
@@ -28,6 +28,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
 """
 
 import time
