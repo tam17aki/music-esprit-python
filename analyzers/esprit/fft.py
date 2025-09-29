@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import warnings
-from typing import final, override
+from typing import TypeAlias, final, override
 
 import numpy as np
 import numpy.typing as npt
@@ -34,6 +34,10 @@ from .._common import estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
 from .base import EspritAnalyzerBase
 from .solvers import LSEspritSolver, TLSEspritSolver, WoodburyLSEspritSolver
+
+StandardEspritSolver: TypeAlias = (
+    LSEspritSolver | TLSEspritSolver | WoodburyLSEspritSolver
+)
 
 
 @final
@@ -72,7 +76,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         self,
         fs: float,
         n_sinusoids: int,
-        solver: LSEspritSolver | TLSEspritSolver | WoodburyLSEspritSolver,
+        solver: StandardEspritSolver,
         *,
         n_fft_iip: int | None = None,
     ):
@@ -81,10 +85,8 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            solver:
+            solver (StandardEspritSolver):
                 An ESPRIT solver for the final estimation step.
-                Must be one of `LSEspritSolver`, `TLSEspritSolver`, or
-                `WoodburyLSEspritSolver`.
             n_fft_iip (int, optional):
                 The length of iterative interpolation FFT.
                 Defaults to None.
