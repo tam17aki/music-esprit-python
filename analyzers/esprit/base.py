@@ -54,7 +54,6 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             np.ndarray:
                 A sorted array of final, unique frequency estimates in
                 Hz, limited to `self.n_sinusoids` (float64).
-
         """
         # 1. Convert normalized angular frequencies [rad/sample]
         #    to physical frequencies [Hz]
