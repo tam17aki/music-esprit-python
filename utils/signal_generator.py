@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""A collection of functions for building test signals for parameter estimation.
+"""A collection of functions for building test signals.
 
 This module provides the complete pipeline for generating test signals,
-from creating the ground truth parameters to synthesizing the clean waveform
-and adding controlled noise. These functions are used to create the datasets
-for demonstrating and evaluating the analyzer algorithms.
+from creating the ground truth parameters to synthesizing the clean
+waveform and adding controlled noise. These functions are used to create
+the datasets for demonstrating and evaluating the analyzer algorithms.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -41,14 +41,17 @@ def _generate_amps_phases(
     """Generate amplitudes and phases for multiple sinusoids.
 
     Args:
-        amp_range (tuple of float64): Lower and upper bound for amplitude.
+        amp_range (tuple[float, float]):
+            Lower and upper bound for amplitude.
         n_sinusoids (int): Number of sinusoids.
         rng (np.random.Generator, optional): Random generator.
 
     Returns:
         tuple[np.ndarray, np.ndarray]:
-            - amps (np.ndarray of float64): Random amplitudes assigned to each sinusoid.
-            - phases (np.ndarray of float64): Random phases assigned to each sinus
+            - amps: Random amplitudes assigned to each sinusoid
+                    (float64).
+            - phases: Random phases assigned to each sinusoid
+                    (float64).
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -60,7 +63,7 @@ def _generate_amps_phases(
 def create_true_parameters(
     config: ExperimentConfig, rng: np.random.Generator | None = None
 ) -> SinusoidParameters:
-    """Create a SinusoidParameters object with true values from the config.
+    """Create a SinusoidParameters object with true values.
 
     Args:
         config (ExperimentConfig): Configuration of the experiment.
@@ -129,7 +132,8 @@ def add_awgn(
         rng (np.random.Generator, optional): Random generator.
 
     Returns:
-        np.ndarray: Noisy signal with specified SNR (float64 or complex128).
+        np.ndarray:
+            Noisy signal with specified SNR (float64 or complex128).
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -148,7 +152,7 @@ def generate_test_signal(
     *,
     is_complex: bool = False,
 ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
-    """Generate a noisy test signal consisting of multiple sinusoids and AWGN.
+    """Generate a test signal consisting of multi-sinusoids and AWGN.
 
     Args:
         fs (float): Sampling frequency in Hz.
