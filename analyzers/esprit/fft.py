@@ -81,9 +81,13 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            solver (LSEspritSolver | TLSEspritSolver | WoodburyLSEspritSolver):
-                Solver to solve frequencies with the rotation operator.
-            n_fft_iip (int): The length of iterative interpolation FFT.
+            solver:
+                An ESPRIT solver for the final estimation step.
+                Must be one of `LSEspritSolver`, `TLSEspritSolver`, or
+                `WoodburyLSEspritSolver`.
+            n_fft_iip (int, optional):
+                The length of iterative interpolation FFT.
+                Defaults to None.
         """
         super().__init__(fs, n_sinusoids)
         self.solver = solver
