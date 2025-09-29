@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Defines core data structures for the project using dataclasses.
 
-This module centralizes the definitions of immutable data models that are
-shared across different parts of the application, such as the signal
+This module centralizes the definitions of immutable data models that
+are shared across different parts of the application, such as the signal
 generator and the analyzers.
 
 Copyright (C) 2025 by Akira TAMAMORI
@@ -43,7 +43,7 @@ class SinusoidParameters:
 
 @dataclass(frozen=True)
 class ExperimentConfig:
-    """A class to store the configuration for a signal processing experiment."""
+    """A class to store the configuration for an experiment."""
 
     fs: float
     duration: float
