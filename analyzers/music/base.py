@@ -44,8 +44,9 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
             signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
-            np.ndarray: Estimated noise subspace (float64 or complex128).
-                Returns None if estimation fails.
+            np.ndarray:
+                Estimated noise subspace (float64 or complex128).
+                Returns an empty array on failure.
         """
         # 1. Build the covariance matrix
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
@@ -57,10 +58,10 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
             warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
             return None
 
-        # The noise subspace is the set of vectors corresponding to the smaller
-        # eigenvalues.
-        # Since it is in ascending order, select (subspace_dim - model_order) vectors
-        # from the beginning, where model_order = 2 * n_sinusoids
+        # The noise subspace is the set of vectors corresponding to the
+        # smaller eigenvalues.  Since it is in ascending order, select
+        # (subspace_dim - model_order) vectors from the beginning, where
+        # model_order = 2 * n_sinusoids
         n_noise_vectors = self.subspace_dim - 2 * self.n_sinusoids
         noise_subspace = eigenvectors[:, :n_noise_vectors]
         if np.isrealobj(noise_subspace):
