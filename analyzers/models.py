@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Defines TypedDict models for structuring analyzer parameters and results.
+"""Define TypedDict models for analyzer parameters and results.
 
-This module contains the type definitions that describe the shape of data
-objects, such as hyperparameter dictionaries, used across the different
-analyzer classes.
+This module contains the type definitions that describe the shape of
+data objects, such as hyperparameter dictionaries, used across the
+different analyzer classes.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -30,31 +30,34 @@ from typing import NotRequired, TypedDict
 
 
 class AnalyzerParameters(TypedDict):
-    """A TypedDict model for the dictionary returned by `AnalyzerBase.get_params()`.
+    """Define the structure for analyzer hyperparameter dictionaries.
 
-    This structure defines the set of all possible hyperparameters that can be
-    reported by any analyzer instance in this library. Each key may or may not
-    be present depending on the specific analyzer class.
+    This structure defines the set of all possible hyperparameters that
+    can be reported by any analyzer instance in this library. Each key
+    may or may not be present depending on the specific analyzer class.
     """
 
     subspace_ratio: NotRequired[float]
-    """Ratio of the subspace dimension to the signal length (L/N)."""
+    """Ratio of the subspace dimension to signal length (L/N)."""
 
     solver: NotRequired[str]
-    """The name of the solver class used (e.g., 'LSEspritSolver')."""
+    """Name of the solver class used (e.g., `LSEspritSolver`)."""
 
     n_grids: NotRequired[int]
     """Number of grid points for spectral search methods."""
 
     min_freq_period: NotRequired[float]
-    """The minimum frequency in Hz for FAST MUSIC method."""
+    """Minimum frequency (Hz) for FAST MUSIC's periodicity search."""
 
     ar_order: NotRequired[int]
-    """The order of the AutoRegressive (AR) model for HOYW method."""
+    """Order of the AutoRegressive (AR) model for the HOYW method."""
 
     n_fft_iip: NotRequired[int | None]
-    """The length of iterative interpolation FFT for FFT-ESPRIT."""
+    """FFT length for iterative interpolation in FFT-ESPRIT."""
 
     nystrom_rank_factor: NotRequired[float]
-    """A factor to determine the number of rows to sample for
-       the Nyström-based ESPRIT."""
+    """Factor to determine the sampling rank for Nyström-ESPRIT.
+
+    This defines the number of rows to sample (K) for the
+    approximation.
+    """
