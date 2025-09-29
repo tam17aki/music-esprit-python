@@ -52,9 +52,11 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            n_grids (int, optional): Number of grid points for Spectral Min-Norm.
-            subspace_ratio (float, optional): The ratio of the subspace dimension
-                to the signal length. Must be between 0 and 0.5. Defaults to 1/3.
+            n_grids (int, optional):
+                Number of grid points for Spectral Min-Norm.
+            subspace_ratio (float, optional):
+                The ratio of the subspace dimension to the signal
+                length. Must be between 0 and 0.5. Defaults to 1/3.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio)
         self.n_grids: int = n_grids
@@ -63,7 +65,7 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Estimate frequencies of multiple sinusoids using Spectral Min-Norm.
+        """Estimate frequencies of multi-sinusoids via Spec. Min-Norm.
 
         This method overrides the abstract method in the base class.
 
@@ -80,7 +82,8 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
             warnings.warn("Failed to estimate noise subspace. Returning empty result.")
             return np.array([])
 
-        # 2. Calculate the minimum norm vector `d` from the noise subspace
+        # 2. Calculate the minimum norm vector `d` from the noise
+        #    subspace
         min_norm_vector = self._calculate_min_norm_vector(noise_subspace)
         if min_norm_vector is None:
             warnings.warn(
@@ -111,8 +114,8 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
-                - freq_grid (np.ndarray): Frequency grid (float64).
-                - min_norm_spectrum (np.ndarray): Min-Norm pseudospectrum (float64).
+                - freq_grid: Frequency grid (float64).
+                - min_norm_spectrum: Min-Norm pseudospectrum (float64).
         """
         # 1. Calculate the FFT of mininum norm vector
         fft_noise_eigvec = fft(min_norm_vector, n=self.n_grids)
@@ -133,10 +136,10 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Return the analyzer's hyperparameters, including spectral-specific ones.
+        """Return the analyzer's hyperparameters.
 
-        Extends the base implementation to include the 'n_grids' parameter
-        specific to the Spectral Min-Norm method.
+        Extends the base implementation to include the 'n_grids'
+        parameter specific to the Spectral Min-Norm method.
 
         Returns:
             AnalyzerParameters:
@@ -150,7 +153,8 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
 
 @final
 class SpectralMinNormAnalyzerFB(ForwardBackwardMixin, SpectralMinNormAnalyzer):
-    """Spectral Min-Norm analyzer enhanced with Forward-Backward averaging.
+    """Spectral Min-Norm analyzer enhanced with FB averaging.
 
-    Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
+    Inherits from ForwardBackwardMixin to override the covariance matrix
+    calculation.
     """
