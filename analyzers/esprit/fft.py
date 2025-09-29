@@ -158,12 +158,12 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
         kernel_matrix: npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.complex128]:
-        """Compute the product of a Hankel and kernel matrix efficiently.
+        """Compute the product of Hankel and kernel matrix efficiently.
 
         This method calculates `Yp = X @ Ap` where `X` is the Hankel
         matrix of the signal. It leverages the convolution theorem,
-        replacing direct matrix multiplication with FFT-based convolution
-        via `scipy.signal.fftconvolve`.
+        replacing direct matrix multiplication with FFT-based
+        convolution via `scipy.signal.fftconvolve`.
 
         This corresponds to the "Fast Hankel Matrix-Matrix product"
         (Algorithm 3) in the reference paper.
