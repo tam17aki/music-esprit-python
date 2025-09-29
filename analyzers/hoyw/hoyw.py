@@ -204,7 +204,13 @@ class HoywAnalyzer(AnalyzerBase):
         # Estimate AR coefficients by solving reduced-rank equations
         #    b = -V1^H * S1_inv * U1^H * r (Stoica 4.4.16)
         #    V in textbook is Vh.conj().T
-        model_order = 2 * self.n_sinusoids
+        if np.isrealobj(acorr_mat):
+            # For real signals, positive and negative frequency pairs
+            # are considered
+            model_order = 2 * self.n_sinusoids
+        else:
+            # For complex signals, the number of signals themselves
+            model_order = self.n_sinusoids
         u1 = u[:, :model_order]
         s1_inv = np.diag(1 / s[:model_order])
         vh1 = vh[:model_order, :]
