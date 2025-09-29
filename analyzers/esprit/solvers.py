@@ -115,7 +115,7 @@ class TLSEspritSolver:
             augmented_subspace = _augmented_subspace.astype(np.complex128)
 
         try:
-            _, _, vh = svd(augmented_subspace)
+            _, _, vh = svd(augmented_subspace, full_matrices=False)
         except LinAlgError:
             warnings.warn("SVD on augmented_subspace did not converge.")
             return np.array([])
@@ -304,7 +304,7 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
         t2 = k2 @ signal_subspace
 
         try:
-            _, _, vh = svd(np.concatenate((t1, t2), axis=1))
+            _, _, vh = svd(np.concatenate((t1, t2), axis=1), full_matrices=False)
         except LinAlgError:
             warnings.warn("SVD on augmented_subspace did not converge.")
             return np.array([])
