@@ -90,13 +90,13 @@ def main() -> None:
         "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
         ),
-        "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
-        ),
         "FFT-ESPRIT (Woodbury-LS)": FFTEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=WoodburyLSEspritSolver(),
+        ),
+        "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
         ),
     }
 
