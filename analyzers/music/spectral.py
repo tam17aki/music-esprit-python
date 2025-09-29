@@ -52,9 +52,11 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            n_grids (int, optional): Number of grid points for MUSIC algorithm.
-            subspace_ratio (float, optional): The ratio of the subspace dimension
-                to the signal length. Must be between 0 and 0.5. Defaults to 1/3.
+            n_grids (int, optional):
+                Number of grid points for MUSIC algorithm.
+            subspace_ratio (float, optional):
+                The ratio of the subspace dimension to the signal
+                length. Must be between 0 and 0.5. Defaults to 1/3.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio)
         self.n_grids: int = n_grids
@@ -63,13 +65,14 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
     def _estimate_frequencies(
         self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
     ) -> npt.NDArray[np.float64]:
-        """Estimate frequencies of multiple sinusoids using spectral MUSIC.
+        """Estimate frequencies of multi-sinusoids using Spectral MUSIC.
 
         Args:
             signal (np.ndarray): Input signal (float64 or complex128).
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
+            np.ndarray:
+                Estimated frequencies in Hz (float64).
                 Returns empty arrays if estimation fails.
         """
         # 1. Estimate the noise subspace
@@ -99,8 +102,8 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 
         Returns:
             tuple[np.ndarray, np.ndarray]:
-                - freq_grid (np.ndarray): Frequency grid (float64).
-                - music_spectrum (np.ndarray): MUSIC pseudospectrum (float64).
+                - freq_grid: Frequency grid (float64).
+                - music_spectrum: MUSIC pseudospectrum (float64).
         """
         # 1. Calculate the FFT of each noise eigenvector
         fft_noise_eigvec = fft(noise_subspace, n=self.n_grids, axis=0)
@@ -125,14 +128,14 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 
     @override
     def get_params(self) -> AnalyzerParameters:
-        """Return the analyzer's hyperparameters, including spectral-specific ones.
+        """Return the analyzer's hyperparameters.
 
-        Extends the base implementation to include the 'n_grids' parameter
-        specific to the Spectral MUSIC method.
+        Extends the base implementation to include the 'n_grids'
+        parameter specific to the Spectral MUSIC method.
 
         Returns:
             AnalyzerParameters:
-                A TypedDict containing both common and spectral-specific
+                A TypedDict containing both common and method-specific
                 hyperparameters.
         """
         params = super().get_params()
@@ -144,5 +147,6 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 class SpectralMusicAnalyzerFB(ForwardBackwardMixin, SpectralMusicAnalyzer):
     """Spectral MUSIC analyzer enhanced with Forward-Backward averaging.
 
-    Inherits from ForwardBackwardMixin to override the covariance matrix calculation.
+    Inherits from ForwardBackwardMixin to override the covariance matrix
+    calculation.
     """
