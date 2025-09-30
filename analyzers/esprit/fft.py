@@ -138,7 +138,9 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         # 3. Project data onto the kernel via fast convolution to get
         #    Yp. (Corresponds to Alg. 4, Step 3, implemented with
         #    Alg. 3)
-        projected_matrix = self._fast_hankel_vandermonde_product(signal, kernel_matrix)
+        projected_matrix = self._fast_hankel_vandermonde_product(
+            signal, kernel_matrix
+        )
 
         # 4. Orthonormalize the approximated signal subspace via QR
         #    decomposition. (Corresponds to Alg. 4, Step 4)
