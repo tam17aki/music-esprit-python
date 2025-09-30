@@ -110,7 +110,9 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         real_signal = np.real(signal)
 
         # 1. Calculate the autocorrelation
-        acf = np.correlate(real_signal, real_signal, mode="full").astype(np.float64)
+        acf = np.correlate(real_signal, real_signal, mode="full").astype(
+            np.float64
+        )
         acf = acf[real_signal.size - 1 :]
 
         # 2. Detect the period M
@@ -135,7 +137,9 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         )
 
         # 6. Find peaks and estimate frequencies (reuse common helpers)
-        return find_peaks_from_spectrum(pseudospectrum, self.n_sinusoids, freq_grid)
+        return find_peaks_from_spectrum(
+            pseudospectrum, self.n_sinusoids, freq_grid
+        )
 
     @staticmethod
     def _find_period(
@@ -174,7 +178,9 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
             )
             best_peak_local_index = np.argmax(search_range)
         elif all_peaks.size > 0 and "prominences" in properties:
-            best_peak_local_index = all_peaks[np.argmax(properties["prominences"])]
+            best_peak_local_index = all_peaks[
+                np.argmax(properties["prominences"])
+            ]
         else:
             best_peak_local_index = np.argmax(search_range)
 
@@ -239,7 +245,10 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         denominator = np.sin(np.pi * x)
         near_zero_den = np.abs(denominator) < ZERO_LEVEL
         result: npt.NDArray[np.float64] = np.divide(
-            numerator, denominator, out=np.zeros_like(numerator), where=~near_zero_den
+            numerator,
+            denominator,
+            out=np.zeros_like(numerator),
+            where=~near_zero_den,
         )
         result[near_zero_den] = m
         return result
