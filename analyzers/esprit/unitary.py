@@ -36,7 +36,7 @@ from .solvers import LSUnitaryEspritSolver, TLSUnitaryEspritSolver
 
 @final
 class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
-    """A class to solve frequencies via Unitary ESPRIT with LS."""
+    """Implements the Unitary ESPRIT method."""
 
     def __init__(
         self,
