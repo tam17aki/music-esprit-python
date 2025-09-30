@@ -55,3 +55,14 @@ class ExperimentConfig:
     def n_sinusoids(self) -> int:
         """Return the number of sinusoids."""
         return self.freqs_true.size
+
+
+@dataclass(frozen=True)
+class AlgorithmConfig:
+    """A class to store hyperparameters for the analyzer algorithms."""
+
+    subspace_ratio: float
+    n_grids: int
+    min_freq_period: float
+    ar_order: int
+    rank_factor: int
