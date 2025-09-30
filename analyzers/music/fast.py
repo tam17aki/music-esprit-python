@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines FastMusicAnalyzer class for FAST MUSIC algorithm.
+"""Defines FastMusicAnalyzer class for the FAST MUSIC algorithm.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
