@@ -75,7 +75,9 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         coefficients = self._calculate_polynomial_coefficients(noise_subspace)
 
         # 3. Find the roots and estimate the frequencies
-        estimated_freqs = find_freqs_from_roots(coefficients, self.fs, self.n_sinusoids)
+        estimated_freqs = find_freqs_from_roots(
+            coefficients, self.fs, self.n_sinusoids
+        )
 
         return estimated_freqs
 
@@ -107,7 +109,9 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         for k in range(1, poly_degree + 1):
             _coefficients.append(np.sum(np.diag(projector_onto_noise, k=k)))
         coefficients = np.array(_coefficients)
-        coefficients = np.concatenate([coefficients[::-1], coefficients[1:].conj()])
+        coefficients = np.concatenate(
+            [coefficients[::-1], coefficients[1:].conj()]
+        )
 
         # Notice: The polynomial coefficients are arranged in descending
         #         order of powers
