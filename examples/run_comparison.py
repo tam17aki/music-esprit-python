@@ -3,7 +3,6 @@
 
 This script runs a comparative analysis of high-resolution parameter
 estimation algorithms:
-
 - Spectral MUSIC
 - Root Min-Norm
 - Standard ESPRIT (LS)
