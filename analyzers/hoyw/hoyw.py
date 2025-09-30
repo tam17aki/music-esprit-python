@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines HoywAnalyzer class for Higher-Order Yule-Walker (HOYW).
+"""Defines HoywAnalyzer class for Higher-Order Yule-Walker (HOYW) method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
@@ -95,13 +95,16 @@ class HoywAnalyzer(AnalyzerBase):
 
         # 4. Estimate frequency by finding roots from AR coefficients
         poly_coeffs = np.concatenate(([1], ar_coeffs))
-        estimated_freqs = find_freqs_from_roots(poly_coeffs, self.fs, self.n_sinusoids)
+        estimated_freqs = find_freqs_from_roots(
+            poly_coeffs, self.fs, self.n_sinusoids
+        )
 
         return estimated_freqs
 
     @staticmethod
     def _calculate_autocorrelation(
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128], n_lags: int
+        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        n_lags: int,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Calculate the autocorrelation of the signal.
 
@@ -125,7 +128,9 @@ class HoywAnalyzer(AnalyzerBase):
 
     @staticmethod
     def _build_autocorr_matrix(
-        autocorr: npt.NDArray[np.float64] | npt.NDArray[np.complex128], p: int, m: int
+        autocorr: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        p: int,
+        m: int,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Build the autocorrelation matrix R for the HOYW equations.
 
@@ -153,7 +158,9 @@ class HoywAnalyzer(AnalyzerBase):
 
     @staticmethod
     def _build_autocorr_vector(
-        autocorr: npt.NDArray[np.float64] | npt.NDArray[np.complex128], p: int, m: int
+        autocorr: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        p: int,
+        m: int,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Build the autocorrelation vector r for the HOYW equations.
 
