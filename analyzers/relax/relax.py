@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines RelaxAnalyzer class for RELAX algorithm.
+"""Defines RelaxAnalyzer class for the RELAX algorithm.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
