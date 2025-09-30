@@ -30,6 +30,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
 """
 
 import time
@@ -76,10 +77,10 @@ def main() -> None:
         "Spectral MUSIC": SpectralMusicAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
-        "Root MUSIC": RootMusicAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
         "Spectral MUSIC FB": SpectralMusicAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
+        "Root MUSIC": RootMusicAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
         "Root MUSIC FB": RootMusicAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids
         ),
