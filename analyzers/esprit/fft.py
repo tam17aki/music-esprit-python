@@ -192,7 +192,9 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         )
         for i in range(n_components):
             kernel_vector = kernel_matrix[:, i]
-            conv_result = fftconvolve(signal, kernel_vector[::-1], mode="valid")
+            conv_result = fftconvolve(
+                signal, kernel_vector[::-1], mode="valid"
+            )
             projected_matrix[:, i] = conv_result[: self.subspace_dim]
         return projected_matrix
 
