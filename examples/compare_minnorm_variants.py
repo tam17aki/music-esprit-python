@@ -77,11 +77,11 @@ def main() -> None:
         "Spectral Min-Norm": SpectralMinNormAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
-        "Root Min-Norm": RootMinNormAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids
-        ),
         "Spectral Min-Norm FB": SpectralMinNormAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
+        ),
+        "Root Min-Norm": RootMinNormAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids
         ),
         "Root Min-Norm FB": RootMinNormAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids
