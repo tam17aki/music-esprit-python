@@ -37,7 +37,10 @@ import numpy as np
 
 from analyzers.music.fast import FastMusicAnalyzer
 from analyzers.music.root import RootMusicAnalyzer, RootMusicAnalyzerFB
-from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
+from analyzers.music.spectral import (
+    SpectralMusicAnalyzer,
+    SpectralMusicAnalyzerFB,
+)
 from cli import (
     compute_summary_row,
     parse_args,
@@ -65,7 +68,11 @@ def main() -> None:
     # --- 2. Generate Test Signal ---
     true_params = create_true_parameters(config)
     noisy_signal = generate_test_signal(
-        config.fs, config.duration, config.snr_db, true_params, is_complex=args.complex
+        config.fs,
+        config.duration,
+        config.snr_db,
+        true_params,
+        is_complex=args.complex,
     )
 
     # --- 3. Print Setup and Run Analyses ---
@@ -78,7 +85,9 @@ def main() -> None:
         "Spectral MUSIC FB": SpectralMusicAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
-        "Root MUSIC": RootMusicAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
+        "Root MUSIC": RootMusicAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids
+        ),
         "Root MUSIC FB": RootMusicAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids
         ),
