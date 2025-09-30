@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines StandardEspritAnalyzer class to solve frequencies via ESPRIT.
+"""Defines StandardEspritAnalyzer class for ESPRIT method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
