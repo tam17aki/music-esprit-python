@@ -134,7 +134,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         k_nystrom = self.nystrom_rank_factor * n_complex_sinusoids
         if not n_complex_sinusoids < k_nystrom < self.subspace_dim:
             warnings.warn(
-                "Invalid model order for Nyström method. Adjust nystrom_rank_factor."
+                "Invalid model order for Nyström method. "
+                + "Adjust nystrom_rank_factor."
             )
             k_nystrom = int((n_complex_sinusoids + self.subspace_dim) / 2)
 
@@ -237,9 +238,13 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         u = np.vstack([u11, u21])
         _g_matrix = u @ np.diag(np.sqrt(safe_eigvals))
         if np.isrealobj(_g_matrix):
-            g_matrix_float: npt.NDArray[np.float64] = _g_matrix.astype(np.float64)
+            g_matrix_float: npt.NDArray[np.float64] = _g_matrix.astype(
+                np.float64
+            )
             return g_matrix_float
-        g_matrix_complex: npt.NDArray[np.complex128] = _g_matrix.astype(np.complex128)
+        g_matrix_complex: npt.NDArray[np.complex128] = _g_matrix.astype(
+            np.complex128
+        )
         return g_matrix_complex
 
     def _compute_subspace_from_g(
@@ -273,12 +278,16 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         eigvals_g, u_g = eigh(g_h_g)  # eigenvalues Lambda_G, basis U_G
         idx = np.argsort(eigvals_g)[::-1]
         u_g = u_g[:, idx]
-        signal_subspace_unortho = (matrix_g @ u_g)[:, :n_components]  #  Pi = G * U_G
+        signal_subspace_unortho = (matrix_g @ u_g)[:, :n_components]
         _q_matrix, _ = qr(signal_subspace_unortho, mode="economic")
         if np.isrealobj(_q_matrix):
-            q_matrix_float: npt.NDArray[np.float64] = _q_matrix.astype(np.float64)
+            q_matrix_float: npt.NDArray[np.float64] = _q_matrix.astype(
+                np.float64
+            )
             return q_matrix_float
-        q_matrix_complex: npt.NDArray[np.complex128] = _q_matrix.astype(np.complex128)
+        q_matrix_complex: npt.NDArray[np.complex128] = _q_matrix.astype(
+            np.complex128
+        )
         return q_matrix_complex
 
     @override
