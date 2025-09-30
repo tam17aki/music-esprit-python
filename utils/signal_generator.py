@@ -70,7 +70,8 @@ def create_true_parameters(
         rng (np.random.Generator, optional): Random generator.
 
     Returns:
-        SinusoidParameters: An object containing the true signal params.
+        SinusoidParameters:
+            An object containing the true signal parameters.
     """
     # Generate the random parts of the parameters
     amps_true, phases_true = _generate_amps_phases(
