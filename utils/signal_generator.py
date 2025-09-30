@@ -53,7 +53,9 @@ def _generate_amps_phases(
     """
     if rng is None:
         rng = np.random.default_rng()
-    amps = rng.uniform(amp_range[0], amp_range[1], n_sinusoids).astype(np.float64)
+    amps = rng.uniform(amp_range[0], amp_range[1], n_sinusoids).astype(
+        np.float64
+    )
     phases = rng.uniform(-np.pi, np.pi, n_sinusoids).astype(np.float64)
     return amps, phases
 
@@ -102,7 +104,8 @@ def synthesize_sinusoids(
     Returns:
         np.ndarray: Sum of multiple sinusoids (float64 or complex128).
     """
-    t = np.linspace(0, duration, int(fs * duration), endpoint=False).reshape(1, -1)
+    n_samples = int(fs * duration)
+    t = np.linspace(0, duration, n_samples, endpoint=False).reshape(1, -1)
     freqs = params.frequencies.reshape(-1, 1)
     amps = params.amplitudes.reshape(-1, 1)
     phases = params.phases.reshape(-1, 1)
@@ -169,6 +172,8 @@ def generate_test_signal(
             The generated noisy test signal (float64 or complex128),
             depending on the `is_complex` flag.
     """
-    clean_signal = synthesize_sinusoids(fs, duration, params, is_complex=is_complex)
+    clean_signal = synthesize_sinusoids(
+        fs, duration, params, is_complex=is_complex
+    )
     noisy_signal = add_awgn(clean_signal, snr_db)
     return noisy_signal
