@@ -73,7 +73,11 @@ def main() -> None:
     # --- 2. Generate Test Signal ---
     true_params = create_true_parameters(config)
     noisy_signal = generate_test_signal(
-        config.fs, config.duration, config.snr_db, true_params, is_complex=args.complex
+        config.fs,
+        config.duration,
+        config.snr_db,
+        true_params,
+        is_complex=args.complex,
     )
 
     # --- 3. Print Setup and Run Analyses ---
@@ -89,12 +93,18 @@ def main() -> None:
             subspace_ratio=args.subspace_ratio,
         ),
         "Standard ESPRIT (LS)": StandardEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSEspritSolver(),
         ),
         "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSEspritSolver(),
         ),
-        "HOYW": HoywAnalyzer(config.fs, config.n_sinusoids, ar_order=args.ar_order),
+        "HOYW": HoywAnalyzer(
+            config.fs, config.n_sinusoids, ar_order=args.ar_order
+        ),
         "RELAX": RelaxAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
     }
 
