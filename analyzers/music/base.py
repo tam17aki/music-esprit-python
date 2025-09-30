@@ -55,7 +55,7 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         try:
             _, eigenvectors = eigh(cov_matrix)
         except LinAlgError:
-            warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
+            warnings.warn("EVD on covariance matrix failed.")
             return None
 
         # The noise subspace is the set of vectors corresponding to the
