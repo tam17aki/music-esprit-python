@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines SpectralMusicAnalyzer class for Spectral MUSIC.
+"""Defines SpectralMusicAnalyzer class for Spectral MUSIC method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
