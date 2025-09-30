@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines NystromEspritAnalyzer class for Nyström-based ESPRIT method.
+"""Defines NystromEspritAnalyzer class for the Nyström-based ESPRIT method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
