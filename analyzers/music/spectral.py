@@ -126,8 +126,10 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 
         # 6. Make a mask that only handles positive frequencies
         positive_freq_mask = freq_grid >= 0
+        freq_grid = freq_grid[positive_freq_mask]
+        music_spectrum = music_spectrum[positive_freq_mask]
 
-        return freq_grid[positive_freq_mask], music_spectrum[positive_freq_mask]
+        return freq_grid, music_spectrum
 
     @override
     def get_params(self) -> AnalyzerParameters:
