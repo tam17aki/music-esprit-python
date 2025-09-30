@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines StandardEspritAnalyzer class for ESPRIT method.
+"""Defines StandardEspritAnalyzer class for the ESPRIT method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
