@@ -197,6 +197,7 @@ This project is organized into a modular, object-oriented structure to promote c
 - **`utils/`**: A package for reusable helper modules and data structures that are decoupled from the specific analyzer implementations.
   - `data_models.py`: Defines the core `dataclass` models for the project.
     - `ExperimentConfig`: Encapsulates all parameters for a simulation run (e.g., SNR, duration), defining the "world" in which the signals exist.
+    - `AlgorithmConfig`: Encapsulates hyperparameters for the analyzer algorithms (e.g., subspace ratio, number of grids), defining the configuration of the "tools".
     - `SinusoidParameters`: Represents the ground truth or estimated parameters of a signal, serving as the data "payload" that is generated and analyzed.
   - `signal_generator.py`: Provides functions for synthesizing test signals.
 - **`cli.py`**: A module dedicated to the Command-Line Interface. It handles argument parsing and the formatting of results for display.
@@ -206,6 +207,7 @@ This project is organized into a modular, object-oriented structure to promote c
     - `compare_standard_esprit.py`: The demonstration script that runs a comparative analysis of Standard ESPRIT (LS/TLS) and Unitary ESPRIT (LS/TLS) algorithm.
     - `compare_fast_esprit.py`: The demonstration script that runs a comparative analysis of Nyström-based ESPRIT (LS/TLS) and FFT-ESPRIT (LS/TLS) algorithm.
     - `compare_minnorm_variants.py`: The demonstration script that runs a comparative analysis of Spectral and Root Min-Norm algorithm, including their Forward-Backward enhanced versions.
+    - `all_in_one_demo.py`: A comprehensive benchmark script that runs an exhaustive comparison of **all** implemented analyzers and their variants. Ideal for thorough performance evaluation and regression testing.
 
 This layered design allows for maximum code reuse and easy extension.
 
