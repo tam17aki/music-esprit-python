@@ -35,7 +35,9 @@ TOLERANCE_LEVEL = 1e-4
 ZERO_LEVEL = 1e-9
 
 
-def _compute_parabolic_offset(y_minus_1: float, y_0: float, y_plus_1: float) -> float:
+def _compute_parabolic_offset(
+    y_minus_1: float, y_0: float, y_plus_1: float
+) -> float:
     """Compute a peak's fractional offset via parabolic interpolation.
 
     Args:
@@ -156,7 +158,9 @@ def find_peaks_from_spectrum(
         return np.sort(freq_grid[strongest_peak_indices])
 
     # Interpolation allows for more accurate peak position (index)
-    refined_indices, _ = _parabolic_interpolation(spectrum, strongest_peak_indices)
+    refined_indices, _ = _parabolic_interpolation(
+        spectrum, strongest_peak_indices
+    )
 
     # Calculate the final frequency from the interpolated index
     # (freq_grid[1] - freq_grid[0]) is frequency bin width
@@ -190,10 +194,13 @@ def filter_unique_freqs(
 
     unique_freqs: list[npt.NDArray[np.float64]] = []
     for freq in raw_freqs:
-        if any(np.abs(freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs):
+        if any(
+            np.abs(freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs
+        ):
             continue
         unique_freqs.append(freq)
 
+    # return np.sort(np.array(unique_freqs))[:n_sinusoids]
     return np.sort(np.array(unique_freqs[:n_sinusoids]))
 
 
@@ -244,7 +251,10 @@ def find_freqs_from_roots(
 
 
 def _find_and_refine_strongest_peak(
-    spectrum: npt.NDArray[np.float64], fs: float, n_fft: int, is_real_signal: bool
+    spectrum: npt.NDArray[np.float64],
+    fs: float,
+    n_fft: int,
+    is_real_signal: bool,
 ) -> float:
     """Find and refine the strongest peak in an FFT spectrum.
 
@@ -280,15 +290,16 @@ def _find_and_refine_strongest_peak(
         freq_grid = fftshift(fftfreq(n_fft, d=1 / fs))
 
     peak_idx = np.argmax(target_spectrum)
+    peak_freq = freq_grid[peak_idx]
     if 0 < peak_idx < len(target_spectrum) - 1:
         y_m1, y_0, y_p1 = target_spectrum[peak_idx - 1 : peak_idx + 2]
         p = _compute_parabolic_offset(y_m1, y_0, y_p1)
         if p > 0:
-            est_freq = (1 - p) * freq_grid[peak_idx] + p * freq_grid[peak_idx + 1]
+            est_freq = (1 - p) * peak_freq + p * freq_grid[peak_idx + 1]
         else:
-            est_freq = (1 + p) * freq_grid[peak_idx] - p * freq_grid[peak_idx - 1]
+            est_freq = (1 + p) * peak_freq - p * freq_grid[peak_idx - 1]
     else:
-        est_freq = freq_grid[peak_idx]
+        est_freq = peak_freq
 
     return float(est_freq)
 
