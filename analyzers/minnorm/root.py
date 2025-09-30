@@ -69,7 +69,9 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
         # 1. Estimate the noise subspace (reusing the base class method)
         noise_subspace = self._estimate_noise_subspace(signal)
         if noise_subspace is None:
-            warnings.warn("Failed to estimate noise subspace. Returning empty result.")
+            warnings.warn(
+                "Failed to estimate noise subspace. Returning empty result."
+            )
             return np.array([])
 
         # 2. Calculate the minimum norm vector `d` from the noise
