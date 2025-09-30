@@ -97,7 +97,6 @@ def get_music_analyzers(
         dict[str, MusicAnalyzerBase]:
             A dictionary mapping human-readable method names to their
             corresponding analyzer instances.
-
     """
     analyzers: dict[str, MusicAnalyzerBase] = {
         "Spectral MUSIC": SpectralMusicAnalyzer(
