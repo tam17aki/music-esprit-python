@@ -37,7 +37,8 @@ class LSEspritSolver:
     """Solves the ESPRIT rotational invariance equation using LS."""
 
     def solve(
-        self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+        self,
+        signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64]:
         """Estimate angular frequencies from a signal subspace via LS.
 
@@ -69,9 +70,7 @@ class LSEspritSolver:
         try:
             eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
-            warnings.warn(
-                "Eigenvalue decomposition failed while solving rotation operator."
-            )
+            warnings.warn("EVD failed while solving rotation operator.")
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
@@ -84,7 +83,8 @@ class TLSEspritSolver:
     """Solves the ESPRIT rotational invariance equation using TLS."""
 
     def solve(
-        self, signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+        self,
+        signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ) -> npt.NDArray[np.float64]:
         """Estimate angular frequencies from a signal subspace via TLS.
 
@@ -108,7 +108,9 @@ class TLSEspritSolver:
         # Form the augmented matrix for SVD
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
-        _augmented_subspace = np.concatenate((subspace_upper, subspace_lower), axis=1)
+        _augmented_subspace = np.concatenate(
+            (subspace_upper, subspace_lower), axis=1
+        )
         if np.isrealobj(signal_subspace):
             augmented_subspace = _augmented_subspace.astype(np.float64)
         else:
@@ -136,9 +138,7 @@ class TLSEspritSolver:
         try:
             eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
-            warnings.warn(
-                "Eigenvalue decomposition failed while solving rotation operator."
-            )
+            warnings.warn("EVD failed while solving rotation operator.")
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
@@ -151,7 +151,9 @@ class _UnitaryEspritHelpers:
     """Mixin class providing helpers for Unitary ESPRIT solvers."""
 
     @staticmethod
-    def _get_unitary_transform_matrix(subspace_dim: int) -> npt.NDArray[np.complex128]:
+    def _get_unitary_transform_matrix(
+        subspace_dim: int,
+    ) -> npt.NDArray[np.complex128]:
         """Construct the unitary matrix Q for real-valued transform.
 
         Args:
@@ -164,7 +166,9 @@ class _UnitaryEspritHelpers:
         identity = np.eye(p, dtype=np.complex128)
         exchange = identity[:, ::-1]  # exchange matrix
         if subspace_dim % 2 == 0:  # L is even
-            q_matrix = np.block([[identity, 1j * identity], [exchange, -1j * exchange]])
+            q_matrix = np.block(
+                [[identity, 1j * identity], [exchange, -1j * exchange]]
+            )
         else:  #  L is odd
             q_left = np.vstack(
                 [identity, np.zeros((1, p)), exchange], dtype=np.complex128
@@ -172,7 +176,8 @@ class _UnitaryEspritHelpers:
             q_center = np.zeros((subspace_dim, 1), dtype=np.complex128)
             q_center[p] = np.sqrt(2.0).astype(np.complex128)
             q_right = np.vstack(
-                [1j * identity, np.zeros((1, p)), -1j * exchange], dtype=np.complex128
+                [1j * identity, np.zeros((1, p)), -1j * exchange],
+                dtype=np.complex128,
             )
             q_matrix = np.hstack([q_left, q_center, q_right])
         return q_matrix
@@ -258,7 +263,7 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
         try:
             eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
-            warnings.warn("Eigenvalue decomposition of Y_LS failed.")
+            warnings.warn("EVD of Y_LS failed.")
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
@@ -304,7 +309,9 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
         t2 = k2 @ signal_subspace
 
         try:
-            _, _, vh = svd(np.concatenate((t1, t2), axis=1), full_matrices=False)
+            _, _, vh = svd(
+                np.concatenate((t1, t2), axis=1), full_matrices=False
+            )
         except LinAlgError:
             warnings.warn("SVD on augmented_subspace did not converge.")
             return np.array([])
@@ -324,7 +331,7 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
         try:
             eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
-            warnings.warn("Eigenvalue decomposition of Y_TLS failed.")
+            warnings.warn("EVD of Y_TLS failed.")
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
@@ -373,13 +380,15 @@ class WoodburyLSEspritSolver:
 
         # 2. Calculate q*q^H (scalar)
         #    Since q_matrix is orthonormal, ||q_last_row||^2 <= 1
-        q_q_h = np.dot(q_last_row, q_last_row.conj().T).item()  # .item() to scalar
+        q_q_h = np.dot(
+            q_last_row, q_last_row.conj().T
+        ).item()  # .item() to scalar
 
         # 3. Calculate the coefficients needed to calculate
         #    (I - q^H*q)^-1. Coefficient = 1 / (1 - q*q^H)
         denominator = 1 - q_q_h
         if abs(denominator) < ZERO_LEVEL:
-            warnings.warn("Denominator in Sherman-Morrison formula is close to zero.")
+            warnings.warn("Denominator in Woodbury formula is close to zero.")
             # In this case, (I - q^H*q) is a nearly singular matrix.
             # It is safe to fall back to the LS solution using pinv.
             rotation_operator = pinv(q_upper) @ q_lower
@@ -399,7 +408,7 @@ class WoodburyLSEspritSolver:
         try:
             eigenvalues = eigvals(rotation_operator)
         except LinAlgError:
-            warnings.warn("Eigenvalue decomposition failed in Woodbury solver.")
+            warnings.warn("EVD failed in Woodbury solver.")
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
