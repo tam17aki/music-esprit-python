@@ -84,7 +84,9 @@ def print_analyzer_info(analyzer: AnalyzerBase) -> None:
         print(f"  {formatted_key}: {formatted_value}")
 
 
-def print_results(analyzer: AnalyzerBase, true_params: SinusoidParameters) -> None:
+def print_results(
+    analyzer: AnalyzerBase, true_params: SinusoidParameters
+) -> None:
     """Print the estimation results and errors from a fitted analyzer.
 
     This function retrieves estimated parameters from a fitted analyzer
@@ -173,7 +175,8 @@ def parse_args() -> argparse.Namespace:
         nargs=2,
         default=[0.5, 1.5],
         metavar=("AMP_MIN", "AMP_MAX"),
-        help="Range for random generation of sinusoidal amplitudes (default: 0.5 1.5).",
+        help="Range for random generation of sinusoidal amplitudes "
+        + "(default: 0.5 1.5).",
     )
     parser.add_argument(
         "--subspace_ratio",
