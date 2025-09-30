@@ -58,7 +58,8 @@ class RelaxAnalyzer(AnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            n_fft_iip (int, optional): The length of iterative interpolation FFT.
+            n_fft_iip (int, optional):
+                The length of iterative interpolation FFT.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio=0.5)
         self.n_fft_iip = n_fft_iip
@@ -83,7 +84,9 @@ class RelaxAnalyzer(AnalyzerBase):
                 residual_signal, n_peaks=1, fs=self.fs
             )[0]
             estimated_freqs.append(strongest_freq)
-            amp, phase = self._estimate_amp_phase(residual_signal, strongest_freq)
+            amp, phase = self._estimate_amp_phase(
+                residual_signal, strongest_freq
+            )
             params.frequency = float(strongest_freq)
             params.amplitude = float(amp)
             params.phase = float(phase)
