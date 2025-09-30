@@ -79,16 +79,14 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         # 1. Estimate the noise subspace (reusing the base class method)
         noise_subspace = self._estimate_noise_subspace(signal)
         if noise_subspace is None:
-            warnings.warn("Failed to estimate noise subspace. Returning empty result.")
+            warnings.warn("Failed to estimate noise subspace.")
             return np.array([])
 
         # 2. Calculate the minimum norm vector `d` from the noise
         #    subspace
         min_norm_vector = self._calculate_min_norm_vector(noise_subspace)
         if min_norm_vector is None:
-            warnings.warn(
-                "Failed to compute the Min-Norm vector. Returning empty result."
-            )
+            warnings.warn("Failed to compute the Min-Norm vector.")
             return np.array([])
 
         # 3. Calculate Min-Norm spectrum using `d`
@@ -104,7 +102,8 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         return estimated_freqs
 
     def _calculate_min_norm_spectrum(
-        self, min_norm_vector: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+        self,
+        min_norm_vector: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Calculate the Min-Norm pseudospectrum over a frequency grid.
 
