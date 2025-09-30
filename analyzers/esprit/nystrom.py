@@ -143,7 +143,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         data_matrix = self._build_hankel_matrix(signal, self.subspace_dim)
 
         # --- Step 2: Calculate R11 and R21 ---
-        r11, r21 = self._compute_sub_covariance_matrices(data_matrix, k_nystrom)
+        r11, r21 = self._compute_sub_covariance_matrices(
+            data_matrix, k_nystrom
+        )
 
         # --- Step 3: Build the matrix G ---
         try:
