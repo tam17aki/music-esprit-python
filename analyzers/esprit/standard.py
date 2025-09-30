@@ -37,7 +37,7 @@ from .solvers import LSEspritSolver, TLSEspritSolver
 
 
 class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
-    """A class to solve frequencies via ESPRIT."""
+    """Implements the standard (classical) ESPRIT method."""
 
     def __init__(
         self,
