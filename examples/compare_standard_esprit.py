@@ -69,7 +69,11 @@ def main() -> None:
     # --- 2. Generate Test Signal ---
     true_params = create_true_parameters(config)
     noisy_signal = generate_test_signal(
-        config.fs, config.duration, config.snr_db, true_params, is_complex=args.complex
+        config.fs,
+        config.duration,
+        config.snr_db,
+        true_params,
+        is_complex=args.complex,
     )
 
     # --- 3. Print Setup and Run Analyses ---
@@ -77,13 +81,19 @@ def main() -> None:
 
     analyzers_to_test = {
         "ESPRIT (LS)": StandardEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSEspritSolver(),
         ),
         "ESPRIT (TLS)": StandardEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=TLSEspritSolver(),
         ),
         "Unitary ESPRIT (LS)": UnitaryEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSUnitaryEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSUnitaryEspritSolver(),
         ),
         "Unitary ESPRIT (TLS)": UnitaryEspritAnalyzer(
             fs=config.fs,
