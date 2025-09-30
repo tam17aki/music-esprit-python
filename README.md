@@ -53,13 +53,14 @@ The project is architected with a clean, object-oriented design, emphasizing cod
 
 After installation, you can run the provided example scripts to see the analyzers in action. These scripts are located in the `examples/` directory and serve as a starting point for your own experiments.
 
-### Basic Demonstration
+### 1. Quick Start: The Main Comparison Demo
 
-The main demonstration script, `run_comparison.py`, provides a comprehensive overview of all major algorithm families.
+To get a quick overview of the main algorithm families, run the primary demonstration script:
 
 ```bash
 python examples/run_comparison.py
 ```
+This script compares a representative analyzer from each major family (MUSIC, ESPRIT, HOYW, etc.).
 
 #### Example Output
 Running the command above will produce an output similar to this:
@@ -86,9 +87,9 @@ HOYW                 | 0.332008 | 0.491927       | 0.022890 | 0.144001
 RELAX                | 0.002666 | 0.002439       | 0.001025 | 0.000704   
 ```
 
-(Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)
+*(Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)*
 
-### Running Focused Comparisons
+### 2. Focused Comparisons
 
 While `run_comparison.py` provides a great overview of the main algorithm families, you may want to dive deeper into the specific trade-offs within each family. The following scripts are dedicated to these focused comparisons.
 
@@ -122,7 +123,17 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
 
 These scripts are the best place to understand the subtle but important differences between the various implementations provided in this library.
 
-### Command-Line Options
+### 3. Comprehensive Benchmark: The All-in-One Script
+
+For an exhaustive comparison of **all** implemented analyzers and their variants (including LS/TLS solvers and Forward-Backward versions), run the comprehensive benchmark script:
+
+```bash
+    python examples/all_in_one_demo.py
+ ```
+
+*(Note: This script may take longer to run as it executes every available combination.)*
+
+### 4. Command-Line Options
 
 All of the above experiments can be easily customized using a shared set of command-line arguments. This allows you to test the algorithms' performance with different signals and noise conditions.
 
