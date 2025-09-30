@@ -64,7 +64,9 @@ class AnalyzerBase(ABC):
         self.subspace_dim: int = -1
         self.est_params: SinusoidParameters | None = None
 
-    def fit(self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]) -> Self:
+    def fit(
+        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+    ) -> Self:
         """Run the full parameter estimation process.
 
         This method takes an input signal, runs the complete estimation
@@ -91,9 +93,12 @@ class AnalyzerBase(ABC):
             return self
         freqs = self._estimate_frequencies(signal)
         if freqs.size != self.n_sinusoids:
-            self.est_params = SinusoidParameters(freqs, np.array([]), np.array([]))
+            self.est_params = SinusoidParameters(
+                freqs, np.array([]), np.array([])
+            )
             warnings.warn(
-                f"Expected {self.n_sinusoids} components, but found {freqs.size}."
+                f"Expected {self.n_sinusoids} components, "
+                + f"but found {freqs.size}."
             )
             return self
         amps, phases = self._estimate_amplitudes_phases(signal, freqs)
@@ -109,7 +114,8 @@ class AnalyzerBase(ABC):
 
     @staticmethod
     def _build_hankel_matrix(
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128], subspace_dim: int
+        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        subspace_dim: int,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Build the Hankel data matrix.
 
@@ -120,7 +126,9 @@ class AnalyzerBase(ABC):
         Returns:
             np.ndarray: The Hankel matrix (float64 or complex128).
         """
-        hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
+        hankel_matrix = hankel(
+            signal[:subspace_dim], signal[subspace_dim - 1 :]
+        )
         if np.isrealobj(signal):
             return hankel_matrix.astype(np.float64)
         return hankel_matrix.astype(np.complex128)
@@ -141,7 +149,9 @@ class AnalyzerBase(ABC):
         """
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
-        hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
+        hankel_matrix = hankel(
+            signal[:subspace_dim], signal[subspace_dim - 1 :]
+        )
         cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
         if np.isrealobj(signal):
             return cov_matrix.astype(np.float64)
@@ -189,7 +199,9 @@ class AnalyzerBase(ABC):
         try:
             complex_amps = pinv(vandermonde_matrix) @ signal
         except LinAlgError:
-            warnings.warn("Least squares estimation for amplitudes/phases failed.")
+            warnings.warn(
+                "Least squares estimation for amplitudes/phases failed."
+            )
             return np.array([]), np.array([])
 
         # 3. Extract amplitudes and phases
@@ -225,7 +237,9 @@ class AnalyzerBase(ABC):
     def frequencies(self) -> npt.NDArray[np.float64]:
         """Return the estimated frequencies in Hz after fitting."""
         if self.est_params is None:
-            raise AttributeError("Cannot access 'frequencies' before running fit().")
+            raise AttributeError(
+                "Cannot access 'frequencies' before running fit()."
+            )
         return self.est_params.frequencies
 
     @property
@@ -241,5 +255,7 @@ class AnalyzerBase(ABC):
     def phases(self) -> npt.NDArray[np.float64]:
         """Return the estimated phases in radians after fitting."""
         if self.est_params is None or self.est_params.phases.size == 0:
-            raise AttributeError("Cannot access 'phases' before fitting is complete.")
+            raise AttributeError(
+                "Cannot access 'phases' before fitting is complete."
+            )
         return self.est_params.phases
