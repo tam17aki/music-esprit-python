@@ -114,7 +114,9 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
         try:
             transformed_matrix = self._transform_complex_to_real(data_matrix)
         except ValueError:
-            warnings.warn("Failed to transform complex data matrix to real matrix.")
+            warnings.warn(
+                "Failed to transform complex data matrix to real matrix."
+            )
             return None
 
         # 3. Perform eigenvalue decomposion the Hermetial matrix in
@@ -123,7 +125,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
         try:
             _, eigenvectors = eigh(cov_matrix)
         except LinAlgError:
-            warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
+            warnings.warn("EVD on covariance matrix failed.")
             return None
 
         # 4. Estimated signal subspace is the (model_order) principal
