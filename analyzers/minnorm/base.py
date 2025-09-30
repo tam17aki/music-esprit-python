@@ -56,7 +56,9 @@ class MinNormAnalyzerBase(MusicAnalyzerBase, ABC):
         # If the first row vector is close to the zero vector,
         # the calculation may become unstable.
         if np.linalg.norm(first_row_h) < ZERO_LEVEL:
-            warnings.warn("The first row of the noise subspace is close to zero.")
+            warnings.warn(
+                "The first row of the noise subspace is close to zero."
+            )
             return None
 
         # d is a linear combination of the column vectors of E_n,
