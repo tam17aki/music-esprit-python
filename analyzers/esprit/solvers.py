@@ -132,7 +132,8 @@ class TLSEspritSolver:
             rotation_operator = pinv(v11) @ v12
         except LinAlgError:
             warnings.warn(
-                "TLS matrix inversion failed while computing rotation operator."
+                "TLS matrix inversion failed while computing rotation "
+                + "operator."
             )
             return np.array([])
         try:
@@ -325,7 +326,8 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
             rotation_operator = pinv(v11) @ v12
         except LinAlgError:
             warnings.warn(
-                "TLS matrix inversion failed while computing rotation operator."
+                "TLS matrix inversion failed while computing rotation "
+                + "operator."
             )
             return np.array([])
         try:
