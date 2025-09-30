@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines the Command-Line Interface (CLI) for the demo script.
+"""Defines the Command-Line Interface (CLI) for the demonstration script.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
