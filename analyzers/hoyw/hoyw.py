@@ -121,7 +121,9 @@ class HoywAnalyzer(AnalyzerBase):
         """
         n_samples = signal.size
         corr_full = correlate(signal, signal)
-        autocorr = corr_full[n_samples - 1 : n_samples - 1 + n_lags] / n_samples
+        autocorr = (
+            corr_full[n_samples - 1 : n_samples - 1 + n_lags] / n_samples
+        )
         if np.isrealobj(signal):
             return autocorr.astype(np.float64)
         return autocorr.astype(np.complex128)
