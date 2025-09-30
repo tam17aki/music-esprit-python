@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines UnitaryEspritAnalyzer class to solve frequencies via Unitary ESPRIT.
+"""Defines UnitaryEspritAnalyzer class for Unitary ESPRIT method.
 
 Copyright (C) 2025 by Akira TAMAMORI
 
