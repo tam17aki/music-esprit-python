@@ -109,6 +109,10 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
             warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
             return None
 
+        # Estimated signal subspace is the (model_order) principal
+        # eigenvectors, where model_order = 2 * n_sinusoids if signal is
+        # real-valued, else model_order = n_sinusoids if signal is
+        # complex-valued.
         if np.isrealobj(signal):
             # For real signals, positive and negative frequency pairs
             # are considered
@@ -116,10 +120,6 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
         else:
             # For complex signals, the number of signals themselves
             model_order = self.n_sinusoids
-        # Estimated signal subspace is the (model_order) principal
-        # eigenvectors, where model_order = 2 * n_sinusoids if signal is
-        # real-valued, else model_order = n_sinusoids if signal is
-        # complex-valued.
         signal_subspace = eigenvectors[:, -model_order:]
         if np.isrealobj(signal_subspace):
             return signal_subspace.astype(np.float64)
