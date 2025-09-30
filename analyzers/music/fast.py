@@ -103,8 +103,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         if np.iscomplexobj(signal):
             warnings.warn(
                 "FastMusicAnalyzer received a complex-valued signal. "
-                + "This algorithm is designed for real-valued signals and will "
-                + "discard the imaginary part. For complex signal analysis, "
+                + "This algorithm is designed for real-valued signals and will"
+                + " discard the imaginary part. For complex signal analysis, "
                 + "consider using other analyzers like StandardEspritAnalyzer."
             )
         real_signal = np.real(signal)
@@ -174,7 +174,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         )
         if all_peaks.size == 0:
             warnings.warn(
-                "No periodic peaks found in ACF. Using the highest point as fallback."
+                "No periodic peaks found in ACF. "
+                + "Using the highest point as fallback."
             )
             best_peak_local_index = np.argmax(search_range)
         elif all_peaks.size > 0 and "prominences" in properties:
