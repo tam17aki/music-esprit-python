@@ -56,7 +56,10 @@ from analyzers.minnorm.spectral import (
 )
 from analyzers.music.fast import FastMusicAnalyzer
 from analyzers.music.root import RootMusicAnalyzer, RootMusicAnalyzerFB
-from analyzers.music.spectral import SpectralMusicAnalyzer, SpectralMusicAnalyzerFB
+from analyzers.music.spectral import (
+    SpectralMusicAnalyzer,
+    SpectralMusicAnalyzerFB,
+)
 from analyzers.relax.relax import RelaxAnalyzer
 from cli import (
     compute_summary_row,
@@ -85,7 +88,11 @@ def main() -> None:
     # --- 2. Generate Test Signal ---
     true_params = create_true_parameters(config)
     noisy_signal = generate_test_signal(
-        config.fs, config.duration, config.snr_db, true_params, is_complex=args.complex
+        config.fs,
+        config.duration,
+        config.snr_db,
+        true_params,
+        is_complex=args.complex,
     )
 
     # --- 3. Print Setup and Run Analyses ---
@@ -98,7 +105,9 @@ def main() -> None:
         "Spectral MUSIC FB": SpectralMusicAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
         ),
-        "Root MUSIC": RootMusicAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
+        "Root MUSIC": RootMusicAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids
+        ),
         "Root MUSIC FB": RootMusicAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids
         ),
@@ -120,15 +129,23 @@ def main() -> None:
         "Root Min-Norm FB": RootMinNormAnalyzerFB(
             fs=config.fs, n_sinusoids=config.n_sinusoids
         ),
-        "HOYW": HoywAnalyzer(config.fs, config.n_sinusoids, ar_order=args.ar_order),
+        "HOYW": HoywAnalyzer(
+            config.fs, config.n_sinusoids, ar_order=args.ar_order
+        ),
         "ESPRIT (LS)": StandardEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSEspritSolver(),
         ),
         "ESPRIT (TLS)": StandardEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=TLSEspritSolver(),
         ),
         "Unitary ESPRIT (LS)": UnitaryEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSUnitaryEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSUnitaryEspritSolver(),
         ),
         "Unitary ESPRIT (TLS)": UnitaryEspritAnalyzer(
             fs=config.fs,
@@ -148,10 +165,14 @@ def main() -> None:
             nystrom_rank_factor=args.rank_factor,
         ),
         "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSEspritSolver(),
         ),
         "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, solver=TLSEspritSolver()
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=TLSEspritSolver(),
         ),
         "FFT-ESPRIT (Woodbury-LS)": FFTEspritAnalyzer(
             fs=config.fs,
