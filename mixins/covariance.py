@@ -37,7 +37,8 @@ class ForwardBackwardMixin:
 
     @staticmethod
     def _build_covariance_matrix(
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128], subspace_dim: int
+        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+        subspace_dim: int,
     ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
         """Build the forward-backward averaged covariance matrix.
 
@@ -52,7 +53,9 @@ class ForwardBackwardMixin:
         # 1. Standard forward covariance matrix
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
-        hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
+        hankel_matrix = hankel(
+            signal[:subspace_dim], signal[subspace_dim - 1 :]
+        )
         cov_matrix_f = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
 
         # 2. Backward covariance matrix
