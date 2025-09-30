@@ -82,7 +82,9 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
             return np.array([])
 
         # 2. Calculate MUSIC pseudospectrum
-        freq_grid, music_spectrum = self._calculate_music_spectrum(noise_subspace)
+        freq_grid, music_spectrum = self._calculate_music_spectrum(
+            noise_subspace
+        )
 
         # 3. Detecting peaks from a spectrum
         estimated_freqs = find_peaks_from_spectrum(
@@ -92,7 +94,8 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         return estimated_freqs
 
     def _calculate_music_spectrum(
-        self, noise_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
+        self,
+        noise_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Calculate the MUSIC pseudospectrum over a frequency grid.
 
