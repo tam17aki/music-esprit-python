@@ -126,8 +126,18 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
             warnings.warn("Eigenvalue decomposition on covariance matrix failed.")
             return None
 
-        # 4. Estimated signal subspace is the 2*M principal eigenvectors
-        signal_subspace = eigenvectors[:, -2 * self.n_sinusoids :]
+        # 4. Estimated signal subspace is the (model_order) principal
+        # eigenvectors, where model_order = 2 * n_sinusoids if signal is
+        # real-valued, else model_order = n_sinusoids if signal is
+        # complex-valued.
+        if np.isrealobj(signal):
+            # For real signals, positive and negative frequency pairs
+            # are considered
+            model_order = 2 * self.n_sinusoids
+        else:
+            # For complex signals, the number of signals themselves
+            model_order = self.n_sinusoids
+        signal_subspace = eigenvectors[:, -model_order:]
 
         return signal_subspace
 
