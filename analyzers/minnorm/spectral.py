@@ -26,10 +26,10 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 from numpy.fft import fft, fftfreq
 
 from mixins.covariance import ForwardBackwardMixin
+from utils.data_models import ComplexArray, FloatArray, NumpyFloat, SignalArray
 
 from .._common import find_peaks_from_spectrum
 from ..models import AnalyzerParameters
@@ -62,18 +62,16 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         self.n_grids: int = n_grids
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies of multi-sinusoids via Spec. Min-Norm.
 
         This method overrides the abstract method in the base class.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
+            FloatArray: Estimated frequencies in Hz.
                 Returns empty arrays if estimation fails.
         """
         # 1. Estimate the noise subspace (reusing the base class method)
@@ -102,19 +100,18 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         return estimated_freqs
 
     def _calculate_min_norm_spectrum(
-        self,
-        min_norm_vector: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+        self, min_norm_vector: FloatArray | ComplexArray
+    ) -> tuple[FloatArray, FloatArray]:
         """Calculate the Min-Norm pseudospectrum over a frequency grid.
 
         Args:
-            min_norm_vector (np.ndarray):
-                The minimum norm vector (float64 or complex128).
+            min_norm_vector (FloatArray | ComplexArray):
+                The minimum norm vector.
 
         Returns:
-            tuple[np.ndarray, np.ndarray]:
-                - freq_grid: Frequency grid (float64).
-                - min_norm_spectrum: Min-Norm pseudospectrum (float64).
+            tuple[FloatArray, FloatArray]:
+                - freq_grid: Frequency grid
+                - min_norm_spectrum: Min-Norm pseudospectrum.
         """
         # 1. Calculate the FFT of mininum norm vector
         fft_noise_eigvec = fft(min_norm_vector, n=self.n_grids)
@@ -126,7 +123,7 @@ class SpectralMinNormAnalyzer(MinNormAnalyzerBase):
         music_spectrum = 1 / (power_spectra_noise + 1e-12)
 
         # 4. Build a frequency grid
-        freq_grid = fftfreq(self.n_grids, d=1 / self.fs).astype(np.float64)
+        freq_grid = fftfreq(self.n_grids, d=1 / self.fs).astype(NumpyFloat)
 
         # 5. Make a mask that only handles positive frequencies
         positive_freq_mask = freq_grid >= 0
