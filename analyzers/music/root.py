@@ -26,9 +26,15 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 
 from mixins.covariance import ForwardBackwardMixin
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 from .._common import find_freqs_from_roots
 from .base import MusicAnalyzerBase
@@ -52,17 +58,15 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         super().__init__(fs, n_sinusoids, subspace_ratio)
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies of multiple sinusoids using Root MUSIC.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray:
-                Estimated frequencies in Hz (float64).
+            FloatArray:
+                Estimated frequencies in Hz.
                 Returns an empty array on failure.
         """
         # 1. Estimate the noise subspace
@@ -83,18 +87,17 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
 
     @staticmethod
     def _calculate_polynomial_coefficients(
-        noise_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        noise_subspace: FloatArray | ComplexArray,
+    ) -> FloatArray | ComplexArray:
         """Calculate the coefficients of the Root MUSIC polynomial D(z).
 
         Args:
-            noise_subspace (np.ndarray):
-                The noise subspace matrix E_n (float64 or complex128).
+            noise_subspace (FloatArray | ComplexArray):
+                The noise subspace matrix E_n.
 
         Returns:
-            np.ndarray:
-                A vector of polynomial coefficients
-                (float64 or complex128).
+            FloatArray | ComplexArray:
+                A vector of polynomial coefficients.
         """
         # C = E_n * E_n^H
         projector_onto_noise = noise_subspace @ noise_subspace.conj().T
@@ -116,8 +119,8 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
         # Notice: The polynomial coefficients are arranged in descending
         #         order of powers
         if np.isrealobj(noise_subspace):
-            return coefficients.astype(np.float64)
-        return coefficients.astype(np.complex128)
+            return coefficients.astype(NumpyFloat)
+        return coefficients.astype(NumpyComplex)
 
 
 @final
