@@ -190,7 +190,7 @@ def filter_unique_freqs(raw_freqs: FloatArray, n_sinusoids: int) -> FloatArray:
         n_sinusoids (int): Number of sinusoids.
 
     Returns:
-        FloatArray: Filtered unique frequencies.
+        FloatArray: A sorted array of filtered unique frequencies.
     """
     if raw_freqs.size == 0:
         warnings.warn("No raw frequencies were estimated to be filtered.")
@@ -207,7 +207,6 @@ def filter_unique_freqs(raw_freqs: FloatArray, n_sinusoids: int) -> FloatArray:
             continue
         unique_freqs.append(freq)
 
-    # return np.sort(np.array(unique_freqs))[:n_sinusoids]
     return np.sort(np.array(unique_freqs[:n_sinusoids]))
 
 
