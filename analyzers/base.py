@@ -32,6 +32,8 @@ from scipy.linalg import LinAlgError, hankel, pinv
 from utils.data_models import (
     ComplexArray,
     FloatArray,
+    NumpyComplex,
+    NumpyFloat,
     SignalArray,
     SinusoidParameters,
 )
@@ -129,8 +131,8 @@ class AnalyzerBase(ABC):
             signal[:subspace_dim], signal[subspace_dim - 1 :]
         )
         if np.isrealobj(signal):
-            return hankel_matrix.astype(np.float64)
-        return hankel_matrix.astype(np.complex128)
+            return hankel_matrix.astype(NumpyFloat)
+        return hankel_matrix.astype(NumpyComplex)
 
     @staticmethod
     def _build_covariance_matrix(
@@ -200,14 +202,14 @@ class AnalyzerBase(ABC):
             return np.array([]), np.array([])
 
         # 3. Extract amplitudes and phases
-        estimated_amps = np.abs(complex_amps).astype(np.float64)
+        estimated_amps = np.abs(complex_amps).astype(NumpyFloat)
         if np.isrealobj(signal):
             # For a real-valued sinusoid A*cos(2*pi*f*t + phi), the
             # complex amplitude estimated using only the positive
             # frequency is (A/2)*exp(j*phi). Therefore, we need to
             # multiply the magnitude by 2.
             estimated_amps *= 2
-        estimated_phases = np.angle(complex_amps).astype(np.float64)
+        estimated_phases = np.angle(complex_amps).astype(NumpyFloat)
 
         # Sort results according to frequency for consistent comparison
         sort_indices = np.argsort(estimated_freqs)
