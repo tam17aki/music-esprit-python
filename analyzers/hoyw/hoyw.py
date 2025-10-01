@@ -26,9 +26,16 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import LinAlgError, svd, toeplitz
 from scipy.signal import correlate
+
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 from .._common import find_freqs_from_roots
 from ..base import AnalyzerBase
@@ -54,18 +61,15 @@ class HoywAnalyzer(AnalyzerBase):
         self.ar_order = ar_order if ar_order is not None else 512
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies using the rank-truncated HOYW method.
 
         Args:
-            signal (np.ndarray):
-                Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray:
-                Estimated frequencies in Hz (float64).
+            FloatArray:
+                Estimated frequencies in Hz.
                 Returns empty arrays if estimation fails.
         """
         p = self.ar_order  # L in the textbook
@@ -103,19 +107,16 @@ class HoywAnalyzer(AnalyzerBase):
 
     @staticmethod
     def _calculate_autocorrelation(
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        n_lags: int,
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        signal: SignalArray, n_lags: int
+    ) -> FloatArray | ComplexArray:
         """Calculate the autocorrelation of the signal.
 
         Args:
-            signal (np.ndarray):
-                Input signal (float64 or complex128).
-            n_lags (int):
-                Number of autocorrelation lags to compute.
+            signal (SignalArray): Input signal.
+            n_lags (int): Number of autocorrelation lags to compute.
 
         Returns:
-            np.ndarray:
+            FloatArray | ComplexArray:
                 A vector of autocorrelation values
                 [r(0), r(1), ..., r(n_lags-1)].
         """
@@ -125,19 +126,17 @@ class HoywAnalyzer(AnalyzerBase):
             corr_full[n_samples - 1 : n_samples - 1 + n_lags] / n_samples
         )
         if np.isrealobj(signal):
-            return autocorr.astype(np.float64)
-        return autocorr.astype(np.complex128)
+            return autocorr.astype(NumpyFloat)
+        return autocorr.astype(NumpyComplex)
 
     @staticmethod
     def _build_autocorr_matrix(
-        autocorr: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        p: int,
-        m: int,
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        autocorr: FloatArray | ComplexArray, p: int, m: int
+    ) -> FloatArray | ComplexArray:
         """Build the autocorrelation matrix R for the HOYW equations.
 
         Args:
-            autocorr (np.ndarray):
+            autocorr (FloatArray | ComplexArray):
                 A vector of autocorrelation values [r(0), r(1), ...].
             p (int):
                 The order of the AR model.
@@ -147,27 +146,24 @@ class HoywAnalyzer(AnalyzerBase):
                 is p + m.
 
         Returns:
-            np.ndarray:
-                The autocorrelation matrix R of shape (m x p)
-                (float64 or complex128).
+            FloatArray | ComplexArray:
+                The autocorrelation matrix R of shape (m x p).
         """
         column = autocorr[p : p + m]
         row = autocorr[p:0:-1]
         acorr_mat = toeplitz(column, r=row)
         if np.isrealobj(autocorr):
-            return acorr_mat.astype(np.float64)
-        return acorr_mat.astype(np.complex128)
+            return acorr_mat.astype(NumpyFloat)
+        return acorr_mat.astype(NumpyComplex)
 
     @staticmethod
     def _build_autocorr_vector(
-        autocorr: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        p: int,
-        m: int,
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        autocorr: FloatArray | ComplexArray, p: int, m: int
+    ) -> FloatArray | ComplexArray:
         """Build the autocorrelation vector r for the HOYW equations.
 
         Args:
-            autocorr (np.ndarray):
+            autocorr (FloatArray | ComplexArray):
                 A vector of autocorrelation values [r(0), r(1), ...].
             p (int):
                 The order of the AR model.
@@ -177,30 +173,27 @@ class HoywAnalyzer(AnalyzerBase):
                 is p + m.
 
         Returns:
-            np.ndarray:
-                The autocorrelation vector r of shape (m x 1)
-                (float64 or complex128).
+            FloatArray | ComplexArray:
+                The autocorrelation vector r of shape (m x 1).
         """
         return autocorr[p + 1 : p + m + 1]
 
     def _solve_hoyw_equation(
         self,
-        acorr_mat: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        acorr_vec: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        acorr_mat: FloatArray | ComplexArray,
+        acorr_vec: FloatArray | ComplexArray,
+    ) -> FloatArray | ComplexArray:
         """Solve the HOYW equations to estimate the AR coefficients.
 
         Args:
-            acorr_mat (np.ndarray):
-                The sample autocorrelation matrix (float64 or
-                complex128); lhs of Stoica 4.4.8
-            acorr_vec (np.ndarray):
-                The sample autocorrelation vector (float64 or
-                complex128); rhs of Stoica 4.4.8
+            acorr_mat (FloatArray | ComplexArray):
+                The sample autocorrelation matrix; lhs of Stoica 4.4.8
+            acorr_vec (FloatArray | ComplexArray):
+                The sample autocorrelation vector; rhs of Stoica 4.4.8
 
         Returns:
-            np.ndarray:
-                The AR coefficients (float64 or complex128).
+            FloatArray | ComplexArray:
+                The AR coefficients.
                 Returns an empty array on failure.
         """
         # Performs SVD of matrix R (Stoica 4.4.12)
