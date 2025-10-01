@@ -29,7 +29,7 @@ import numpy as np
 from numpy.fft import fft, fftfreq
 
 from mixins.covariance import ForwardBackwardMixin
-from utils.data_models import ComplexArray, FloatArray
+from utils.data_models import ComplexArray, FloatArray, SignalArray
 
 from .._common import find_peaks_from_spectrum
 from ..models import AnalyzerParameters
@@ -62,13 +62,11 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         self.n_grids: int = n_grids
 
     @override
-    def _estimate_frequencies(
-        self, signal: FloatArray | ComplexArray
-    ) -> FloatArray:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies of multi-sinusoids using Spectral MUSIC.
 
         Args:
-            signal (FloatArray | ComplexArray): Input signal.
+            signal (SignalArray): Input signal.
 
         Returns:
             FloatArray:
