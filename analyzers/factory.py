@@ -230,7 +230,6 @@ def get_standard_esprit_variants(
         dict[str, EspritAnalyzerBase]:
             A dictionary mapping method names to their corresponding
             standard ESPRIT analyzer instances.
-
     """
     analyzers: dict[str, EspritAnalyzerBase] = {
         "ESPRIT (LS)": StandardEspritAnalyzer(
