@@ -31,7 +31,7 @@ from numpy.fft import fft, fftfreq
 from mixins.covariance import ForwardBackwardMixin
 from utils.data_models import ComplexArray, FloatArray, NumpyFloat, SignalArray
 
-from .._common import find_peaks_from_spectrum
+from .._common import ZERO_LEVEL, find_peaks_from_spectrum
 from ..models import AnalyzerParameters
 from .base import MusicAnalyzerBase
 
@@ -116,7 +116,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         denominator_values = np.sum(power_spectra_noise, axis=1)
 
         # 4. Calculate the MUSIC pseudospectrum
-        music_spectrum = 1 / (denominator_values + 1e-12)
+        music_spectrum = 1 / (denominator_values + ZERO_LEVEL)
 
         # 5. Build a frequency grid
         freq_grid = fftfreq(self.n_grids, d=1 / self.fs).astype(NumpyFloat)
