@@ -26,10 +26,10 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 from numpy.fft import fft, fftfreq
 
 from mixins.covariance import ForwardBackwardMixin
+from utils.data_models import ComplexArray, FloatArray
 
 from .._common import find_peaks_from_spectrum
 from ..models import AnalyzerParameters
@@ -63,17 +63,17 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
 
     @override
     def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+        self, signal: FloatArray | ComplexArray
+    ) -> FloatArray:
         """Estimate frequencies of multi-sinusoids using Spectral MUSIC.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (FloatArray | ComplexArray): Input signal.
 
         Returns:
-            np.ndarray:
-                Estimated frequencies in Hz (float64).
-                Returns empty arrays if estimation fails.
+            FloatArray:
+                Estimated frequencies in Hz.
+                Returns empty arrays on failure.
         """
         # 1. Estimate the noise subspace
         noise_subspace = self._estimate_noise_subspace(signal)
@@ -94,19 +94,18 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         return estimated_freqs
 
     def _calculate_music_spectrum(
-        self,
-        noise_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+        self, noise_subspace: FloatArray | ComplexArray
+    ) -> tuple[FloatArray, FloatArray]:
         """Calculate the MUSIC pseudospectrum over a frequency grid.
 
         Args:
-            noise_subspace (np.ndarray):
-                The noise subspace matrix (float64 or complex128).
+            noise_subspace (FloatArray | ComplexArray):
+                The noise subspace matrix.
 
         Returns:
-            tuple[np.ndarray, np.ndarray]:
-                - freq_grid: Frequency grid (float64).
-                - music_spectrum: MUSIC pseudospectrum (float64).
+            tuple[FloatArray, FloatArray]:
+                - freq_grid: Frequency grid.
+                - music_spectrum: MUSIC pseudospectrum.
         """
         # 1. Calculate the FFT of each noise eigenvector
         fft_noise_eigvec = fft(noise_subspace, n=self.n_grids, axis=0)
