@@ -67,8 +67,8 @@ def print_analyzer_info(analyzer: AnalyzerBase) -> None:
 
     Args:
         analyzer (AnalyzerBase):
-            The analyzer instance whose parameters are to be
-            printed. Must be an instance of a class inheriting from
+            The analyzer instance whose parameters are to be printed.
+            Must be an instance of a class inheriting from
             `AnalyzerBase`.
     """
     params = analyzer.get_params()
