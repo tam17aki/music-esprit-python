@@ -76,7 +76,7 @@ class LSEspritSolver:
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        omegas = np.angle(eigenvalues).astype(np.float64)
+        omegas = np.angle(eigenvalues).astype(NumpyFloat)
         return omegas
 
 
