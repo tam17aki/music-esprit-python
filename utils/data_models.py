@@ -27,18 +27,23 @@ SOFTWARE.
 """
 
 from dataclasses import dataclass
+from typing import TypeAlias
 
 import numpy as np
 import numpy.typing as npt
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
+ComplexArray: TypeAlias = npt.NDArray[np.complex128]
+SignalArray: TypeAlias = FloatArray | ComplexArray
 
 
 @dataclass(frozen=True)
 class SinusoidParameters:
     """A class to store the parameters of multiple sinusoids."""
 
-    frequencies: npt.NDArray[np.float64]
-    amplitudes: npt.NDArray[np.float64]
-    phases: npt.NDArray[np.float64]
+    frequencies: FloatArray
+    amplitudes: FloatArray
+    phases: FloatArray
 
 
 @dataclass(frozen=True)
@@ -48,7 +53,7 @@ class ExperimentConfig:
     fs: float
     duration: float
     snr_db: float
-    freqs_true: npt.NDArray[np.float64]
+    freqs_true: FloatArray
     amp_range: tuple[float, float]
 
     @property
