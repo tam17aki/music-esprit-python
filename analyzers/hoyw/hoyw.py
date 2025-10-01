@@ -47,7 +47,7 @@ class HoywAnalyzer(AnalyzerBase):
     """Implements the Higher-Order Yule-Walker (HOYW) method."""
 
     def __init__(
-        self, fs: float, n_sinusoids: int, *, ar_order: int | None = None
+        self, fs: float, n_sinusoids: int, *, ar_order: int = 512
     ) -> None:
         """Initialize the HOYW analyzer.
 
@@ -58,7 +58,7 @@ class HoywAnalyzer(AnalyzerBase):
                 Should be > 2*n_sinusoids. Defaults to 512.
         """
         super().__init__(fs, n_sinusoids)
-        self.ar_order = ar_order if ar_order is not None else 512
+        self.ar_order = ar_order
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
