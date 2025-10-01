@@ -101,9 +101,9 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         #    signals)
         if np.iscomplexobj(signal):
             warnings.warn(
-                "FastMusicAnalyzer received a complex-valued signal. "
-                + "This algorithm is designed for real-valued signals and will"
-                + " discard the imaginary part. For complex signal analysis, "
+                "FastMusicAnalyzer received a complex-valued signal. This "
+                + "algorithm is designed for real-valued signals and will "
+                + "discard the imaginary part. For complex signal analysis, "
                 + "consider using other analyzers like StandardEspritAnalyzer."
             )
         real_signal = np.real(signal)
