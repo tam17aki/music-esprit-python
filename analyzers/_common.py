@@ -30,7 +30,14 @@ from numpy.fft import fftfreq, fftshift
 from numpy.linalg import LinAlgError, pinv
 from scipy.signal import find_peaks
 
-from utils.data_models import ComplexArray, FloatArray, IntArray, SignalArray
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    IntArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 TOLERANCE_LEVEL = 1e-4
 ZERO_LEVEL = 1e-9
@@ -71,8 +78,8 @@ def _parabolic_interpolation(
             - refined_indices: The refined peak locations.
             - refined_mags: The refined magnitudes.
     """
-    refined_indices = np.zeros_like(peak_indices, dtype=np.float64)
-    refined_mags = np.zeros_like(peak_indices, dtype=np.float64)
+    refined_indices = np.zeros_like(peak_indices, dtype=NumpyFloat)
+    refined_mags = np.zeros_like(peak_indices, dtype=NumpyFloat)
 
     for i, idx in enumerate(peak_indices):
         if idx in (0, len(spectrum) - 1):
@@ -237,7 +244,7 @@ def find_freqs_from_roots(
 
     # 4. Convert normalized angular frequency ω [rad/sample] to physical
     #    frequency f [Hz]
-    raw_freqs = angles.astype(np.float64) * (fs / (2 * np.pi))
+    raw_freqs = angles.astype(NumpyFloat) * (fs / (2 * np.pi))
 
     # 5. Filter frequencies
     unique_freqs = filter_unique_freqs(raw_freqs, n_sinusoids)
@@ -362,7 +369,7 @@ def estimate_freqs_iterative_fft(
     if n_fft is None:
         n_fft = signal.size
 
-    residual_signal = signal.copy().astype(np.complex128)
+    residual_signal = signal.copy().astype(NumpyComplex)
     estimated_freqs: list[float] = []
 
     for _ in range(n_peaks):
