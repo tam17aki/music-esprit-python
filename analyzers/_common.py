@@ -69,7 +69,8 @@ def _parabolic_interpolation(
     """Refine peak locations & magnitudes using parabolic interpolation.
 
     Args:
-        spectrum (FloatArray): The input pseudospectrum.
+        spectrum (FloatArray):
+            Input pseudospectrum.
         peak_indices (IntArray):
             Integer indecies of peaks in the spectrum.
 
@@ -105,12 +106,13 @@ def find_peak_indices_from_spectrum(
 
     Args:
         spectrum (FloatArray):
-            The input pseudospectrum (e.g., from MUSIC).
+            Input pseudospectrum (e.g., from MUSIC).
         n_peaks (int):
-            The number of peaks to find and return.
+            Number of peaks to find and return.
 
     Returns:
-        IntArray: The indices of the top-N strongest peaks.
+        IntArray:
+            Indices of the top-N strongest peaks.
     """
     prominence_thresh = (np.max(spectrum) - np.min(spectrum)) * 0.01
     all_peaks, _ = find_peaks(spectrum, prominence=prominence_thresh)
@@ -139,9 +141,9 @@ def find_peaks_from_spectrum(
 
     Args:
         spectrum (FloatArray):
-            The input pseudospectrum (e.g., from MUSIC).
+            Input pseudospectrum (e.g., from MUSIC).
         n_peaks (int):
-            The number of peaks to find and return.
+            Number of peaks to find and return.
         freq_grid (FloatArray):
             The frequency grid corresponding to the spectrum.
         use_interpolation (bool, optional):
@@ -151,7 +153,8 @@ def find_peaks_from_spectrum(
             points directly.  Defaults to True.
 
     Returns:
-        FloatArray: A sorted array of estimated peak frequencies in Hz.
+        FloatArray:
+            A sorted array of estimated peak frequencies in Hz.
     """
     # Find the indices of the N strongest peaks from a spectrum
     strongest_peak_indices = find_peak_indices_from_spectrum(spectrum, n_peaks)
@@ -216,11 +219,14 @@ def find_freqs_from_roots(
     Args:
         coefficients (FloatArray | ComplexArray):
             The polynomial coefficients.
-        fs (float): Sampling frequency in Hz.
-        n_sinusoids (int): Number of sinusoids.
+        fs (float):
+            Sampling frequency in Hz.
+        n_sinusoids (int):
+            Number of sinusoids.
 
     Returns:
-        FloatArray: An array of estimated frequencies in Hz.
+        FloatArray:
+            An array of estimated frequencies in Hz.
     """
     # 1. Calculate the roots of a polynomial
     try:
@@ -264,12 +270,12 @@ def _find_and_refine_strongest_peak(
 
     Args:
         spectrum (FloatArray):
-            The magnitude spectrum of a signal (the result of
-            np.abs(np.fft.fft(...))).
+            Magnitude spectrum of a signal (the result of
+            np.abs(np.fft.fft(...)))
         fs (float):
-            The sampling frequency in Hz, used for frequency conversion.
+            Sampling frequency in Hz, used for frequency conversion.
         n_fft (int):
-            The number of points used in the FFT calculation, required
+            Number of points used in the FFT calculation, required
             for correct frequency scaling.
         is_real_signal (bool):
             A flag indicating whether the original signal was
@@ -279,7 +285,8 @@ def _find_and_refine_strongest_peak(
             spectrum (positive and negative frequencies) is searched.
 
     Returns:
-        float: The estimated frequency of the strongest peak in Hz.
+        float:
+            The estimated frequency of the strongest peak in Hz.
     """
     if is_real_signal:
         target_spectrum = spectrum[: n_fft // 2]
@@ -316,13 +323,13 @@ def _estimate_and_subtract_component(
 
     Args:
         signal (ComplexArray):
-            The input complex-valued signal from which to subtract a
+            Input complex-valued signal from which to subtract a
             component.
         freq (float):
             The frequency of the sinusoidal component to estimate and
             subtract, in Hz.
         fs (float):
-            The sampling frequency in Hz.
+            Sampling frequency in Hz.
 
     Returns:
         ComplexArray:
@@ -356,12 +363,11 @@ def estimate_freqs_iterative_fft(
 
     Args:
         signal (SignalArray): Input signal.
-        n_peaks (int): The number of peaks to find and return.
+        n_peaks (int): Number of peaks to find and return.
         fs (float): Sampling frequency in Hz.
-        n_fft (int, optional):
-            The length of the FFT used for spectral peak finding.
-            If None, it defaults to the length of the input signal.
-            Defaults to None.
+        n_fft (int, optional): Length of the FFT used for spectral peak
+            finding. If None, it defaults to the length of the input
+            signal. Defaults to None.
 
     Returns:
         FloatArray: An array of estimated frequencies in Hz.
