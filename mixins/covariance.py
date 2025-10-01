@@ -23,8 +23,15 @@ SOFTWARE.
 """
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import hankel
+
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 
 class ForwardBackwardMixin:
@@ -37,18 +44,17 @@ class ForwardBackwardMixin:
 
     @staticmethod
     def _build_covariance_matrix(
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        subspace_dim: int,
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        signal: SignalArray, subspace_dim: int
+    ) -> FloatArray | ComplexArray:
         """Build the forward-backward averaged covariance matrix.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (Signal): Input signal.
             subspace_dim (int): The dimension of subspace.
 
         Returns:
-            np.ndarray:
-                The averaged covariance matrix (float64 or complex128).
+            FloatArray | ComplexArray:
+                The averaged covariance matrix.
         """
         # 1. Standard forward covariance matrix
         n_samples = signal.size
@@ -65,5 +71,5 @@ class ForwardBackwardMixin:
         # 3. Averaged covariance matrix
         cov_matrix_fb = (cov_matrix_f + cov_matrix_b) / 2.0
         if np.isrealobj(signal):
-            return cov_matrix_fb.astype(np.float64)
-        return cov_matrix_fb.astype(np.complex128)
+            return cov_matrix_fb.astype(NumpyFloat)
+        return cov_matrix_fb.astype(NumpyComplex)
