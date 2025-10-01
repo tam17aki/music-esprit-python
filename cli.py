@@ -23,8 +23,10 @@ SOFTWARE.
 """
 
 import argparse
+import time
 
 import numpy as np
+import numpy.typing as npt
 
 from analyzers.base import SUBSPACE_RATIO_UPPER_BOUND, AnalyzerBase
 from utils.data_models import ExperimentConfig, SinusoidParameters
@@ -280,6 +282,50 @@ def compute_summary_row(
         "Amp RMSE": amp_rmse,
         "Phase RMSE (rad)": phase_rmse,
     }
+
+
+def run_and_evaluate_analyzer(
+    name: str,
+    analyzer: AnalyzerBase,
+    signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+    true_params: SinusoidParameters,
+) -> dict[str, str | float] | None:
+    """Run an analyzer, prints results, and returns a summary row.
+
+    This function encapsulates the entire workflow for a single analysis
+    run:
+    1. Prints the analyzer's name and hyperparameters.
+    2. Measures the execution time of the .fit() method.
+    3. Prints the detailed estimation results.
+    4. Computes and returns a summary row for the final table.
+
+    Args:
+        name (str): The human-readable name of the analyzer.
+        analyzer (AnalyzerBase): The analyzer instance to run.
+        signal (np.ndarray): The input signal.
+        true_params (SinusoidParameters): The ground truth parameters.
+
+    Returns:
+        dict[str, any] | None:
+            A dictionary representing one row of the summary table,
+            or None if the estimation was incomplete.
+
+    """
+    print(f"\n--- Running {name} ---")
+    print_analyzer_info(analyzer)
+
+    start_time = time.perf_counter()
+    analyzer.fit(signal)
+    end_time = time.perf_counter()
+
+    print(f"Elapsed Time: {end_time - start_time:.4f} seconds")
+    print_results(analyzer, true_params)
+
+    summary_row = compute_summary_row(
+        name, analyzer, true_params, end_time - start_time
+    )
+
+    return summary_row
 
 
 def print_summary_table(results: list[dict[str, str | float]]) -> None:
