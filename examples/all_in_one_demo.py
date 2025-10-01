@@ -42,7 +42,7 @@ from cli import (
     print_summary_table,
     run_and_evaluate_analyzer,
 )
-from utils.data_models import AlgorithmConfig, ExperimentConfig
+from utils.data_models import AlgorithmConfig, ExperimentConfig, NumpyFloat
 from utils.signal_generator import create_true_parameters, generate_test_signal
 
 
@@ -54,7 +54,7 @@ def main() -> None:
         fs=args.fs,
         duration=args.duration,
         snr_db=args.snr_db,
-        freqs_true=np.array(args.freqs_true, dtype=np.float64),
+        freqs_true=np.array(args.freqs_true, dtype=NumpyFloat),
         amp_range=tuple(args.amp_range),
     )
     algo_config = AlgorithmConfig(
