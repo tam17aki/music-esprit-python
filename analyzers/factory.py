@@ -290,7 +290,7 @@ def get_unitary_esprit_variants(
 def get_fast_esprit_variants(
     config: ExperimentConfig, algo_config: AlgorithmConfig
 ) -> dict[str, EspritAnalyzerBase]:
-    """Create a dictionary of FFT-based/Nyström-based ESPRIT variants.
+    """Create a dictionary of Nyström-based/FFT-based ESPRIT variants.
 
     Instantiates `NystromEspritAnalyzer` and `FFTEspritAnalyzer`, which
     prioritize computational speed by approximating the signal subspace
