@@ -26,7 +26,14 @@ from dataclasses import dataclass
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
+
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 from .._common import ZERO_LEVEL, estimate_freqs_iterative_fft
 from ..base import AnalyzerBase
@@ -65,16 +72,14 @@ class RelaxAnalyzer(AnalyzerBase):
         self.n_fft_iip = n_fft_iip
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate the signal subspace using eigenvalue decomposition.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
+            FloatArray: Estimated frequencies in Hz.
         """
         residual_signal = signal.copy()
         estimated_freqs: list[float] = []
@@ -94,9 +99,9 @@ class RelaxAnalyzer(AnalyzerBase):
                 params, signal.size, self.fs, np.isrealobj(signal)
             )
             if np.isrealobj(signal):
-                sinusoid_to_remove = single_sinsoid.astype(np.float64)
+                sinusoid_to_remove = single_sinsoid.astype(NumpyFloat)
             else:
-                sinusoid_to_remove = single_sinsoid.astype(np.complex128)
+                sinusoid_to_remove = single_sinsoid.astype(NumpyComplex)
             residual_signal -= sinusoid_to_remove
 
         return np.sort(np.array(estimated_freqs))
@@ -107,7 +112,7 @@ class RelaxAnalyzer(AnalyzerBase):
         n_samples: int,
         fs: float,
         is_real_signal: bool,
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+    ) -> SignalArray:
         """Re-synthesize a single sinusoid from its parameter object.
 
         Args:
@@ -121,23 +126,21 @@ class RelaxAnalyzer(AnalyzerBase):
                 A flag indicating whether the sinusoid is real-valued.
 
         Returns:
-            np.ndarray:
-                Re-synthesized single sinusoid (float64 or complex128).
+            SignalArray:
+                Re-synthesized single sinusoid.
         """
         t = np.arange(n_samples) / fs
         argument = 2 * np.pi * params.frequency * t + params.phase
         if is_real_signal:
             signal_real = params.amplitude * np.cos(argument)
             return signal_real
-        signal_complex: npt.NDArray[np.complex128] = (
+        signal_complex: ComplexArray = (
             params.amplitude * np.exp(1j * argument)
-        ).astype(np.complex128)
+        ).astype(NumpyComplex)
         return signal_complex
 
     def _estimate_amp_phase(
-        self,
-        signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
-        freq: float,
+        self, signal: SignalArray, freq: float
     ) -> tuple[float, float]:
         """Estimate the amplitude and phase of a single sinusoid.
 
@@ -145,8 +148,7 @@ class RelaxAnalyzer(AnalyzerBase):
         of a single sinusoid at the given frequency to the signal.
 
         Args:
-            signal (np.ndarray):
-                The input signal (float64 or complex128).
+            signal (SignalArray): The input signal.
             freq (float):
                 The frequency of the component to estimate, in Hz.
 
@@ -163,21 +165,17 @@ class RelaxAnalyzer(AnalyzerBase):
         steering_vector = np.exp(2j * np.pi * freq * t_vector)
 
         # Internal calculations are done with complex numbers
-        complex_signal = signal.astype(np.complex128)
+        complex_signal = signal.astype(NumpyComplex)
 
         # 2. Solve complex amplitudes with least squares c = pinv(V) @ x
         #    pinv(vector) is equivalent to
         #    (vector^H * vector)^-1 * vector^H
         #    For pinv calculations, using np.dot is faster when
         #    there is only one vector.  c = (a^H * a)^-1 * a^H * x
-        a_h_a: npt.NDArray[np.complex128] = np.dot(
-            steering_vector.conj().T, steering_vector
-        )
+        a_h_a: ComplexArray = np.dot(steering_vector.conj().T, steering_vector)
         if np.abs(a_h_a) < ZERO_LEVEL:
             return 0.0, 0.0
-        a_h_x: npt.NDArray[np.complex128] = np.dot(
-            steering_vector.conj().T, complex_signal
-        )
+        a_h_x: ComplexArray = np.dot(steering_vector.conj().T, complex_signal)
         complex_amp = a_h_x / a_h_a
 
         # 3. Extract amplitude and phase
