@@ -222,7 +222,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
                 The (L-K) x K sub-covariance matrix.
 
         Returns:
-            FloatArray | ComplexArray: The resulting L x K matrix G.
+            FloatArray | ComplexArray:
+                The resulting L x K matrix G.
         """
         eigvals_r11, u11 = eigh(r11)
         idx = np.argsort(eigvals_r11)[::-1]
