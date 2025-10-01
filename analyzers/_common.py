@@ -26,10 +26,11 @@ import warnings
 
 import numpy as np
 import numpy.polynomial.polynomial as poly
-import numpy.typing as npt
 from numpy.fft import fftfreq, fftshift
 from numpy.linalg import LinAlgError, pinv
 from scipy.signal import find_peaks
+
+from utils.data_models import ComplexArray, FloatArray, IntArray, SignalArray
 
 TOLERANCE_LEVEL = 1e-4
 ZERO_LEVEL = 1e-9
@@ -56,19 +57,19 @@ def _compute_parabolic_offset(
 
 
 def _parabolic_interpolation(
-    spectrum: npt.NDArray[np.float64], peak_indices: npt.NDArray[np.int_]
-) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+    spectrum: FloatArray, peak_indices: IntArray
+) -> tuple[FloatArray, FloatArray]:
     """Refine peak locations & magnitudes using parabolic interpolation.
 
     Args:
-        spectrum (np.ndarray): The input pseudospectrum (float64).
-        peak_indices (np.ndarray):
-            Integer indecies of peaks in the spectrum (int_).
+        spectrum (FloatArray): The input pseudospectrum.
+        peak_indices (IntArray):
+            Integer indecies of peaks in the spectrum.
 
     Returns:
-        tuple[np.ndarray, np.ndarray]
-            - refined_indices: The refined peak locations (float64).
-            - refined_mags: The refined magnitudes (float64).
+        tuple[FloatArray, FloatArray]
+            - refined_indices: The refined peak locations.
+            - refined_mags: The refined magnitudes.
     """
     refined_indices = np.zeros_like(peak_indices, dtype=np.float64)
     refined_mags = np.zeros_like(peak_indices, dtype=np.float64)
@@ -87,8 +88,8 @@ def _parabolic_interpolation(
 
 
 def find_peak_indices_from_spectrum(
-    spectrum: npt.NDArray[np.float64], n_peaks: int
-) -> npt.NDArray[np.int_]:
+    spectrum: FloatArray, n_peaks: int
+) -> IntArray:
     """Find the indices of the N strongest peaks from a spectrum.
 
     This function uses `scipy.signal.find_peaks` with a prominence
@@ -96,13 +97,13 @@ def find_peak_indices_from_spectrum(
     detected candidates.
 
     Args:
-        spectrum (np.ndarray):
-            The input pseudospectrum (e.g., from MUSIC) (float64).
+        spectrum (FloatArray):
+            The input pseudospectrum (e.g., from MUSIC).
         n_peaks (int):
             The number of peaks to find and return.
 
     Returns:
-        np.ndarray: The indices of the top-N strongest peaks (int_).
+        IntArray: The indices of the top-N strongest peaks.
     """
     prominence_thresh = (np.max(spectrum) - np.min(spectrum)) * 0.01
     all_peaks, _ = find_peaks(spectrum, prominence=prominence_thresh)
@@ -121,21 +122,21 @@ def find_peak_indices_from_spectrum(
 
 
 def find_peaks_from_spectrum(
-    spectrum: npt.NDArray[np.float64],
+    spectrum: FloatArray,
     n_peaks: int,
-    freq_grid: npt.NDArray[np.float64],
+    freq_grid: FloatArray,
     *,
     use_interpolation: bool = True,
-) -> npt.NDArray[np.float64]:
+) -> FloatArray:
     """Find the N strongest peaks from the spectrum.
 
     Args:
-        spectrum (np.ndarray):
-            The input pseudospectrum (e.g., from MUSIC) (float64).
+        spectrum (FloatArray):
+            The input pseudospectrum (e.g., from MUSIC).
         n_peaks (int):
             The number of peaks to find and return.
-        freq_grid (np.ndarray):
-            The frequency grid corresponding to the spectrum (float64).
+        freq_grid (FloatArray):
+            The frequency grid corresponding to the spectrum.
         use_interpolation (bool, optional):
             If True, performs parabolic interpolation on the detected
             peaks to estimate their true location with sub-grid
@@ -143,9 +144,7 @@ def find_peaks_from_spectrum(
             points directly.  Defaults to True.
 
     Returns:
-        np.ndarray:
-            A sorted array of estimated peak frequencies in Hz
-           (float64).
+        FloatArray: A sorted array of estimated peak frequencies in Hz.
     """
     # Find the indices of the N strongest peaks from a spectrum
     strongest_peak_indices = find_peak_indices_from_spectrum(spectrum, n_peaks)
@@ -170,20 +169,18 @@ def find_peaks_from_spectrum(
     return np.sort(estimated_freqs)
 
 
-def filter_unique_freqs(
-    raw_freqs: npt.NDArray[np.float64], n_sinusoids: int
-) -> npt.NDArray[np.float64]:
+def filter_unique_freqs(raw_freqs: FloatArray, n_sinusoids: int) -> FloatArray:
     """Filter frequencies to a specified number of unique values.
 
     This function removes closely spaced frequencies (within
     `TOLERANCE_LEVEL`) and truncates the result to `n_sinusoids`.
 
     Args:
-        raw_freqs (np.ndarray): The estimated raw frequencies (float64).
+        raw_freqs (FloatArray): The estimated raw frequencies.
         n_sinusoids (int): Number of sinusoids.
 
     Returns:
-        np.ndarray: Filtered unique frequencies (float64).
+        FloatArray: Filtered unique frequencies.
     """
     if raw_freqs.size == 0:
         warnings.warn("No raw frequencies were estimated to be filtered.")
@@ -192,7 +189,7 @@ def filter_unique_freqs(
     if raw_freqs.size <= n_sinusoids:
         return np.sort(raw_freqs)
 
-    unique_freqs: list[npt.NDArray[np.float64]] = []
+    unique_freqs: list[FloatArray] = []
     for freq in raw_freqs:
         if any(
             np.abs(freq - _freq) <= TOLERANCE_LEVEL for _freq in unique_freqs
@@ -205,20 +202,18 @@ def filter_unique_freqs(
 
 
 def find_freqs_from_roots(
-    coefficients: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    fs: float,
-    n_sinusoids: int,
-) -> npt.NDArray[np.float64]:
+    coefficients: FloatArray | ComplexArray, fs: float, n_sinusoids: int
+) -> FloatArray:
     """Find roots of the polynomial and estimate frequencies.
 
     Args:
-        coefficients (np.ndarray):
-            The polynomial coefficients (float64 or complex128).
+        coefficients (FloatArray | ComplexArray):
+            The polynomial coefficients.
         fs (float): Sampling frequency in Hz.
         n_sinusoids (int): Number of sinusoids.
 
     Returns:
-        np.ndarray: An array of estimated frequencies in Hz (float64).
+        FloatArray: An array of estimated frequencies in Hz.
     """
     # 1. Calculate the roots of a polynomial
     try:
@@ -251,10 +246,7 @@ def find_freqs_from_roots(
 
 
 def _find_and_refine_strongest_peak(
-    spectrum: npt.NDArray[np.float64],
-    fs: float,
-    n_fft: int,
-    is_real_signal: bool,
+    spectrum: FloatArray, fs: float, n_fft: int, is_real_signal: bool
 ) -> float:
     """Find and refine the strongest peak in an FFT spectrum.
 
@@ -264,7 +256,7 @@ def _find_and_refine_strongest_peak(
     estimate a more precise, off-grid frequency.
 
     Args:
-        spectrum (np.ndarray):
+        spectrum (FloatArray):
             The magnitude spectrum of a signal (the result of
             np.abs(np.fft.fft(...))).
         fs (float):
@@ -305,8 +297,8 @@ def _find_and_refine_strongest_peak(
 
 
 def _estimate_and_subtract_component(
-    signal: npt.NDArray[np.complex128], freq: float, fs: float
-) -> npt.NDArray[np.complex128]:
+    signal: ComplexArray, freq: float, fs: float
+) -> ComplexArray:
     """Estimate and subtract a single sinusoid from a signal.
 
     This function performs one step of a signal decomposition process.
@@ -316,7 +308,7 @@ def _estimate_and_subtract_component(
     subtracts it from the original signal, returning the residual.
 
     Args:
-        signal (np.ndarray):
+        signal (ComplexArray):
             The input complex-valued signal from which to subtract a
             component.
         freq (float):
@@ -326,9 +318,9 @@ def _estimate_and_subtract_component(
             The sampling frequency in Hz.
 
     Returns:
-        np.ndarray:
+        ComplexArray:
             The residual signal after the estimated component has been
-            subtracted (complex128).
+            subtracted.
             Returns the original signal on failure.
     """
     t = np.arange(signal.size) / fs
@@ -339,7 +331,7 @@ def _estimate_and_subtract_component(
     except LinAlgError:
         return signal
 
-    estimated_component: npt.NDArray[np.complex128] = (
+    estimated_component: ComplexArray = (
         complex_amp * steering_vector
     ).flatten()
 
@@ -347,11 +339,8 @@ def _estimate_and_subtract_component(
 
 
 def estimate_freqs_iterative_fft(
-    signal: npt.NDArray[np.complex128] | npt.NDArray[np.float64],
-    n_peaks: int,
-    fs: float,
-    n_fft: int | None = None,
-) -> npt.NDArray[np.float64]:
+    signal: SignalArray, n_peaks: int, fs: float, n_fft: int | None = None
+) -> FloatArray:
     """Estimate frequencies via an iterative interpolated FFT method.
 
     This method, similar to IIp-DFT, iteratively finds the strongest
@@ -359,7 +348,7 @@ def estimate_freqs_iterative_fft(
     and subtracts it from the signal to find subsequent components.
 
     Args:
-        signal (np.ndarray): Input signal (float64 or complex128).
+        signal (SignalArray): Input signal.
         n_peaks (int): The number of peaks to find and return.
         fs (float): Sampling frequency in Hz.
         n_fft (int, optional):
@@ -368,8 +357,7 @@ def estimate_freqs_iterative_fft(
             Defaults to None.
 
     Returns:
-        np.ndarray:
-            An array of estimated frequencies in Hz (float64).
+        FloatArray: An array of estimated frequencies in Hz.
     """
     if n_fft is None:
         n_fft = signal.size
