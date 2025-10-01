@@ -26,10 +26,16 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigh
 
 from mixins.covariance import ForwardBackwardMixin
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
@@ -62,17 +68,15 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
         self.solver: LSEspritSolver | TLSEspritSolver = solver
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies of multiple sinusoids.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
-                Returns empty arrays if estimation fails.
+            FloatArray: Estimated frequencies in Hz.
+                Returns empty arrays on failure.
         """
         # 1. Estimate the signal subspace
         signal_subspace = self._estimate_signal_subspace(signal)
@@ -90,17 +94,17 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
 
     @override
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
+        self, signal: SignalArray
+    ) -> FloatArray | ComplexArray | None:
         """Estimate the signal subspace using eigenvalue decomposition.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray:
-                The signal subspace matrix (float64 or complex128).
-                Returns None if estimation fails.
+            FloatArray | ComplexArray | None:
+                The signal subspace matrix.
+                Returns None on failure.
         """
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
         try:
@@ -122,8 +126,8 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
             model_order = self.n_sinusoids
         signal_subspace = eigenvectors[:, -model_order:]
         if np.isrealobj(signal_subspace):
-            return signal_subspace.astype(np.float64)
-        return signal_subspace.astype(np.complex128)
+            return signal_subspace.astype(NumpyFloat)
+        return signal_subspace.astype(NumpyComplex)
 
     @override
     def get_params(self) -> AnalyzerParameters:
