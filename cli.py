@@ -365,6 +365,7 @@ def parse_args() -> argparse.Namespace:
         help="Factor to determine the number of rows to sample "
         + "for Nyström-based ESPRIT method (default: 10).",
     )
+
     args = parser.parse_args()
     if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
         parser.error(
