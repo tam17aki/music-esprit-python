@@ -33,6 +33,7 @@ from .data_models import (
     ComplexArray,
     ExperimentConfig,
     FloatArray,
+    NumpyFloat,
     SignalArray,
     SinusoidParameters,
 )
@@ -59,9 +60,9 @@ def _generate_amps_phases(
     if rng is None:
         rng = np.random.default_rng()
     amps = rng.uniform(amp_range[0], amp_range[1], n_sinusoids).astype(
-        np.float64
+        NumpyFloat
     )
-    phases = rng.uniform(-np.pi, np.pi, n_sinusoids).astype(np.float64)
+    phases = rng.uniform(-np.pi, np.pi, n_sinusoids).astype(NumpyFloat)
     return amps, phases
 
 
