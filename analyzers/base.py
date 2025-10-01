@@ -154,8 +154,8 @@ class AnalyzerBase(ABC):
         )
         cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
         if np.isrealobj(signal):
-            return cov_matrix.astype(np.float64)
-        return cov_matrix.astype(np.complex128)
+            return cov_matrix.astype(NumpyFloat)
+        return cov_matrix.astype(NumpyComplex)
 
     @staticmethod
     def _build_vandermonde_matrix(
