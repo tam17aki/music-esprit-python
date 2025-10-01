@@ -30,24 +30,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import time
-
 import numpy as np
 
-from analyzers.minnorm.root import RootMinNormAnalyzer, RootMinNormAnalyzerFB
-from analyzers.minnorm.spectral import (
-    SpectralMinNormAnalyzer,
-    SpectralMinNormAnalyzerFB,
-)
+from analyzers.factory import get_minnorm_analyzers
 from cli import (
-    compute_summary_row,
     parse_args,
-    print_analyzer_info,
     print_experiment_setup,
-    print_results,
     print_summary_table,
+    run_and_evaluate_analyzer,
 )
-from utils.data_models import ExperimentConfig
+from utils.data_models import AlgorithmConfig, ExperimentConfig
 from utils.signal_generator import create_true_parameters, generate_test_signal
 
 
@@ -62,6 +54,13 @@ def main() -> None:
         freqs_true=np.array(args.freqs_true, dtype=np.float64),
         amp_range=tuple(args.amp_range),
     )
+    algo_config = AlgorithmConfig(
+        subspace_ratio=args.subspace_ratio,
+        n_grids=args.n_grids,
+        min_freq_period=args.min_freq_period,
+        ar_order=args.ar_order,
+        rank_factor=args.rank_factor,
+    )
 
     # --- 2. Generate Test Signal ---
     true_params = create_true_parameters(config)
@@ -73,46 +72,22 @@ def main() -> None:
         is_complex=args.complex,
     )
 
-    # --- 3. Print Setup and Run Analyses ---
-    print_experiment_setup(config, true_params)
+    # --- 3. Build Analyzer Dictionary ---
+    analyzers_to_test = get_minnorm_analyzers(config, algo_config)
 
-    analyzers_to_test = {
-        "Spectral Min-Norm": SpectralMinNormAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
-        ),
-        "Spectral Min-Norm FB": SpectralMinNormAnalyzerFB(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, n_grids=args.n_grids
-        ),
-        "Root Min-Norm": RootMinNormAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids
-        ),
-        "Root Min-Norm FB": RootMinNormAnalyzerFB(
-            fs=config.fs, n_sinusoids=config.n_sinusoids
-        ),
-    }
+    # --- 4. Print Setup and Run Analyses ---
+    print_experiment_setup(config, true_params)
 
     results_summary: list[dict[str, str | float]] = []
     for name, analyzer in analyzers_to_test.items():
-        print(f"\n--- Running {name} ---")
-        print_analyzer_info(analyzer)
-
-        start_time = time.perf_counter()
-        analyzer.fit(noisy_signal)
-        end_time = time.perf_counter()
-
-        print(f"Elapsed Time: {end_time - start_time:.4f} seconds")
-        print_results(analyzer, true_params)
-
-        # Call the function and get the resulting rows
-        summary_row = compute_summary_row(
-            name, analyzer, true_params, end_time - start_time
+        summary_row = run_and_evaluate_analyzer(
+            name, analyzer, noisy_signal, true_params
         )
-
         # If the result is valid, add it to the summary list
         if summary_row is not None:
             results_summary.append(summary_row)
 
-    # --- 4. Print Summary Table ---
+    # --- 5. Print Summary Table ---
     print_summary_table(results_summary)
 
 
