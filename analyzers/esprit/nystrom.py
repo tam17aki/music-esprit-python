@@ -28,7 +28,13 @@ from typing import final, override
 import numpy as np
 from scipy.linalg import LinAlgError, eigh, qr
 
-from utils.data_models import ComplexArray, FloatArray, SignalArray
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 from .._common import ZERO_LEVEL
 from ..models import AnalyzerParameters
@@ -194,11 +200,11 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         r11 = (x1 @ x1.conj().T) / n_snapshots
         r21 = (x2 @ x1.conj().T) / n_snapshots
         if np.isrealobj(r11):
-            r11_float: FloatArray = r11.astype(np.float64)
-            r21_float: FloatArray = r21.astype(np.float64)
+            r11_float: FloatArray = r11.astype(NumpyFloat)
+            r21_float: FloatArray = r21.astype(NumpyFloat)
             return r11_float, r21_float
-        r11_complex: ComplexArray = r11.astype(np.complex128)
-        r21_complex: ComplexArray = r21.astype(np.complex128)
+        r11_complex: ComplexArray = r11.astype(NumpyComplex)
+        r21_complex: ComplexArray = r21.astype(NumpyComplex)
         return r11_complex, r21_complex
 
     def _build_g_matrix(
