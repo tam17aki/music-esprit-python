@@ -268,7 +268,6 @@ def get_unitary_esprit_variants(
         dict[str, EspritAnalyzerBase]:
             A dictionary mapping method names to their corresponding
             Unitary ESPRIT analyzer instances.
-
     """
     analyzers: dict[str, EspritAnalyzerBase] = {
         "Unitary ESPRIT (LS)": UnitaryEspritAnalyzer(
