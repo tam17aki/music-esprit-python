@@ -54,6 +54,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
             n_sinusoids (int): Number of sinusoids.
             n_grids (int, optional):
                 Number of grid points for MUSIC algorithm.
+                Defaults to 16384.
             subspace_ratio (float, optional):
                 The ratio of the subspace dimension to the signal
                 length. Must be between 0 and 0.5. Defaults to 1/3.
