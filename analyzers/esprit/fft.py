@@ -29,7 +29,12 @@ import numpy as np
 from scipy.linalg import qr
 from scipy.signal import fftconvolve
 
-from utils.data_models import ComplexArray, FloatArray, SignalArray
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    SignalArray,
+)
 
 from .._common import estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
@@ -145,7 +150,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
             # Performs efficient thin QR decomposition
             # with "economic" mode
             _q_matrix, _ = qr(projected_matrix, mode="economic")
-            q_matrix = _q_matrix.astype(np.complex128)
+            q_matrix = _q_matrix.astype(NumpyComplex)
         except np.linalg.LinAlgError:
             warnings.warn("QR decomposition failed in FFT-ESPRIT.")
             return np.array([])
@@ -183,7 +188,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         """
         n_components = kernel_matrix.shape[1]
         projected_matrix = np.zeros(
-            (self.subspace_dim, n_components), dtype=np.complex128
+            (self.subspace_dim, n_components), dtype=NumpyComplex
         )
         for i in range(n_components):
             kernel_vector = kernel_matrix[:, i]
