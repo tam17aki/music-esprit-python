@@ -169,7 +169,7 @@ class AnalyzerBase(ABC):
         freq_vector = freqs.reshape(1, -1)
 
         vandermonde_matrix = np.exp(2j * np.pi * t_vector @ freq_vector)
-        return vandermonde_matrix.astype(np.complex128)
+        return vandermonde_matrix.astype(NumpyComplex)
 
     def _estimate_amplitudes_phases(
         self, signal: SignalArray, estimated_freqs: FloatArray
