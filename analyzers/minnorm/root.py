@@ -26,9 +26,9 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 
 from mixins.covariance import ForwardBackwardMixin
+from utils.data_models import FloatArray, SignalArray
 
 from .._common import find_freqs_from_roots
 from .base import MinNormAnalyzerBase
@@ -52,19 +52,17 @@ class RootMinNormAnalyzer(MinNormAnalyzerBase):
         super().__init__(fs, n_sinusoids, subspace_ratio)
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies of multi-sinusoids using Root Min-Norm.
 
         This method overrides the abstract method in the base class.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
-                Returns empty arrays if estimation fails.
+            FloatArray: Estimated frequencies in Hz.
+                Returns empty arrays on failure.
         """
         # 1. Estimate the noise subspace (reusing the base class method)
         noise_subspace = self._estimate_noise_subspace(signal)
