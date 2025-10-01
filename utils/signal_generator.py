@@ -28,16 +28,21 @@ SOFTWARE.
 """
 
 import numpy as np
-import numpy.typing as npt
 
-from .data_models import ExperimentConfig, SinusoidParameters
+from .data_models import (
+    ComplexArray,
+    ExperimentConfig,
+    FloatArray,
+    SignalArray,
+    SinusoidParameters,
+)
 
 
 def _generate_amps_phases(
     amp_range: tuple[float, float],
     n_sinusoids: int,
     rng: np.random.Generator | None = None,
-) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+) -> tuple[FloatArray, FloatArray]:
     """Generate amplitudes and phases for multiple sinusoids.
 
     Args:
@@ -47,9 +52,9 @@ def _generate_amps_phases(
         rng (np.random.Generator, optional): Random generator.
 
     Returns:
-        tuple[np.ndarray, np.ndarray]:
-            - amps: An array of random amplitudes (float64).
-            - phases: An array of random phases (float64).
+        tuple[FloatArray, FloatArray]:
+            - amps: An array of random amplitudes.
+            - phases: An array of random phases.
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -91,7 +96,7 @@ def synthesize_sinusoids(
     params: SinusoidParameters,
     *,
     is_complex: bool = False,
-) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+) -> SignalArray:
     """Synthesize a clean signal from multiple sinusoids.
 
     Args:
@@ -103,7 +108,7 @@ def synthesize_sinusoids(
             generate a real-valued cosine signal. Defaults to False.
 
     Returns:
-        np.ndarray: Sum of multiple sinusoids (float64 or complex128).
+        SignalArray: Sum of multiple sinusoids.
     """
     n_samples = int(fs * duration)
     t = np.linspace(0, duration, n_samples, endpoint=False).reshape(1, -1)
@@ -112,29 +117,26 @@ def synthesize_sinusoids(
     phases = params.phases.reshape(-1, 1)
     argument = 2 * np.pi * freqs @ t + phases
     if is_complex:
-        clean_signal_complex: npt.NDArray[np.complex128]
+        clean_signal_complex: ComplexArray
         clean_signal_complex = np.sum(amps * np.exp(1j * argument), axis=0)
         return clean_signal_complex
-    clean_signal_real: npt.NDArray[np.float64]
+    clean_signal_real: FloatArray
     clean_signal_real = np.sum(amps * np.cos(argument), axis=0)
     return clean_signal_real
 
 
 def add_awgn(
-    signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    snr_db: float,
-    rng: np.random.Generator | None = None,
-) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+    signal: SignalArray, snr_db: float, rng: np.random.Generator | None = None
+) -> SignalArray:
     """Add Additive White Gaussian Noise (AWGN) to a given signal.
 
     Args:
-        signal (np.ndarray): Input clean signal (float64 or complex128).
+        signal (SignalArray): Input clean signal.
         snr_db (float): Target signal-to-noise ratio in dB.
         rng (np.random.Generator, optional): Random generator.
 
     Returns:
-        np.ndarray:
-            Noisy signal with specified SNR (float64 or complex128).
+        SignalArray: Noisy signal with specified SNR.
     """
     if rng is None:
         rng = np.random.default_rng()
@@ -152,7 +154,7 @@ def generate_test_signal(
     params: SinusoidParameters,
     *,
     is_complex: bool = False,
-) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+) -> SignalArray:
     """Generate a noisy test signal of multiple sinusoids.
 
     This is a convenience wrapper that combines sinusoid synthesis and
@@ -169,8 +171,7 @@ def generate_test_signal(
             Defaults to False.
 
     Returns:
-        np.ndarray:
-            The generated noisy test signal (float64 or complex128),
+        SignalArray: The generated noisy test signal,
             depending on the `is_complex` flag.
     """
     clean_signal = synthesize_sinusoids(
