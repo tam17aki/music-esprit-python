@@ -26,8 +26,9 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigh, qr
+
+from utils.data_models import ComplexArray, FloatArray, SignalArray
 
 from .._common import ZERO_LEVEL
 from ..models import AnalyzerParameters
@@ -74,17 +75,14 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         self.nystrom_rank_factor = nystrom_rank_factor
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate signal frequencies using the Nyström-ESPRIT method.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray:
-                An array of estimated frequencies in Hz (float64).
+            FloatArray: An array of estimated frequencies in Hz.
                 Returns an empty array on failure.
         """
         # 1. Estimate the signal subspace
@@ -103,8 +101,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
 
     @override
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
+        self, signal: SignalArray
+    ) -> FloatArray | ComplexArray | None:
         """Approximate the signal subspace using the Nyström method.
 
         This method avoids a full covariance EVD by approximating the
@@ -112,13 +110,13 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         reduces computational complexity compared to standard ESPRIT.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray | None:
+            FloatArray | ComplexArray | None:
                 An orthonormal basis for the approximated signal
-                subspace (float64 or complex128).
-                Returns None if estimation fails.
+                subspace.
+                Returns None on failure.
         """
         # --- Step 1: Prepare the parameters ---
         # The number of complex exponential components
@@ -171,12 +169,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
 
     @staticmethod
     def _compute_sub_covariance_matrices(
-        data_matrix: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        model_order: int,
-    ) -> tuple[
-        npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ]:
+        data_matrix: FloatArray | ComplexArray, model_order: int
+    ) -> tuple[FloatArray | ComplexArray, FloatArray | ComplexArray]:
         """Compute the R11 and R21 sub-matrices.
 
         This function partitions the data matrix into X1 (first
@@ -185,15 +179,14 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         R21 = E[X2*X1^H].
 
         Args:
-            data_matrix (np.ndarray):
-                The full Hankel data matrix X (float64 or complex128).
+            data_matrix (FloatArray | ComplexArray):
+                The full Hankel data matrix X.
             model_order (int):
                 The number of rows to sample for the approximation (K).
 
         Returns:
-            tuple[np.ndarray, np.ndarray]:
-                A tuple containing the (R11, R21) matrices
-                (float64 or complex128).
+            tuple[FloatArray | ComplexArray, FloatArray | ComplexArray]:
+                A tuple containing the (R11, R21) matrices.
         """
         x1 = data_matrix[:model_order, :]
         x2 = data_matrix[model_order:, :]
@@ -201,18 +194,16 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         r11 = (x1 @ x1.conj().T) / n_snapshots
         r21 = (x2 @ x1.conj().T) / n_snapshots
         if np.isrealobj(r11):
-            r11_float: npt.NDArray[np.float64] = r11.astype(np.float64)
-            r21_float: npt.NDArray[np.float64] = r21.astype(np.float64)
+            r11_float: FloatArray = r11.astype(np.float64)
+            r21_float: FloatArray = r21.astype(np.float64)
             return r11_float, r21_float
-        r11_complex: npt.NDArray[np.complex128] = r11.astype(np.complex128)
-        r21_complex: npt.NDArray[np.complex128] = r21.astype(np.complex128)
+        r11_complex: ComplexArray = r11.astype(np.complex128)
+        r21_complex: ComplexArray = r21.astype(np.complex128)
         return r11_complex, r21_complex
 
     def _build_g_matrix(
-        self,
-        r11: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        r21: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        self, r11: FloatArray | ComplexArray, r21: FloatArray | ComplexArray
+    ) -> FloatArray | ComplexArray:
         """Build the intermediate matrix G based on the Nyström method.
 
         This corresponds to G = U @ Lambda^{1/2} in the proposition 1 in
@@ -220,15 +211,13 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         calculated via a stable eigenvalue decomposition of R11.
 
         Args:
-            r11 (np.ndarray):
-                The K x K sub-covariance matrix (float64 or complex128).
-            r21 (np.ndarray):
-                The (L-K) x K sub-covariance matrix
-                (float64 or complex128).
+            r11 (FloatArray | ComplexArray):
+                The K x K sub-covariance matrix.
+            r21 (FloatArray | ComplexArray):
+                The (L-K) x K sub-covariance matrix.
 
         Returns:
-            np.ndarray:
-                The resulting L x K matrix G (float64 or complex128).
+            FloatArray | ComplexArray: The resulting L x K matrix G.
         """
         eigvals_r11, u11 = eigh(r11)
         idx = np.argsort(eigvals_r11)[::-1]
@@ -240,20 +229,14 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         u = np.vstack([u11, u21])
         _g_matrix = u @ np.diag(np.sqrt(safe_eigvals))
         if np.isrealobj(_g_matrix):
-            g_matrix_float: npt.NDArray[np.float64] = _g_matrix.astype(
-                np.float64
-            )
+            g_matrix_float: FloatArray = _g_matrix.astype(np.float64)
             return g_matrix_float
-        g_matrix_complex: npt.NDArray[np.complex128] = _g_matrix.astype(
-            np.complex128
-        )
+        g_matrix_complex: ComplexArray = _g_matrix.astype(np.complex128)
         return g_matrix_complex
 
     def _compute_subspace_from_g(
-        self,
-        matrix_g: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        n_components: int,
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        self, matrix_g: FloatArray | ComplexArray, n_components: int
+    ) -> FloatArray | ComplexArray:
         """Compute the signal subspace from the G matrix.
 
         This function implements Proposition 1 from the reference paper.
@@ -261,9 +244,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         G * U_G, which is then orthonormalized via QR decomposition.
 
         Args:
-            matrix_g (np.ndarray):
-                The intermediate matrix G of shape (L, K)
-                (float64 or complex128).
+            matrix_g (FloatArray | ComplexArray):
+                The intermediate matrix G of shape (L, K).
 
             n_components (int):
                 Number of complex exponential components to estimate.
@@ -272,9 +254,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
                 signals.
 
         Returns:
-            np.ndarray:
+            FloatArray | ComplexArray:
                 An orthonormal basis for the approximated signal
-                subspace, Q (float64 or complex128).
+                subspace, Q.
         """
         g_h_g = matrix_g.conj().T @ matrix_g
         eigvals_g, u_g = eigh(g_h_g)  # eigenvalues Lambda_G, basis U_G
@@ -283,13 +265,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         signal_subspace_unortho = (matrix_g @ u_g)[:, :n_components]
         _q_matrix, _ = qr(signal_subspace_unortho, mode="economic")
         if np.isrealobj(_q_matrix):
-            q_matrix_float: npt.NDArray[np.float64] = _q_matrix.astype(
-                np.float64
-            )
+            q_matrix_float: FloatArray = _q_matrix.astype(np.float64)
             return q_matrix_float
-        q_matrix_complex: npt.NDArray[np.complex128] = _q_matrix.astype(
-            np.complex128
-        )
+        q_matrix_complex: ComplexArray = _q_matrix.astype(np.complex128)
         return q_matrix_complex
 
     @override
