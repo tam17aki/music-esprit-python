@@ -32,9 +32,12 @@ from typing import TypeAlias
 import numpy as np
 import numpy.typing as npt
 
-FloatArray: TypeAlias = npt.NDArray[np.float64]
-ComplexArray: TypeAlias = npt.NDArray[np.complex128]
+NumpyFloat: TypeAlias = np.float64
+NumpyComplex: TypeAlias = np.complex128
+FloatArray: TypeAlias = npt.NDArray[NumpyFloat]
+ComplexArray: TypeAlias = npt.NDArray[NumpyComplex]
 SignalArray: TypeAlias = FloatArray | ComplexArray
+IntArray: TypeAlias = npt.NDArray[np.int_]
 
 
 @dataclass(frozen=True)
