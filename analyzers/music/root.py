@@ -65,8 +65,7 @@ class RootMusicAnalyzer(MusicAnalyzerBase):
             signal (SignalArray): Input signal.
 
         Returns:
-            FloatArray:
-                Estimated frequencies in Hz.
+            FloatArray: Estimated frequencies in Hz.
                 Returns an empty array on failure.
         """
         # 1. Estimate the noise subspace
