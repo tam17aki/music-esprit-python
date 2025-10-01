@@ -26,8 +26,15 @@ import warnings
 from abc import ABC
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigh
+
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 from ..base import AnalyzerBase
 
@@ -36,16 +43,16 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for MUSIC-based parameter analyzers."""
 
     def _estimate_noise_subspace(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
+        self, signal: SignalArray
+    ) -> FloatArray | ComplexArray | None:
         """Estimate the noise subspace using eigenvalue decomposition.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray:
-                Estimated noise subspace (float64 or complex128).
+            FloatArray | ComplexArray:
+                Estimated noise subspace.
                 Returns an empty array on failure.
         """
         # 1. Build the covariance matrix
@@ -73,5 +80,5 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         n_noise_vectors = self.subspace_dim - model_order
         noise_subspace = eigenvectors[:, :n_noise_vectors]
         if np.isrealobj(noise_subspace):
-            return noise_subspace.astype(np.float64)
-        return noise_subspace.astype(np.complex128)
+            return noise_subspace.astype(NumpyFloat)
+        return noise_subspace.astype(NumpyComplex)
