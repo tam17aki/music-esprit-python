@@ -235,9 +235,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         u = np.vstack([u11, u21])
         _g_matrix = u @ np.diag(np.sqrt(safe_eigvals))
         if np.isrealobj(_g_matrix):
-            g_matrix_float: FloatArray = _g_matrix.astype(np.float64)
+            g_matrix_float: FloatArray = _g_matrix.astype(NumpyFloat)
             return g_matrix_float
-        g_matrix_complex: ComplexArray = _g_matrix.astype(np.complex128)
+        g_matrix_complex: ComplexArray = _g_matrix.astype(NumpyComplex)
         return g_matrix_complex
 
     def _compute_subspace_from_g(
@@ -271,9 +271,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         signal_subspace_unortho = (matrix_g @ u_g)[:, :n_components]
         _q_matrix, _ = qr(signal_subspace_unortho, mode="economic")
         if np.isrealobj(_q_matrix):
-            q_matrix_float: FloatArray = _q_matrix.astype(np.float64)
+            q_matrix_float: FloatArray = _q_matrix.astype(NumpyFloat)
             return q_matrix_float
-        q_matrix_complex: ComplexArray = _q_matrix.astype(np.complex128)
+        q_matrix_complex: ComplexArray = _q_matrix.astype(NumpyComplex)
         return q_matrix_complex
 
     @override
