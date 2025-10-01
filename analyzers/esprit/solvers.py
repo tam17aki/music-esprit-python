@@ -25,9 +25,15 @@ SOFTWARE.
 import warnings
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigvals, pinv, svd
 from scipy.sparse import csc_array, csr_array
+
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+)
 
 from .._common import ZERO_LEVEL
 
@@ -36,10 +42,7 @@ from .._common import ZERO_LEVEL
 class LSEspritSolver:
     """Solves the ESPRIT rotational invariance equation using LS."""
 
-    def solve(
-        self,
-        signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.float64]:
+    def solve(self, signal_subspace: FloatArray | ComplexArray) -> FloatArray:
         """Estimate angular frequencies from a signal subspace via LS.
 
         This method solves for the rotational operator Psi in the
@@ -48,15 +51,14 @@ class LSEspritSolver:
         from the phase angles of Psi's eigenvalues.
 
         Args:
-            signal_subspace (np.ndarray):
-                The signal subspace `Es` (float64 or complex128).
-                Shape: (L, 2M).
+            signal_subspace (FloatArray | ComplexArray):
+                The signal subspace `Es`. Shape: (L, 2M).
 
         Returns:
-            np.ndarray:
-                Estimated normalized angular frequencies in rad/sample
-                (float64). Shape: (2M,).
-                Returns an empty array if estimation fails.
+            FloatArray:
+                Estimated normalized angular frequencies in rad/sample.
+                Shape: (2M,).
+                Returns an empty array on failure.
         """
         subspace_upper = signal_subspace[:-1, :]
         subspace_lower = signal_subspace[1:, :]
@@ -82,10 +84,7 @@ class LSEspritSolver:
 class TLSEspritSolver:
     """Solves the ESPRIT rotational invariance equation using TLS."""
 
-    def solve(
-        self,
-        signal_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.float64]:
+    def solve(self, signal_subspace: FloatArray | ComplexArray) -> FloatArray:
         """Estimate angular frequencies from a signal subspace via TLS.
 
         This method solves for the rotational operator Psi by
@@ -95,15 +94,14 @@ class TLSEspritSolver:
         eigenvalues of Psi.
 
         Args:
-            signal_subspace (np.ndarray):
-                The signal subspace `Es` (float64 or complex128).
-                Shape: (L, 2M).
+            signal_subspace (FloatArray | ComplexArray):
+                The signal subspace `Es`. Shape: (L, 2M).
 
         Returns:
-            np.ndarray:
-                Estimated normalized angular frequencies in rad/sample
-                (float64). Shape: (2M,).
-                Returns an empty array if estimation fails.
+            FloatArray:
+                Estimated normalized angular frequencies in rad/sample.
+                Shape: (2M,).
+                Returns an empty array on failure.
         """
         # Form the augmented matrix for SVD
         subspace_upper = signal_subspace[:-1, :]
@@ -112,9 +110,9 @@ class TLSEspritSolver:
             (subspace_upper, subspace_lower), axis=1
         )
         if np.isrealobj(signal_subspace):
-            augmented_subspace = _augmented_subspace.astype(np.float64)
+            augmented_subspace = _augmented_subspace.astype(NumpyFloat)
         else:
-            augmented_subspace = _augmented_subspace.astype(np.complex128)
+            augmented_subspace = _augmented_subspace.astype(NumpyComplex)
 
         try:
             _, _, vh = svd(augmented_subspace, full_matrices=False)
@@ -143,7 +141,7 @@ class TLSEspritSolver:
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        omegas = np.angle(eigenvalues).astype(np.float64)
+        omegas = np.angle(eigenvalues).astype(NumpyFloat)
         return omegas
 
 
@@ -152,19 +150,17 @@ class _UnitaryEspritHelpers:
     """Mixin class providing helpers for Unitary ESPRIT solvers."""
 
     @staticmethod
-    def _get_unitary_transform_matrix(
-        subspace_dim: int,
-    ) -> npt.NDArray[np.complex128]:
+    def _get_unitary_transform_matrix(subspace_dim: int) -> ComplexArray:
         """Construct the unitary matrix Q for real-valued transform.
 
         Args:
             subspace_dim (int): Dimension of signal subspace.
 
         Returns:
-            np.ndarray: Unitary matrix for the tranform (complex128).
+            ComplexArray: Unitary matrix for the tranform.
         """
         p = subspace_dim // 2
-        identity = np.eye(p, dtype=np.complex128)
+        identity = np.eye(p, dtype=NumpyComplex)
         exchange = identity[:, ::-1]  # exchange matrix
         if subspace_dim % 2 == 0:  # L is even
             q_matrix = np.block(
@@ -172,34 +168,34 @@ class _UnitaryEspritHelpers:
             )
         else:  #  L is odd
             q_left = np.vstack(
-                [identity, np.zeros((1, p)), exchange], dtype=np.complex128
+                [identity, np.zeros((1, p)), exchange], dtype=NumpyComplex
             )
-            q_center = np.zeros((subspace_dim, 1), dtype=np.complex128)
-            q_center[p] = np.sqrt(2.0).astype(np.complex128)
+            q_center = np.zeros((subspace_dim, 1), dtype=NumpyComplex)
+            q_center[p] = np.sqrt(2.0).astype(NumpyComplex)
             q_right = np.vstack(
                 [1j * identity, np.zeros((1, p)), -1j * exchange],
-                dtype=np.complex128,
+                dtype=NumpyComplex,
             )
             q_matrix = np.hstack([q_left, q_center, q_right])
         return q_matrix
 
     def _get_real_selection_matrices(
         self, subspace_dim: int
-    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+    ) -> tuple[FloatArray, FloatArray]:
         """Construct the real-valued selection matrices K1 and K2.
 
         Args:
             subspace_dim (int): Dimension of signal subspace.
 
         Returns:
-            tuple[np.ndarray, np.ndarray]:
-                The selection matrices K1 and K2 (float64).
+            tuple[FloatArray, FloatArray]:
+                The selection matrices K1 and K2.
         """
         m_prime = subspace_dim - 1  # Subarray size
 
         # 1. Build a complex selection matrix J1
         #    (select the first m' rows)
-        j1 = np.eye(subspace_dim, dtype=np.complex128)[:m_prime, :]
+        j1 = np.eye(subspace_dim, dtype=NumpyComplex)[:m_prime, :]
 
         # 2. Build unitary transformation matrix Q
         q_m_prime = csc_array(self._get_unitary_transform_matrix(m_prime))
@@ -228,9 +224,7 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
     least squares approach.
     """
 
-    def solve(
-        self, signal_subspace: npt.NDArray[np.float64]
-    ) -> npt.NDArray[np.float64]:
+    def solve(self, signal_subspace: FloatArray) -> FloatArray:
         """Estimate omegas from real subspace via Unitary ESPRIT (LS).
 
         This method constructs real-valued selection matrices K1 and K2,
@@ -240,15 +234,15 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
         arctangent function.
 
         Args:
-            signal_subspace (np.ndarray):
-                The real-valued signal subspace `Es_real` (float64).
+            signal_subspace (FloatArray):
+                The real-valued signal subspace `Es_real`.
                 Shape: (L, 2M).
 
         Returns:
-            np.ndarray:
-                Estimated normalized angular frequencies in rad/sample
-                (float64). Shape: (M,).
-                Returns an empty array if estimation fails.
+            FloatArray:
+                Estimated normalized angular frequencies in rad/sample.
+                Shape: (M,).
+                Returns an empty array on failure.
         """
         subspace_dim = signal_subspace.shape[0]
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
@@ -268,7 +262,7 @@ class LSUnitaryEspritSolver(_UnitaryEspritHelpers):
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        omegas: npt.NDArray[np.float64] = 2 * np.arctan(np.real(eigenvalues))
+        omegas: FloatArray = 2 * np.arctan(np.real(eigenvalues))
         return omegas
 
 
@@ -281,9 +275,7 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
     total least squares approach.
     """
 
-    def solve(
-        self, signal_subspace: npt.NDArray[np.float64]
-    ) -> npt.NDArray[np.float64]:
+    def solve(self, signal_subspace: FloatArray) -> FloatArray:
         """Estimate omegas from real subspace via Unitary ESPRIT (TLS).
 
         This method constructs real-valued matrices T1 and T2 from the
@@ -293,16 +285,15 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
         matrix Y_TLS using the arctangent function.
 
         Args:
-            signal_subspace (np.ndarray):
-                The real-valued signal subspace `Es_real` (float64).
+            signal_subspace (FloatArray):
+                The real-valued signal subspace `Es_real`.
                 Shape: (L, 2M).
 
         Returns:
-            np.ndarray:
-                Estimated normalized angular frequencies in rad/sample
-                (float64). Shape: (M,).
-                Returns an empty array if estimation fails.
-
+            FloatArray:
+                Estimated normalized angular frequencies in rad/sample.
+                Shape: (M,).
+                Returns an empty array on failure.
         """
         subspace_dim = signal_subspace.shape[0]
         k1, k2 = self._get_real_selection_matrices(subspace_dim)
@@ -337,7 +328,7 @@ class TLSUnitaryEspritSolver(_UnitaryEspritHelpers):
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        omegas: npt.NDArray[np.float64] = 2 * np.arctan(np.real(eigenvalues))
+        omegas: FloatArray = 2 * np.arctan(np.real(eigenvalues))
         return omegas
 
 
@@ -352,9 +343,7 @@ class WoodburyLSEspritSolver:
     Kiser et al. (2023).
     """
 
-    def solve(
-        self, signal_subspace: npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def solve(self, signal_subspace: ComplexArray) -> FloatArray:
         """Solve the LS problem for an orthonormal subspace efficiently.
 
         This method implements a fast version of the LS solver by
@@ -363,15 +352,15 @@ class WoodburyLSEspritSolver:
         where the input signal subspace is orthonormal.
 
         Args:
-            signal_subspace (np.ndarray):
-                The orthonormal signal subspace matrix Q (complex128).
+            signal_subspace (ComplexArray):
+                The orthonormal signal subspace matrix Q.
                 Shape: (L, 2M).
 
         Returns:
-            np.ndarray:
-                Estimated normalized angular frequencies in rad/sample
-                (float64). Shape: (M,).
-                Returns an empty array if estimation fails.
+            FloatArray:
+                Estimated normalized angular frequencies in rad/sample.
+                Shape: (M,).
+                Returns an empty array on failure.
         """
         q_matrix = signal_subspace
         q_upper = q_matrix[:-1, :]
@@ -389,7 +378,7 @@ class WoodburyLSEspritSolver:
         # 3. Calculate the coefficients needed to calculate
         #    (I - q^H*q)^-1. Coefficient = 1 / (1 - q*q^H)
         denominator = 1 - q_q_h
-        if abs(denominator) < ZERO_LEVEL:
+        if np.abs(denominator) < ZERO_LEVEL:
             warnings.warn("Denominator in Woodbury formula is close to zero.")
             # In this case, (I - q^H*q) is a nearly singular matrix.
             # It is safe to fall back to the LS solution using pinv.
@@ -414,5 +403,5 @@ class WoodburyLSEspritSolver:
             return np.array([])
 
         # Recover normalized angular frequencies from eigenvalues
-        omegas = np.angle(eigenvalues).astype(np.float64)
+        omegas = np.angle(eigenvalues).astype(NumpyFloat)
         return omegas
