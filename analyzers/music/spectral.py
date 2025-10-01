@@ -29,7 +29,7 @@ import numpy as np
 from numpy.fft import fft, fftfreq
 
 from mixins.covariance import ForwardBackwardMixin
-from utils.data_models import ComplexArray, FloatArray, SignalArray
+from utils.data_models import ComplexArray, FloatArray, NumpyFloat, SignalArray
 
 from .._common import find_peaks_from_spectrum
 from ..models import AnalyzerParameters
@@ -119,7 +119,7 @@ class SpectralMusicAnalyzer(MusicAnalyzerBase):
         music_spectrum = 1 / (denominator_values + 1e-12)
 
         # 5. Build a frequency grid
-        freq_grid = fftfreq(self.n_grids, d=1 / self.fs).astype(np.float64)
+        freq_grid = fftfreq(self.n_grids, d=1 / self.fs).astype(NumpyFloat)
 
         # 6. Make a mask that only handles positive frequencies
         positive_freq_mask = freq_grid >= 0
