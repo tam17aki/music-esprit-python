@@ -45,14 +45,14 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             4. Filter closely spaced frequencies to ensure uniqueness.
 
         Args:
-            raw_omegas (np.ndarray):
+            raw_omegas (FloatArray):
                 An array of raw normalized angular frequencies in
-                radians per sample, as returned by a solver (float64).
+                radians per sample, as returned by a solver.
 
         Returns:
-            np.ndarray:
+            FloatArray:
                 A sorted array of final, unique frequency estimates in
-                Hz, limited to `self.n_sinusoids` (float64).
+                Hz, limited to `self.n_sinusoids`.
         """
         # 1. Convert normalized angular frequencies [rad/sample]
         #    to physical frequencies [Hz]
