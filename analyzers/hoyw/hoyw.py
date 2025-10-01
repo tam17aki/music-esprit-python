@@ -68,9 +68,8 @@ class HoywAnalyzer(AnalyzerBase):
             signal (SignalArray): Input signal.
 
         Returns:
-            FloatArray:
-                Estimated frequencies in Hz.
-                Returns empty arrays if estimation fails.
+            FloatArray: Estimated frequencies in Hz.
+                Returns empty arrays on failure.
         """
         p = self.ar_order  # L in the textbook
         m = p  # M in the textbook
@@ -192,8 +191,7 @@ class HoywAnalyzer(AnalyzerBase):
                 The sample autocorrelation vector; rhs of Stoica 4.4.8
 
         Returns:
-            FloatArray | ComplexArray:
-                The AR coefficients.
+            FloatArray | ComplexArray: The AR coefficients.
                 Returns an empty array on failure.
         """
         # Performs SVD of matrix R (Stoica 4.4.12)
