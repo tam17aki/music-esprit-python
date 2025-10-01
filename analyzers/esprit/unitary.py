@@ -26,8 +26,9 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import LinAlgError, eigh
+
+from utils.data_models import ComplexArray, FloatArray, SignalArray
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
@@ -61,17 +62,15 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
         self.solver: LSUnitaryEspritSolver | TLSUnitaryEspritSolver = solver
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies of multiple sinusoids.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
-                Returns empty arrays if estimation fails.
+            FloatArray: Estimated frequencies in Hz.
+                Returns empty arrays on failure.
         """
         # 1. Estimate the signal subspace
         signal_subspace = self._estimate_signal_subspace(signal)
@@ -89,20 +88,20 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
 
     @override
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64] | None:
+        self, signal: SignalArray
+    ) -> FloatArray | None:
         """Estimate the real-valued signal subspace via cov. approach.
 
         This method follows Step 2 of TABLE I in Haardt & Nossek (1995),
         which involves a real-valued SVD of a transformed data matrix.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray:
-                The real-valued signal subspace matrix (float64).
-                Returns None if estimation fails.
+            FloatArray:
+                The real-valued signal subspace matrix.
+                Returns None on failure.
         """
         # 1. Construct the data matrix X (Hankel matrix)
         #    size: (L, N) = (subspace_dim, n_snapshots)
@@ -144,16 +143,14 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
         return signal_subspace
 
     @staticmethod
-    def _transform_complex_to_real(
-        g_matrix: npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.float64]:
+    def _transform_complex_to_real(g_matrix: ComplexArray) -> FloatArray:
         """Transform a complex matrix G to a real matrix T(G).
 
         Args:
-            g_matrix (np.ndarray): Complex matrix G (complex128).
+            g_matrix (ComplexArray): Complex matrix G.
 
         Returns:
-            np.ndarray: Transformed real matrix T(G) (float64).
+            FloatArray: Transformed real matrix T(G).
         """
         p, _ = g_matrix.shape
         p_half = p // 2  # L
