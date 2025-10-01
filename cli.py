@@ -26,10 +26,9 @@ import argparse
 import time
 
 import numpy as np
-import numpy.typing as npt
 
 from analyzers.base import SUBSPACE_RATIO_UPPER_BOUND, AnalyzerBase
-from utils.data_models import ExperimentConfig, SinusoidParameters
+from utils.data_models import ExperimentConfig, SignalArray, SinusoidParameters
 
 
 def print_experiment_setup(
@@ -287,7 +286,7 @@ def compute_summary_row(
 def run_and_evaluate_analyzer(
     name: str,
     analyzer: AnalyzerBase,
-    signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
+    signal: SignalArray,
     true_params: SinusoidParameters,
 ) -> dict[str, str | float] | None:
     """Run an analyzer, prints results, and returns a summary row.
@@ -302,14 +301,13 @@ def run_and_evaluate_analyzer(
     Args:
         name (str): The human-readable name of the analyzer.
         analyzer (AnalyzerBase): The analyzer instance to run.
-        signal (np.ndarray): The input signal.
+        signal (SignalArray): The input signal.
         true_params (SinusoidParameters): The ground truth parameters.
 
     Returns:
-        dict[str, any] | None:
+        dict[str, str | float] | None:
             A dictionary representing one row of the summary table,
             or None if the estimation was incomplete.
-
     """
     print(f"\n--- Running {name} ---")
     print_analyzer_info(analyzer)
