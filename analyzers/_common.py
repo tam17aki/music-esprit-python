@@ -322,7 +322,7 @@ def _estimate_and_subtract_component(
 
     Args:
         signal (ComplexArray):
-            Input complex-valued signal from which to subtract a
+            Complex-valued input signal from which to subtract a
             component.
         freq (float):
             The frequency of the sinusoidal component to estimate and
