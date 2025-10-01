@@ -28,7 +28,13 @@ from typing import final, override
 import numpy as np
 from scipy.linalg import LinAlgError, eigh
 
-from utils.data_models import ComplexArray, FloatArray, NumpyFloat, SignalArray
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    NumpyComplex,
+    NumpyFloat,
+    SignalArray,
+)
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
@@ -106,7 +112,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
         # 1. Construct the data matrix X (Hankel matrix)
         #    size: (L, N) = (subspace_dim, n_snapshots)
         _data_matrix = self._build_hankel_matrix(signal, self.subspace_dim)
-        data_matrix = _data_matrix.astype(np.complex128)
+        data_matrix = _data_matrix.astype(NumpyComplex)
 
         # 2. Convert complex matrix X to real matrix T(X)
         #    (based on Eq. (7)). The size of T(X) is (L, 2*N)
