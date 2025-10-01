@@ -75,7 +75,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
             n_sinusoids (int): Number of sinusoids.
             n_grids (int, optional):
                 The number of points for the final pseudospectrum search
-                grid.  Defaults to 16384.
+                grid. Defaults to 16384.
             min_freq_period (float, optional):
                 The minimum frequency in Hz to consider when searching
                 for the signal's fundamental period. This helps
