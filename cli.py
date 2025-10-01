@@ -130,108 +130,6 @@ def print_results(
     print(f"Phase Errors: {phase_errors} rad\n")
 
 
-def parse_args() -> argparse.Namespace:
-    """Parse and validate command-line arguments for the demo script.
-
-    Configures an ArgumentParser to accept settings for the signal
-    synthesis (e.g., SNR, frequencies) and for the various analyzer
-    algorithms (e.g., subspace ratio, number of grids).
-
-    Returns:
-        argparse.Namespace:
-            An object containing the parsed and validated arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="Parameter estimation demo using MUSIC algorithm."
-    )
-    parser.add_argument(
-        "--fs",
-        type=float,
-        default=44100.0,
-        help="Sampling frequency in Hz (default: 44100.0).",
-    )
-    parser.add_argument(
-        "--duration",
-        type=float,
-        default=0.1,
-        help="Signal duration in seconds (default: 0.1).",
-    )
-    parser.add_argument(
-        "--snr_db",
-        type=float,
-        default=30.0,
-        help="Signal-to-noise ratio in dB (default: 30.0).",
-    )
-    parser.add_argument(
-        "--freqs_true",
-        type=float,
-        nargs="+",
-        default=[440.0, 460.0, 480.0],
-        help="List of true frequencies in Hz (space separated) "
-        + "(default: 440.0 460.0 480.0).",
-    )
-    parser.add_argument(
-        "--amp_range",
-        type=float,
-        nargs=2,
-        default=[0.5, 1.5],
-        metavar=("AMP_MIN", "AMP_MAX"),
-        help="Range for random generation of sinusoidal amplitudes "
-        + "(default: 0.5 1.5).",
-    )
-    parser.add_argument(
-        "--subspace_ratio",
-        type=float,
-        default=1 / 3,
-        help="Ratio of the subspace dimension to the signal length "
-        + "(default: 1/3, which is approximately 0.333). "
-        + "This value (L/N) determines the size of the covariance matrix. "
-        + f"Must be in the range (0, {SUBSPACE_RATIO_UPPER_BOUND}].",
-    )
-    parser.add_argument(
-        "--complex",
-        action="store_true",
-        help="If specified, generate a complex-valued test signal "
-        + "instead of a real-valued one.",
-    )
-    parser.add_argument(
-        "--n_grids",
-        type=int,
-        default=16384,
-        help="Number of frequency grid points for Spectral MUSIC and Spectral "
-        + "Min-Norm method (default: 16384).",
-    )
-    parser.add_argument(
-        "--min_freq_period",
-        type=float,
-        default=20.0,
-        help="Minimum frequency for periodicity search for FAST MUSIC method "
-        + "(default: 20.0).",
-    )
-    parser.add_argument(
-        "--ar_order",
-        type=int,
-        default=512,
-        help="Order of the AutoRegressive (AR) model "
-        + "for HOYW method. (default: 512)",
-    )
-    parser.add_argument(
-        "--rank_factor",
-        type=int,
-        default=10,
-        help="Factor to determine the number of rows to sample "
-        + "for Nyström-based ESPRIT method (default: 10).",
-    )
-    args = parser.parse_args()
-    if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
-        parser.error(
-            "Argument --subspace_ratio must be in the range "
-            + f"(0, {SUBSPACE_RATIO_UPPER_BOUND}]."
-        )
-
-    return args
-
-
 def compute_summary_row(
     name: str,
     analyzer: AnalyzerBase,
@@ -373,3 +271,105 @@ def print_summary_table(results: list[dict[str, str | float]]) -> None:
                 formatted_value = f"{str(value):<{col_widths[key]}}"
             row_items.append(formatted_value)
         print(" | ".join(row_items))
+
+
+def parse_args() -> argparse.Namespace:
+    """Parse and validate command-line arguments for the demo script.
+
+    Configures an ArgumentParser to accept settings for the signal
+    synthesis (e.g., SNR, frequencies) and for the various analyzer
+    algorithms (e.g., subspace ratio, number of grids).
+
+    Returns:
+        argparse.Namespace:
+            An object containing the parsed and validated arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description="Parameter estimation demo using MUSIC algorithm."
+    )
+    parser.add_argument(
+        "--fs",
+        type=float,
+        default=44100.0,
+        help="Sampling frequency in Hz (default: 44100.0).",
+    )
+    parser.add_argument(
+        "--duration",
+        type=float,
+        default=0.1,
+        help="Signal duration in seconds (default: 0.1).",
+    )
+    parser.add_argument(
+        "--snr_db",
+        type=float,
+        default=30.0,
+        help="Signal-to-noise ratio in dB (default: 30.0).",
+    )
+    parser.add_argument(
+        "--freqs_true",
+        type=float,
+        nargs="+",
+        default=[440.0, 460.0, 480.0],
+        help="List of true frequencies in Hz (space separated) "
+        + "(default: 440.0 460.0 480.0).",
+    )
+    parser.add_argument(
+        "--amp_range",
+        type=float,
+        nargs=2,
+        default=[0.5, 1.5],
+        metavar=("AMP_MIN", "AMP_MAX"),
+        help="Range for random generation of sinusoidal amplitudes "
+        + "(default: 0.5 1.5).",
+    )
+    parser.add_argument(
+        "--subspace_ratio",
+        type=float,
+        default=1 / 3,
+        help="Ratio of the subspace dimension to the signal length "
+        + "(default: 1/3, which is approximately 0.333). "
+        + "This value (L/N) determines the size of the covariance matrix. "
+        + f"Must be in the range (0, {SUBSPACE_RATIO_UPPER_BOUND}].",
+    )
+    parser.add_argument(
+        "--complex",
+        action="store_true",
+        help="If specified, generate a complex-valued test signal "
+        + "instead of a real-valued one.",
+    )
+    parser.add_argument(
+        "--n_grids",
+        type=int,
+        default=16384,
+        help="Number of frequency grid points for Spectral MUSIC and Spectral "
+        + "Min-Norm method (default: 16384).",
+    )
+    parser.add_argument(
+        "--min_freq_period",
+        type=float,
+        default=20.0,
+        help="Minimum frequency for periodicity search for FAST MUSIC method "
+        + "(default: 20.0).",
+    )
+    parser.add_argument(
+        "--ar_order",
+        type=int,
+        default=512,
+        help="Order of the AutoRegressive (AR) model "
+        + "for HOYW method. (default: 512)",
+    )
+    parser.add_argument(
+        "--rank_factor",
+        type=int,
+        default=10,
+        help="Factor to determine the number of rows to sample "
+        + "for Nyström-based ESPRIT method (default: 10).",
+    )
+    args = parser.parse_args()
+    if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
+        parser.error(
+            "Argument --subspace_ratio must be in the range "
+            + f"(0, {SUBSPACE_RATIO_UPPER_BOUND}]."
+        )
+
+    return args
