@@ -51,8 +51,7 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
             signal (SignalArray): Input signal.
 
         Returns:
-            FloatArray | ComplexArray:
-                Estimated noise subspace.
+            FloatArray | ComplexArray: Estimated noise subspace.
                 Returns an empty array on failure.
         """
         # 1. Build the covariance matrix
