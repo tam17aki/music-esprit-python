@@ -25,7 +25,8 @@ SOFTWARE.
 from abc import ABC, abstractmethod
 
 import numpy as np
-import numpy.typing as npt
+
+from utils.data_models import ComplexArray, FloatArray, SignalArray
 
 from .._common import filter_unique_freqs
 from ..base import AnalyzerBase
@@ -34,9 +35,7 @@ from ..base import AnalyzerBase
 class EspritAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for ESPRIT-based parameter analyzers."""
 
-    def _postprocess_omegas(
-        self, raw_omegas: npt.NDArray[np.float64]
-    ) -> npt.NDArray[np.float64]:
+    def _postprocess_omegas(self, raw_omegas: FloatArray) -> FloatArray:
         """Finalizes frequency estimates from raw angular frequencies.
 
         This method performs a series of finalization steps:
@@ -79,7 +78,7 @@ class EVDBasedEspritAnalyzer(EspritAnalyzerBase, ABC):
 
     @abstractmethod
     def _estimate_signal_subspace(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
+        self, signal: SignalArray
+    ) -> FloatArray | ComplexArray | None:
         """Estimate the signal subspace via EVD/SVD."""
         raise NotImplementedError
