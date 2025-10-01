@@ -26,9 +26,10 @@ import warnings
 from typing import TypeAlias, final, override
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import qr
 from scipy.signal import fftconvolve
+
+from utils.data_models import ComplexArray, FloatArray, SignalArray
 
 from .._common import estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
@@ -96,18 +97,14 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         self.n_fft_iip = n_fft_iip
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate signal frequencies using the Fast FFT-ESPRIT method.
 
         Args:
-            signal (np.ndarray):
-                Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray:
-                An array of estimated frequencies in Hz (float64).
+            FloatArray: An array of estimated frequencies in Hz.
                 Returns an empty array on failure.
         """
         # 1. Obtain a rough estimate of the frequency using an
@@ -162,10 +159,8 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         return est_freqs
 
     def _fast_hankel_vandermonde_product(
-        self,
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        kernel_matrix: npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.complex128]:
+        self, signal: SignalArray, kernel_matrix: ComplexArray
+    ) -> ComplexArray:
         """Compute the product of Hankel and kernel matrix efficiently.
 
         This method calculates `Yp = X @ Ap` where `X` is the Hankel
@@ -177,13 +172,13 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         (Algorithm 3) in the reference paper.
 
         Args:
-            signal (np.ndarray):
+            signal (SignalArray):
                 The input signal x, of length N.
-            kernel_matrix (np.ndarray):
+            kernel_matrix (ComplexArray):
                 The Vandermonde-like kernel matrix Ap, of shape (L, P).
 
         Returns:
-            np.ndarray:
+            ComplexArray:
                 The projected matrix Yp = X @ Ap, of shape (M, P).
         """
         n_components = kernel_matrix.shape[1]
