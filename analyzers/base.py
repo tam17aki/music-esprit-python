@@ -27,10 +27,14 @@ from abc import ABC, abstractmethod
 from typing import Self
 
 import numpy as np
-import numpy.typing as npt
 from scipy.linalg import LinAlgError, hankel, pinv
 
-from utils.data_models import SinusoidParameters
+from utils.data_models import (
+    ComplexArray,
+    FloatArray,
+    SignalArray,
+    SinusoidParameters,
+)
 
 from .models import AnalyzerParameters
 
@@ -64,9 +68,7 @@ class AnalyzerBase(ABC):
         self.subspace_dim: int = -1
         self.est_params: SinusoidParameters | None = None
 
-    def fit(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> Self:
+    def fit(self, signal: SignalArray) -> Self:
         """Run the full parameter estimation process.
 
         This method takes an input signal, runs the complete estimation
@@ -74,7 +76,7 @@ class AnalyzerBase(ABC):
         the results in the `est_params` attribute.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
             Self: The analyzer instance itself (for method chaining).
@@ -106,25 +108,22 @@ class AnalyzerBase(ABC):
         return self
 
     @abstractmethod
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies using a specific MUSIC variant."""
         raise NotImplementedError
 
     @staticmethod
     def _build_hankel_matrix(
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        subspace_dim: int,
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        signal: SignalArray, subspace_dim: int
+    ) -> FloatArray | ComplexArray:
         """Build the Hankel data matrix.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
             subspace_dim (int): The dimension of subspace.
 
         Returns:
-            np.ndarray: The Hankel matrix (float64 or complex128).
+            FloatArray | ComplexArray: The Hankel matrix.
         """
         hankel_matrix = hankel(
             signal[:subspace_dim], signal[subspace_dim - 1 :]
@@ -135,17 +134,16 @@ class AnalyzerBase(ABC):
 
     @staticmethod
     def _build_covariance_matrix(
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        subspace_dim: int,
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128]:
+        signal: SignalArray, subspace_dim: int
+    ) -> FloatArray | ComplexArray:
         """Build the covariance matrix from the input signal.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
             subspace_dim (int): The dimension of subspace.
 
         Returns:
-            np.ndarray: The covariance matrix (float64 or complex128).
+            FloatArray | ComplexArray: The covariance matrix.
         """
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
@@ -159,8 +157,8 @@ class AnalyzerBase(ABC):
 
     @staticmethod
     def _build_vandermonde_matrix(
-        freqs: npt.NDArray[np.float64], n_rows: int, fs: float
-    ) -> npt.NDArray[np.complex128]:
+        freqs: FloatArray, n_rows: int, fs: float
+    ) -> ComplexArray:
         """Build a Vandermonde matrix from a set of frequencies."""
         # Create the time vector t as a column vector
         t_vector = np.arange(n_rows).reshape(-1, 1) / fs
@@ -172,22 +170,19 @@ class AnalyzerBase(ABC):
         return vandermonde_matrix.astype(np.complex128)
 
     def _estimate_amplitudes_phases(
-        self,
-        signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-        estimated_freqs: npt.NDArray[np.float64],
-    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+        self, signal: SignalArray, estimated_freqs: FloatArray
+    ) -> tuple[FloatArray, FloatArray]:
         """Estimate amplitudes and phases from frequencies using LS.
 
         Args:
-            signal (np.ndarray):
-                Input signal (float64 or complex128).
-            estimated_freqs (np.ndarray):
+            signal (SignalArray): Input signal.
+            estimated_freqs (FloatArray):
                 An array of estimated frequencies in Hz.
 
         Returns:
-            tuple[np.ndarray, np.ndarray]:
-                - estimated_amps: Estimated amplitudes (float64).
-                - estimated_phases: Estimated phases in rad (float64).
+            tuple[FloatArray, FloatArray]:
+                - estimated_amps: Estimated amplitudes.
+                - estimated_phases: Estimated phases in rad.
         """
         # 1. Build the Vandermonde matrix V
         vandermonde_matrix = self._build_vandermonde_matrix(
@@ -234,7 +229,7 @@ class AnalyzerBase(ABC):
         return AnalyzerParameters(subspace_ratio=self.subspace_ratio)
 
     @property
-    def frequencies(self) -> npt.NDArray[np.float64]:
+    def frequencies(self) -> FloatArray:
         """Return the estimated frequencies in Hz after fitting."""
         if self.est_params is None:
             raise AttributeError(
@@ -243,7 +238,7 @@ class AnalyzerBase(ABC):
         return self.est_params.frequencies
 
     @property
-    def amplitudes(self) -> npt.NDArray[np.float64]:
+    def amplitudes(self) -> FloatArray:
         """Return the estimated amplitudes after fitting."""
         if self.est_params is None or self.est_params.amplitudes.size == 0:
             raise AttributeError(
@@ -252,7 +247,7 @@ class AnalyzerBase(ABC):
         return self.est_params.amplitudes
 
     @property
-    def phases(self) -> npt.NDArray[np.float64]:
+    def phases(self) -> FloatArray:
         """Return the estimated phases in radians after fitting."""
         if self.est_params is None or self.est_params.phases.size == 0:
             raise AttributeError(
