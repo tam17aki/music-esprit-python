@@ -170,6 +170,7 @@ This project is organized into a modular, object-oriented structure to promote c
 - **`analyzers/`**: A package containing the core implementations of the signal processing algorithms, structured as a class hierarchy.
   - `base.py`: Defines `AnalyzerBase`, the top-level abstract base class for all parametric estimation methods. It contains the common logic for the analysis workflow, such as the `fit` method template, subsequent amplitude/phase estimation, and result properties.
   - `models.py`: Defines `TypedDict` models (e.g., `AnalyzerParameters`) used for structuring and type-hinting the dictionaries of hyperparameters passed to and returned by the analyzers.
+  - `factory.py`: Provides a set of factory functions (e.g., `get_music_analyzers`) that encapsulate the logic for instantiating the various analyzer classes. This simplifies the setup process in the example scripts.**
   - **`music/`**: A sub-package dedicated to the MUSIC algorithm and its variants.
     - `base.py`: Defines `MusicAnalyzerBase`, an intermediate abstract class for all MUSIC variants. It inherits from `AnalyzerBase` and adds MUSIC-specific logic, like the estimation of the noise subspace.
     - `spectral.py`: Implements `SpectralMusicAnalyzer` (inheriting from `MusicAnalyzerBase`), which estimates frequencies via spectral peak-picking.
