@@ -26,8 +26,9 @@ import warnings
 from typing import final, override
 
 import numpy as np
-import numpy.typing as npt
 from scipy.signal import find_peaks
+
+from utils.data_models import FloatArray, IntArray, NumpyFloat, SignalArray
 
 from .._common import (
     ZERO_LEVEL,
@@ -86,17 +87,15 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         self.min_freq_period = min_freq_period
 
     @override
-    def _estimate_frequencies(
-        self, signal: npt.NDArray[np.float64] | npt.NDArray[np.complex128]
-    ) -> npt.NDArray[np.float64]:
+    def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies of multiple sinusoids using FAST MUSIC.
 
         Args:
-            signal (np.ndarray): Input signal (float64 or complex128).
+            signal (SignalArray): Input signal.
 
         Returns:
-            np.ndarray: Estimated frequencies in Hz (float64).
-                Returns empty arrays if estimation fails.
+            FloatArray: Estimated frequencies in Hz.
+                Returns empty arrays on failure.
         """
         # 0. Convert the signal to real (FAST MUSIC often assumes real
         #    signals)
@@ -111,7 +110,7 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
 
         # 1. Calculate the autocorrelation
         acf = np.correlate(real_signal, real_signal, mode="full").astype(
-            np.float64
+            NumpyFloat
         )
         acf = acf[real_signal.size - 1 :]
 
@@ -142,14 +141,12 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         )
 
     @staticmethod
-    def _find_period(
-        acf: npt.NDArray[np.float64], min_period: int, max_period: int
-    ) -> int:
+    def _find_period(acf: FloatArray, min_period: int, max_period: int) -> int:
         """Estimate the fundamental period of a signal from its ACF.
 
         Args:
-            acf (np.ndarray):
-                The autocorrelation function of the signal (float64).
+            acf (FloatArray):
+                The autocorrelation function of the signal.
             min_period (int):
                 The minimum period (in samples) to search for.
             max_period (int):
@@ -188,8 +185,8 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         return int(min_period + best_peak_local_index)
 
     def _calculate_fast_music_spectrum(
-        self, period_m: int, signal_space_indices: npt.NDArray[np.int_]
-    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+        self, period_m: int, signal_space_indices: IntArray
+    ) -> tuple[FloatArray, FloatArray]:
         """Calculates the FAST MUSIC pseudospectrum.
 
         This method implements the core of the FAST MUSIC
@@ -206,14 +203,14 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         Args:
             period_m (int):
                 The estimated fundamental period of the signal (M).
-            signal_space_indices (np.ndarray):
+            signal_space_indices (IntArray):
                 Indices of the power spectrum peaks corresponding to the
-                signal subspace eigenvectors (int_).
+                signal subspace eigenvectors.
 
         Returns:
-            tuple[np.ndarray, np.ndarray]:
+            tuple[FloatArray, FloatArray]:
                 A tuple containing the frequency grid in Hz and the FAST
-                MUSIC pseudospectrum (float64 and float64).
+                MUSIC pseudospectrum.
         """
         k = np.arange(self.n_grids).reshape(1, -1)  # (1, N_search)
         mi = signal_space_indices.reshape(-1, 1)  # (M, 1)
@@ -226,26 +223,23 @@ class FastMusicAnalyzer(MusicAnalyzerBase):
         return freq_grid, pseudospectrum
 
     @staticmethod
-    def _asinc(x: npt.NDArray[np.float64], m: int) -> npt.NDArray[np.float64]:
+    def _asinc(x: FloatArray, m: int) -> FloatArray:
         """Calculate the aliased sinc function (Dirichlet kernel).
 
         Defined as sin(pi*m*x) / sin(pi*x), this function handles the
         singularity at x = 0, where the value is m.
 
         Args:
-            x (np.ndarray):
-                Input array (float64).
-            m (int):
-                The length of the sequence (period).
+            x (FloatArray): Input array.
+            m (int): The length of the sequence (period).
 
         Returns:
-            np.ndarray:
-                The result of the aliased sinc function (float64).
+            FloatArray: The result of the aliased sinc function.
         """
         numerator = np.sin(np.pi * m * x)
         denominator = np.sin(np.pi * x)
         near_zero_den = np.abs(denominator) < ZERO_LEVEL
-        result: npt.NDArray[np.float64] = np.divide(
+        result: FloatArray = np.divide(
             numerator,
             denominator,
             out=np.zeros_like(numerator),
