@@ -161,7 +161,23 @@ class AnalyzerBase(ABC):
     def _build_vandermonde_matrix(
         freqs: FloatArray, n_rows: int, fs: float
     ) -> ComplexArray:
-        """Build a Vandermonde matrix from a set of frequencies."""
+        """Build a Vandermonde matrix from a set of frequencies.
+
+        Args:
+            freqs (FloatArray):
+                An array of frequencies in Hz used to generate the
+                columns. Shape: (P,).
+            n_rows (int):
+                The number of rows in the matrix, corresponding to the
+                number of time samples (L).
+            fs (float):
+                The sampling frequency in Hz.
+
+        Returns:
+            ComplexArray:
+                The resulting complex-valued Vandermonde matrix.
+                Shape: (L, P).
+        """
         # Create the time vector t as a column vector
         t_vector = np.arange(n_rows).reshape(-1, 1) / fs
 
