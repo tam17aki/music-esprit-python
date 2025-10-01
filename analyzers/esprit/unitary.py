@@ -105,8 +105,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
             signal (SignalArray): Input signal.
 
         Returns:
-            FloatArray:
-                The real-valued signal subspace matrix.
+            FloatArray: The real-valued signal subspace matrix.
                 Returns None on failure.
         """
         # 1. Construct the data matrix X (Hankel matrix)
