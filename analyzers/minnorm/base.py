@@ -26,7 +26,8 @@ import warnings
 from abc import ABC
 
 import numpy as np
-import numpy.typing as npt
+
+from utils.data_models import ComplexArray, FloatArray
 
 from .._common import ZERO_LEVEL
 from ..music.base import MusicAnalyzerBase
@@ -37,18 +38,18 @@ class MinNormAnalyzerBase(MusicAnalyzerBase, ABC):
 
     @staticmethod
     def _calculate_min_norm_vector(
-        noise_subspace: npt.NDArray[np.float64] | npt.NDArray[np.complex128],
-    ) -> npt.NDArray[np.float64] | npt.NDArray[np.complex128] | None:
+        noise_subspace: FloatArray | ComplexArray,
+    ) -> FloatArray | ComplexArray | None:
         """Calculate the minimum norm vector from the noise subspace.
 
         Args:
-            noise_subspace (np.ndarray):
-                The noise subspace matrix E_n (float64 or complex128).
+            noise_subspace (FloatArray | ComplexArray):
+                The noise subspace matrix E_n.
 
         Returns:
-            np.ndarray | None:
-                The minimum norm vector (float64 or complex128).
-                Returns None if estimation fails.
+            FloatArray | ComplexArray | None:
+                The minimum norm vector.
+                Returns None on failure.
         """
         # Extract the first row vector of the noise subspace E_n
         first_row_h = noise_subspace[0, :]
