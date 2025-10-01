@@ -28,7 +28,7 @@ from typing import final, override
 import numpy as np
 from scipy.linalg import LinAlgError, eigh
 
-from utils.data_models import ComplexArray, FloatArray, SignalArray
+from utils.data_models import ComplexArray, FloatArray, NumpyFloat, SignalArray
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
@@ -177,7 +177,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
                 [-np.imag(_diff), -np.sqrt(2.0) * np.imag(gt), np.real(_diff)]
             )
 
-        return np.hstack([tg_left, tg_right]).astype(np.float64)
+        return np.hstack([tg_left, tg_right]).astype(NumpyFloat)
 
     @override
     def get_params(self) -> AnalyzerParameters:
