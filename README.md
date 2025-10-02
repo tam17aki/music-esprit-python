@@ -319,4 +319,4 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 
 [14] A. Serbes, "Fast and efficient sinusoidal frequency estimation by using the DFT coefficients," IEEE Transactions on Communications, vol. 67, no. 3, pp. 2333-2342, 2019.
 
-[13] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
+[15] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
