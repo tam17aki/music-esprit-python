@@ -111,7 +111,7 @@ class AnalyzerBase(ABC):
 
     @abstractmethod
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
-        """Estimate frequencies using a specific MUSIC variant."""
+        """Estimate frequencies of multi-sinusoids."""
         raise NotImplementedError
 
     @staticmethod
