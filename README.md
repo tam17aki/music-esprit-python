@@ -69,22 +69,22 @@ Running the command above will produce an output similar to this:
 --- Experiment Setup ---
 Sampling Frequency: 44100.0 Hz
 Signal Duration:    100 ms
-SNR:                30.0 dB
-True Frequencies:   [440. 460. 480.] Hz
-True Amplitudes:    [0.51346943 1.07169571 1.23648371]
-True Phases:        [-1.18096451  2.03500292  2.73434291] rad
+SNR:                40.0 dB
+True Frequencies:   [440. 445. 450.] Hz
+True Amplitudes:    [1.05291351 1.23881033 1.18742655]
+True Phases:        [-2.42839742 -2.94919381 -1.06740594] rad
 
 ...
 
 --- Results Summary ---
-Method               | Time (s) | Freq RMSE (Hz) | Amp RMSE | Phase RMSE (rad)
----------------------|----------|----------------|----------|-----------------
-Spectral MUSIC       | 0.615082 | 0.536679       | 0.017765 | 0.170921        
-Root Min-Norm        | 1.101027 | 0.009587       | 0.001132 | 0.004199        
-Standard ESPRIT (LS) | 0.280752 | 0.011794       | 0.001265 | 0.004759        
-FFT-ESPRIT (LS)      | 0.006565 | 0.011624       | 0.001265 | 0.004702        
-HOYW                 | 0.332008 | 0.491927       | 0.022890 | 0.144001        
-RELAX                | 0.002666 | 0.002439       | 0.001025 | 0.000704   
+Method          | Time (s) | Freq RMSE (Hz) | Amp RMSE | Phase RMSE (rad)
+----------------|----------|----------------|----------|-----------------
+Spectral MUSIC  | 0.615293 | 2.876581       | 0.523296 | 0.730882        
+Root Min-Norm   | 1.065164 | 0.274875       | 0.084641 | 0.086743        
+ESPRIT (LS)     | 0.264730 | 0.086608       | 0.054137 | 0.031641        
+FFT-ESPRIT (LS) | 0.004962 | 0.135672       | 0.049331 | 0.032281        
+HOYW            | 0.333640 | 98.257049      | 0.725682 | 0.880289        
+RELAX           | 0.002581 | 6.894093       | 0.670390 | 1.000539   
 ```
 
 *(Note: The exact values for amplitudes, phases, and errors will vary due to their random generation.)*
