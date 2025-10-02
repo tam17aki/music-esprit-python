@@ -201,10 +201,10 @@ This project is organized into a modular, object-oriented structure to promote c
     - `root.py`: Implements `RootMinNormAnalyzer`, which estimates frequencies via polynomial rooting.
   - **`hoyw/`**: A sub-package for the Higher-Order Yule-Walker (HOYW) method.
      - `hoyw.py`: Implements `HoywAnalyzer`, which directly inherits from `AnalyzerBase`. It estimates frequencies by solving the HOYW equations and subsequent finding the polynomial roots.
-  - **`relax/`**: A sub-package for the RELAX algorithm.
-     - `relax.py`: Implements `RelaxAnalyzer`, which sequentially estimates parameters using an iterative signal cancellation approach.
-  - **`cfh/`**: A sub-package for the CFH-family of algorithms.
-     - `cfh.py`: Implements `CfhAnalyzer`, which uses the same iterative cancellation framework as RELAX but replaces the dense FFT search with a computationally cheaper, high-accuracy DFT interpolation method. It supports multiple interpolation strategies (Candan, HAQSE/Serbes) that can be selected at instantiation.
+  - **`iterative/`**: A sub-package for fast iterative greedy methods.
+    - `base.py`: Defines `IterativeAnalyzerBase`, an intermediate abstract class that provides the common signal cancellation framework used by RELAX and CFH.
+    - `relax.py`: Implements `RelaxAnalyzer` (inheriting from `IterativeAnalyzerBase`), which uses a high-density zero-padded FFT search to find signal components.
+    - `cfh.py`: Implements `CfhAnalyzer` (inheriting from `IterativeAnalyzerBase`), which uses a fast, closed-form DFT interpolation method (Candan or HAQSE) to find components.
 - **`mixins/`**: A package for providing optional enhancements to the analyzer classes through multiple inheritance.
   - `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
 - **`utils/`**: A package for reusable helper modules and data structures that are decoupled from the specific analyzer implementations.
@@ -234,7 +234,7 @@ The class diagram below illustrates the main **inheritance relationships** betwe
 ![Simple Class Diagram](https://github.com/tam17aki/music-esprit-python/blob/main/docs/images/simple_class_diagram.png)
 *<div align="center">Fig. 1: Primary inheritance hierarchy of the analyzer classes</div>*
 
-As shown, all analyzers inherit from a common `AnalyzerBase`, ensuring a consistent API. Specialized abstract classes like `MusicAnalyzerBase` and `EspritAnalyzerBase` group together logic common to each algorithm family.
+As shown, all analyzers inherit from a common `AnalyzerBase`, ensuring a consistent API. Specialized abstract classes like `MusicAnalyzerBase`, `EspritAnalyzerBase`, and `IterativeAnalyzerBase` group together logic common to each algorithm family. For instance, `IterativeAnalyzerBase` encapsulates the sequential signal cancellation workflow, allowing subclasses like `RelaxAnalyzer` and `CfhAnalyzer` to focus solely on their unique strategy for finding the next strongest signal component.
 
 ### Key Design Patterns
 
@@ -263,7 +263,7 @@ Three main families of models are explored in this project:
      - [Web Version (Markdown)](docs/theory/music_theory.md)
      - [Printable Version (PDF)](docs/theory/music_theory.pdf)
 2. **Autoregressive (AR) Models (HOYW):** This approach models the signal as the output of a linear time-invariant system driven by white noise. Frequencies are estimated from the roots of the AR model's characteristic polynomial, whose coefficients are found from the signal's autocorrelation sequence.
-3. **Iterative Greedy Methods (RELAX, CFH):** This approach estimates parameters sequentially, one component at a time. It "greedily" finds the strongest sinusoidal component in the signal, subtracts it to form a residual signal, and then repeats the process on the residual. This method can be exceptionally fast for well-separated sinusoids.
+3. **Iterative Greedy Methods (RELAX, CFH):** This approach estimates parameters sequentially, one component at a time. It "greedily" finds the strongest sinusoidal component in the signal, subtracts it to form a residual signal, and then repeats the process on the residual. This method can be exceptionally fast for well-separated sinusoids. In this library, both RELAX and CFH are implemented as subclasses of a common iterative framework, differing only in their strategy for identifying the next component.
    - The **RELAX** algorithm performs a high-density spectral search at each step using a zero-padded FFT to achieve high accuracy.
    - The **CFH** (Coarse-to-Fine) family of algorithms, implemented here, follows the same iterative structure but replaces the computationally expensive dense search with a closed-form DFT interpolation formula. By using just three DFT samples around a coarse peak, it calculates a highly accurate frequency offset, resulting in one of the fastest available implementations.
 
