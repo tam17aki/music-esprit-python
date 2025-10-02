@@ -68,8 +68,8 @@ class CfhAnalyzer(AnalyzerBase):
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids to estimate.
             interpolator (InterpolatorType, optional):
-                The DFT interpolation method to use. Can be 'candan' or
-                'haqse'. Defaults to "haqse".
+                The DFT interpolation method to use. Can be "candan" or
+                "haqse". Defaults to "haqse".
         """
         super().__init__(fs, n_sinusoids, subspace_ratio=1 / 3)
         self.interpolator = interpolator
