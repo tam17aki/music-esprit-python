@@ -61,6 +61,7 @@ def main() -> None:
         min_freq_period=args.min_freq_period,
         ar_order=args.ar_order,
         rank_factor=args.rank_factor,
+        cfh_interpolator=args.cfh_intepolator,
     )
 
     # --- 2. Generate Test Signal ---
