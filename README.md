@@ -21,6 +21,8 @@ The project is architected with a clean, object-oriented design, emphasizing cod
   - **Fast Iterative Methods**:
     This approach prioritizes computational speed, making it ideal for applications where frequencies are well-separated.
     - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
+    - **CFH (Iterative DFT Interpolation)**: An extremely fast iterative method similar in structure to RELAX. Instead of a dense spectral search, it uses a high-accuracy, closed-form DFT interpolation method to pinpoint frequencies from just three DFT samples, offering one of the fastest estimation times.
+      - **Multiple Interpolators**: Supports multiple 3-point interpolation strategies, allowing a trade-off between computational simplicity (**Candan**) and numerical robustness (**HAQSE/Serbes**).
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
 - **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
@@ -120,6 +122,13 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
  ```bash
     python examples/compare_minnorm_variants.py
  ```
+- `examples/compare_iterative_methods.py`:<br>This script is dedicated to the fast iterative methods, allowing for a direct comparison of:
+    - RELAX (using a dense zero-padded FFT search)
+    - CFH with the Candan interpolator
+    - CFH with the HAQSE/Serbes interpolator
+```bash
+   examples/compare_iterative_methods.py
+```
 
 These scripts are the best place to understand the subtle but important differences between the various implementations provided in this library.
 
@@ -128,8 +137,8 @@ These scripts are the best place to understand the subtle but important differen
 For an exhaustive comparison of **all** implemented analyzers and their variants (including LS/TLS solvers and Forward-Backward versions), run the comprehensive benchmark script:
 
 ```bash
-    python examples/all_in_one_demo.py
- ```
+   python examples/all_in_one_demo.py
+```
 
 *(Note: This script may take longer to run as it executes every available combination.)*
 
@@ -162,6 +171,7 @@ python examples/run_comparison.py --help
 | `--min_freq_period`| Minimum frequency for periodicity search for FAST MUSIC<br>method. | 20.0|
 | `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | 512|
 | `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | 10|
+| `--cfh_interpolator` | Interpolator method for the CFH analyzer. Can be<br>`candan` or `haqse`. | `haqse` |
 
 ## Project Structure
 
@@ -193,6 +203,8 @@ This project is organized into a modular, object-oriented structure to promote c
      - `hoyw.py`: Implements `HoywAnalyzer`, which directly inherits from `AnalyzerBase`. It estimates frequencies by solving the HOYW equations and subsequent finding the polynomial roots.
   - **`relax/`**: A sub-package for the RELAX algorithm.
      - `relax.py`: Implements `RelaxAnalyzer`, which sequentially estimates parameters using an iterative signal cancellation approach.
+  - **`cfh/`**: A sub-package for the CFH-family of algorithms.
+     - `cfh.py`: Implements `CfhAnalyzer`, which uses the same iterative cancellation framework as RELAX but replaces the dense FFT search with a computationally cheaper, high-accuracy DFT interpolation method. It supports multiple interpolation strategies (Candan, HAQSE/Serbes) that can be selected at instantiation.
 - **`mixins/`**: A package for providing optional enhancements to the analyzer classes through multiple inheritance.
   - `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
 - **`utils/`**: A package for reusable helper modules and data structures that are decoupled from the specific analyzer implementations.
@@ -208,6 +220,7 @@ This project is organized into a modular, object-oriented structure to promote c
     - `compare_standard_esprit.py`: The demonstration script that runs a comparative analysis of Standard ESPRIT (LS/TLS) and Unitary ESPRIT (LS/TLS) algorithm.
     - `compare_fast_esprit.py`: The demonstration script that runs a comparative analysis of Nyström-based ESPRIT (LS/TLS) and FFT-ESPRIT (LS/TLS) algorithm.
     - `compare_minnorm_variants.py`: The demonstration script that runs a comparative analysis of Spectral and Root Min-Norm algorithm, including their Forward-Backward enhanced versions.
+    - `compare_iterative_methods.py`: The demonstration script that runs a focused comparison of the fast iterative methods: RELAX vs. the different variants of CFH (Candan, HAQSE).
     - `all_in_one_demo.py`: A comprehensive benchmark script that runs an exhaustive comparison of **all** implemented analyzers and their variants. Ideal for thorough performance evaluation and regression testing.
 
 This layered design allows for maximum code reuse and easy extension.
@@ -250,7 +263,9 @@ Three main families of models are explored in this project:
      - [Web Version (Markdown)](docs/theory/music_theory.md)
      - [Printable Version (PDF)](docs/theory/music_theory.pdf)
 2. **Autoregressive (AR) Models (HOYW):** This approach models the signal as the output of a linear time-invariant system driven by white noise. Frequencies are estimated from the roots of the AR model's characteristic polynomial, whose coefficients are found from the signal's autocorrelation sequence.
-3. **Iterative Greedy Methods (RELAX):** This approach estimates parameters sequentially, one component at a time. It "greedily" finds the strongest sinusoidal component in the signal, subtracts it to form a residual signal, and then repeats the process on the residual. This method can be exceptionally fast for well-separated sinusoids.
+3. **Iterative Greedy Methods (RELAX, CFH):** This approach estimates parameters sequentially, one component at a time. It "greedily" finds the strongest sinusoidal component in the signal, subtracts it to form a residual signal, and then repeats the process on the residual. This method can be exceptionally fast for well-separated sinusoids.
+   - The **RELAX** algorithm performs a high-density spectral search at each step using a zero-padded FFT to achieve high accuracy.
+   - The **CFH** (Coarse-to-Fine) family of algorithms, implemented here, follows the same iterative structure but replaces the computationally expensive dense search with a closed-form DFT interpolation formula. By using just three DFT samples around a coarse peak, it calculates a highly accurate frequency offset, resulting in one of the fastest available implementations.
 
 For a deeper dive into the theory behind each algorithm, please refer to the following key papers:
 
