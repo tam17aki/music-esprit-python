@@ -27,7 +27,7 @@ SOFTWARE.
 """
 
 from dataclasses import dataclass
-from typing import TypeAlias
+from typing import Literal, TypeAlias
 
 import numpy as np
 import numpy.typing as npt
@@ -38,6 +38,17 @@ FloatArray: TypeAlias = npt.NDArray[NumpyFloat]
 ComplexArray: TypeAlias = npt.NDArray[NumpyComplex]
 SignalArray: TypeAlias = FloatArray | ComplexArray
 IntArray: TypeAlias = npt.NDArray[np.int_]
+
+InterpolatorType: TypeAlias = Literal["candan", "haqse"]
+
+
+@dataclass
+class SingleSinusoidParameters:
+    """Represents the parameters of a single sinusoid."""
+
+    frequency: float
+    amplitude: float
+    phase: float
 
 
 @dataclass(frozen=True)
@@ -74,3 +85,4 @@ class AlgorithmConfig:
     min_freq_period: float
     ar_order: int
     rank_factor: int
+    cfh_interpolator: InterpolatorType
