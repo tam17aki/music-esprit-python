@@ -54,7 +54,6 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             FloatArray:
                 A sorted array of final, unique frequency estimates in
                 Hz, limited to `self.n_sinusoids`.
-
         """
         # 1. Convert normalized angular frequencies [rad/sample]
         #    to physical frequencies [Hz]
