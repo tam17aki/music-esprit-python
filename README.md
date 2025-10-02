@@ -244,12 +244,13 @@ The complete architecture, including these mixin and composition relationships, 
 
 The implemented methods are **model-based** high-resolution techniques that estimate sinusoidal parameters by fitting the observed signal to a predefined mathematical model. This approach allows for performance far exceeding that of traditional non-parametric methods like the FFT.
 
-Two main families of models are explored in this project:
+Three main families of models are explored in this project:
 
-1.  **Subspace Models (MUSIC, ESPRIT, Min-Norm):** These methods model the signal's covariance matrix as having a low-rank signal component embedded in noise. They exploit the geometric properties of the signal and noise subspaces, which are obtained via eigenvalue decomposition. For a detailed, step-by-step walkthrough of the MUSIC algorithm, please see the web version or download the PDF:
+1. **Subspace Models (MUSIC, ESPRIT, Min-Norm):** These methods model the signal's covariance matrix as having a low-rank signal component embedded in noise. They exploit the geometric properties of the signal and noise subspaces, which are obtained via eigenvalue decomposition. For a detailed, step-by-step walkthrough of the MUSIC algorithm, please see the web version or download the PDF:
      - [Web Version (Markdown)](docs/theory/music_theory.md)
      - [Printable Version (PDF)](docs/theory/music_theory.pdf)
-2.  **Autoregressive (AR) Models (HOYW):** This approach models the signal as the output of a linear time-invariant system driven by white noise. Frequencies are estimated from the roots of the AR model's characteristic polynomial, whose coefficients are found from the signal's autocorrelation sequence.
+2. **Autoregressive (AR) Models (HOYW):** This approach models the signal as the output of a linear time-invariant system driven by white noise. Frequencies are estimated from the roots of the AR model's characteristic polynomial, whose coefficients are found from the signal's autocorrelation sequence.
+3. **Iterative Greedy Methods (RELAX):** This approach estimates parameters sequentially, one component at a time. It "greedily" finds the strongest sinusoidal component in the signal, subtracts it to form a residual signal, and then repeats the process on the residual. This method can be exceptionally fast for well-separated sinusoids.
 
 For a deeper dive into the theory behind each algorithm, please refer to the following key papers:
 
