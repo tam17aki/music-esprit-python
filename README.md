@@ -280,9 +280,12 @@ For a deeper dive into the theory behind each algorithm, please refer to the fol
     -   Nyström-based ESPRIT: [9]
     -   FFT-ESPRIT: [10]
 -   **HOYW**: [11]
--   **RELAX**: [12]
+-   **RELAX / CFH**:
+    -   RELAX: [12]
+    -   DFT Interpolation (Candan): [13]
+    -   DFT Interpolation (Serbes/HAQSE): [14]
 
-For a comprehensive overview and detailed mathematical derivations, the following textbook is highly recommended: [13].
+For a comprehensive overview and detailed mathematical derivations, the following textbook is highly recommended: [15].
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/tam17aki/music-esprit-python/blob/main/LICENSE) file for details.
@@ -311,5 +314,9 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 [11] P. Stoica, T. Soderstrom and F. Ti, "Asymptotic properties of the high-order Yule-Walker estimates of sinusoidal frequencies," in IEEE Transactions on Acoustics, Speech, and Signal Processing, vol. 37, no. 11, pp. 1721-1734, 1989.
 
 [12] J. Li and P. Stoica, "Efficient mixed-spectrum estimation with applications to target feature extraction," in IEEE Transactions on Signal Processing, vol. 44, no. 2, pp. 281-295, 1996.
+
+[13] C. Candan, "A method for fine resolution frequency estimation from three DFT samples," IEEE Signal Processing Letters, vol. 18, no. 6, pp. 351-354, 2011.
+
+[14] A. Serbes, "Fast and efficient sinusoidal frequency estimation by using the DFT coefficients," IEEE Transactions on Communications, vol. 67, no. 3, pp. 2333-2342, 2019.
 
 [13] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
