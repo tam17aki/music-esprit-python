@@ -28,7 +28,6 @@ import numpy as np
 
 from utils.data_models import ComplexArray, FloatArray, SignalArray
 
-from .._common import filter_unique_freqs
 from ..base import AnalyzerBase
 
 
@@ -43,7 +42,6 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             2. Selects positive frequency components, resolving the +/-
                pairs that occur with real-valued signals.
             3. Sort frequencies in ascending order.
-            4. Filter closely spaced frequencies to ensure uniqueness.
 
         Args:
             raw_omegas (FloatArray):
@@ -65,10 +63,7 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
         positive_freqs = estimated_freqs_hz[positive_freq_indices]
 
         # 3. Sort the frequencies in ascending order.
-        raw_freqs = np.sort(positive_freqs)
-
-        # 4. Filters out closely spaced frequencies
-        est_freqs = filter_unique_freqs(raw_freqs, self.n_sinusoids)
+        est_freqs = np.sort(positive_freqs)
 
         return est_freqs
 
