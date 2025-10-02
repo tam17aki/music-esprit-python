@@ -28,6 +28,7 @@ SOFTWARE.
 """
 
 from analyzers.base import AnalyzerBase
+from analyzers.cfh.cfh import CfhAnalyzer
 from analyzers.esprit.base import EspritAnalyzerBase
 from analyzers.esprit.fft import FFTEspritAnalyzer
 from analyzers.esprit.nystrom import NystromEspritAnalyzer
@@ -379,6 +380,32 @@ def get_esprit_analyzers(
     return analyzers
 
 
+def get_iterative_greedy_analyzers(
+    config: ExperimentConfig,
+) -> dict[str, AnalyzerBase]:
+    """Get a dictionary of iterative greedy analyzer instances.
+
+    This factory function instantiates RELAX and the different variants
+    of the CFH analyzer for direct comparison.
+
+    Args:
+        config: The experimental configuration.
+
+    Returns:
+        A dictionary mapping method names to analyzer instances.
+    """
+    analyzers: dict[str, AnalyzerBase] = {
+        "RELAX": RelaxAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
+        "CFH (Candan)": CfhAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, interpolator="candan"
+        ),
+        "CFH (HAQSE)": CfhAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, interpolator="haqse"
+        ),
+    }
+    return analyzers
+
+
 def get_all_analyzers(
     config: ExperimentConfig, algo_config: AlgorithmConfig
 ) -> dict[str, AnalyzerBase]:
@@ -403,7 +430,5 @@ def get_all_analyzers(
         config.fs, config.n_sinusoids, ar_order=algo_config.ar_order
     )
     analyzers.update(get_esprit_analyzers(config, algo_config))
-    analyzers["RELAX"] = RelaxAnalyzer(
-        fs=config.fs, n_sinusoids=config.n_sinusoids
-    )
+    analyzers.update(get_iterative_greedy_analyzers(config))
     return analyzers
