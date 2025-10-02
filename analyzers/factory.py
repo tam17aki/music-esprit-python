@@ -92,7 +92,7 @@ def get_representative_analyzers(
             n_sinusoids=config.n_sinusoids,
             subspace_ratio=algo_config.subspace_ratio,
         ),
-        "Standard ESPRIT (LS)": StandardEspritAnalyzer(
+        "ESPRIT (LS)": StandardEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=LSEspritSolver(),
