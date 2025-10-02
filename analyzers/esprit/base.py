@@ -40,7 +40,8 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
 
         This method performs a series of finalization steps:
             1. Convert angular frequencies from rad/sample to Hz.
-            2. Extract positive frequencies from their +/- pairs.
+            2. Selects positive frequency components, resolving the +/-
+               pairs that occur with real-valued signals.
             3. Sort frequencies in ascending order.
             4. Filter closely spaced frequencies to ensure uniqueness.
 
@@ -53,19 +54,19 @@ class EspritAnalyzerBase(AnalyzerBase, ABC):
             FloatArray:
                 A sorted array of final, unique frequency estimates in
                 Hz, limited to `self.n_sinusoids`.
+
         """
         # 1. Convert normalized angular frequencies [rad/sample]
         #    to physical frequencies [Hz]
         estimated_freqs_hz = raw_omegas * (self.fs / (2 * np.pi))
 
-        # 2. Take only the positive frequencies from positive/negative
-        #    frequency pairs
+        # 2. Extracts positive frequencies (handling +/- pairs from real
+        #    signals).
         positive_freq_indices = np.where(estimated_freqs_hz > 0)[0]
         positive_freqs = estimated_freqs_hz[positive_freq_indices]
 
-        # 3. Sort the frequencies (just flipping) to move spurious ones
-        #    to the end
-        raw_freqs = positive_freqs[::-1]
+        # 3. Sort the frequencies in ascending order.
+        raw_freqs = np.sort(positive_freqs)
 
         # 4. Filters out closely spaced frequencies
         est_freqs = filter_unique_freqs(raw_freqs, self.n_sinusoids)
