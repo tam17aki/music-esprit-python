@@ -241,16 +241,16 @@ def get_standard_esprit_variants(
             solver=LSEspritSolver(),
             subspace_ratio=algo_config.subspace_ratio,
         ),
-        "ESPRIT FB (LS)": StandardEspritAnalyzerFB(
-            fs=config.fs,
-            n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
-            subspace_ratio=algo_config.subspace_ratio,
-        ),
         "ESPRIT (TLS)": StandardEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=TLSEspritSolver(),
+            subspace_ratio=algo_config.subspace_ratio,
+        ),
+        "ESPRIT FB (LS)": StandardEspritAnalyzerFB(
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            solver=LSEspritSolver(),
             subspace_ratio=algo_config.subspace_ratio,
         ),
         "ESPRIT FB (TLS)": StandardEspritAnalyzerFB(
