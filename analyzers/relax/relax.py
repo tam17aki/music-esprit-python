@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from dataclasses import dataclass
 from typing import final, override
 
 import numpy as np
@@ -33,20 +32,12 @@ from utils.data_models import (
     NumpyComplex,
     NumpyFloat,
     SignalArray,
+    SingleSinusoidParameters,
 )
 
 from .._common import ZERO_LEVEL, estimate_freqs_iterative_fft
 from ..base import AnalyzerBase
 from ..models import AnalyzerParameters
-
-
-@dataclass
-class SingleSinusoidParameters:
-    """Represents the parameters of a single sinusoid."""
-
-    frequency: float
-    amplitude: float
-    phase: float
 
 
 @final
