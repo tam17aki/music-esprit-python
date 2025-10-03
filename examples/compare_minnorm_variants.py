@@ -63,6 +63,8 @@ def main() -> None:
         rank_factor=args.rank_factor,
         n_fft_iip=args.n_fft_iip,
         cfh_interpolator=args.cfh_interpolator,
+        n_newton_steps=args.n_newton_steps,
+        n_cyclic_rounds=args.n_cyclic_rounds,
     )
 
     # --- 2. Generate Test Signal ---
