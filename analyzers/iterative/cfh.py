@@ -66,7 +66,7 @@ class CfhAnalyzer(IterativeAnalyzerBase):
                 "haqse". Defaults to "haqse".
         """
         super().__init__(fs, n_sinusoids)
-        self.interpolator = interpolator
+        self.interpolator: InterpolatorType = interpolator
         self._single_freq_estimator = (
             self._estimate_single_freq_haqse
             if interpolator == "haqse"
