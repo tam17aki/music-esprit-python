@@ -23,6 +23,7 @@ The project is architected with a clean, object-oriented design, emphasizing cod
     - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
     - **CFH (Iterative DFT Interpolation)**: An extremely fast iterative method similar in structure to RELAX. Instead of a dense spectral search, it uses a high-accuracy, closed-form DFT interpolation method to pinpoint frequencies from just three DFT samples, offering one of the fastest estimation times.
       - **Multiple Interpolators**: Supports multiple 3-point interpolation strategies, allowing a trade-off between computational simplicity (**Candan**) and numerical robustness (**HAQSE/Serbes**).
+    - **NOMP (Newtonized OMP)**: An advanced iterative method that enhances the greedy search with a feedback mechanism. After each new component is found, it refines all previously detected frequencies using Newton's method and updates all amplitudes via a least-squares fit, allowing it to correct earlier estimates.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
 - **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
@@ -126,6 +127,7 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
     - RELAX (using a dense zero-padded FFT search)
     - CFH with the Candan interpolator
     - CFH with the HAQSE/Serbes interpolator
+    - NOMP (Newtonized Orthogonal Matching Pursuit)
 ```bash
    examples/compare_iterative_methods.py
 ```
@@ -173,6 +175,8 @@ python examples/run_comparison.py --help
 | `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | 10|
 | `--n_fft_iip`	| FFT length for iterative methods (RELAX, FFT-ESPRIT).<br>If not specified, defaults to the signal length.| None|
 | `--cfh_interpolator` | Interpolator method for the CFH analyzer. Can be<br>`candan` or `haqse`. | `haqse` |
+| `--n_newton_steps` | Number of Newton refinement steps for NOMP. | 1 |
+| `--n_cyclic_rounds`| Number of cyclic refinement rounds for NOMP. | 1 |
 
 ## Project Structure
 
@@ -206,6 +210,7 @@ This project is organized into a modular, object-oriented structure to promote c
     - `base.py`: Defines `IterativeAnalyzerBase`, an intermediate abstract class that provides the common signal cancellation framework used by RELAX and CFH.
     - `relax.py`: Implements `RelaxAnalyzer` (inheriting from `IterativeAnalyzerBase`), which uses a high-density zero-padded FFT search to find signal components.
     - `cfh.py`: Implements `CfhAnalyzer` (inheriting from `IterativeAnalyzerBase`), which uses a fast, closed-form DFT interpolation method (Candan or HAQSE) to find components.
+    - `nomp.py`: Implements `NompAnalyzer`, a more advanced iterative method featuring Newton-based refinements and a cyclic feedback loop.
 - **`mixins/`**: A package for providing optional enhancements to the analyzer classes through multiple inheritance.
   - `covariance.py`: Contains the `ForwardBackwardMixin` to add Forward-Backward averaging capability.
 - **`utils/`**: A package for reusable helper modules and data structures that are decoupled from the specific analyzer implementations.
@@ -267,6 +272,7 @@ Three main families of models are explored in this project:
 3. **Iterative Greedy Methods (RELAX, CFH):** This approach estimates parameters sequentially, one component at a time. It "greedily" finds the strongest sinusoidal component in the signal, subtracts it to form a residual signal, and then repeats the process on the residual. This method can be exceptionally fast for well-separated sinusoids. In this library, both RELAX and CFH are implemented as subclasses of a common iterative framework, differing only in their strategy for identifying the next component.
    - The **RELAX** algorithm performs a high-density spectral search at each step using a zero-padded FFT to achieve high accuracy.
    - The **CFH** (Coarse-to-Fine) family of algorithms, implemented here, follows the same iterative structure but replaces the computationally expensive dense search with a closed-form DFT interpolation formula. By using just three DFT samples around a coarse peak, it calculates a highly accurate frequency offset, resulting in one of the fastest available implementations.
+   - The **NOMP** algorithm builds upon this greedy framework by incorporating a **feedback mechanism**. Through cyclic Newton-based refinements and least-squares updates, it re-evaluates all prior estimates after each new component is detected, allowing it to correct for inter-component interference and achieve higher accuracy.
 
 For a deeper dive into the theory behind each algorithm, please refer to the following key papers:
 
@@ -285,8 +291,9 @@ For a deeper dive into the theory behind each algorithm, please refer to the fol
     -   RELAX: [12]
     -   DFT Interpolation (Candan): [13]
     -   DFT Interpolation (Serbes/HAQSE): [14]
+    -   NOMP: [15]
 
-For a comprehensive overview and detailed mathematical derivations, the following textbook is highly recommended: [15].
+For a comprehensive overview and detailed mathematical derivations, the following textbook is highly recommended: [16].
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](https://github.com/tam17aki/music-esprit-python/blob/main/LICENSE) file for details.
@@ -320,4 +327,6 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 
 [14] A. Serbes, "Fast and efficient sinusoidal frequency estimation by using the DFT coefficients," IEEE Transactions on Communications, vol. 67, no. 3, pp. 2333-2342, 2019.
 
-[15] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
+[15] B. Mamandipoor, D. Ramasamy and U. Madhow, "Newtonized Orthogonal Matching Pursuit: Frequency Estimation Over the Continuum," in IEEE Transactions on Signal Processing, vol. 64, no. 19, pp. 5066-5081, 2016.
+
+[16] P. Stoica and R. Moses, "Spectral Analysis of Signals," Pearson Prentice Hall, 2005.
