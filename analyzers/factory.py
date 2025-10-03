@@ -407,11 +407,11 @@ def get_iterative_greedy_analyzers(
             n_sinusoids=config.n_sinusoids,
             n_fft_iip=algo_config.n_fft_iip,
         ),
-        "CFH (Candan)": CfhAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, interpolator="candan"
-        ),
         "CFH (HAQSE)": CfhAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, interpolator="haqse"
+        ),
+        "CFH (Candan)": CfhAnalyzer(
+            fs=config.fs, n_sinusoids=config.n_sinusoids, interpolator="candan"
         ),
     }
     return analyzers
