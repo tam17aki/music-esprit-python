@@ -27,6 +27,7 @@ import warnings
 import numpy as np
 import numpy.polynomial.polynomial as poly
 import scipy.fft
+from numpy.fft import fftfreq, fftshift
 from numpy.linalg import LinAlgError, pinv
 from scipy.signal import find_peaks
 
@@ -257,86 +258,56 @@ def find_freqs_from_roots(
     return unique_freqs
 
 
-def _refine_freq_candan(
-    dft_sig: ComplexArray,
-    k_c: int,
-    n_fft: int,
-    fs: float,
-    *,
-    is_real_signal: bool,
+def _find_and_refine_strongest_peak(
+    spectrum: FloatArray, fs: float, n_fft: int, is_real_signal: bool
 ) -> float:
-    """Refine a frequency estimate using Candan's interpolation.
+    """Find and refine the strongest peak in an FFT spectrum.
 
-    This helper function takes a coarse integer peak index from a DFT
-    spectrum and refines it to sub-bin accuracy using the closed-form
-    interpolator proposed by Candan (2011). It uses the complex values
-    of the peak sample and its two immediate neighbors.
-
-    This function is capable of handling both real and complex signals
-    by interpreting the peak index `k_c` accordingly.
+    This helper function identifies the frequency bin with the maximum
+    magnitude in the first half of a given FFT spectrum. It then applies
+    parabolic interpolation to the peak and its two neighbors to
+    estimate a more precise, off-grid frequency.
 
     Args:
-        dft_sig (ComplexArray):
-            The complex-valued DFT spectrum (result of `np.fft.fft`).
-        k_c (int):
-            The coarse integer index of the spectral peak. For real
-            signals, this is an index in the positive-frequency half.
-            For complex signals, this is an index in the full spectrum
-            [0, N-1].
-        n_fft (int):
-            The total number of points in the DFT (length of `dft_sig`).
+        spectrum (FloatArray):
+            Magnitude spectrum of a signal (the result of
+            np.abs(np.fft.fft(...)))
         fs (float):
-            The sampling frequency in Hz, used for final conversion.
+            Sampling frequency in Hz, used for frequency conversion.
+        n_fft (int):
+            Number of points used in the FFT calculation, required
+            for correct frequency scaling.
         is_real_signal (bool):
-            A flag indicating if the original signal was real. This
-            governs the boundary checks and final frequency calculation.
+            A flag indicating whether the original signal was
+            real-valued. This determines how the spectrum is searched:
+            if True, only the first half (positive frequencies) of the
+            spectrum is considered.  f False, the entire shifted
+            spectrum (positive and negative frequencies) is searched.
 
     Returns:
-        float: The refined frequency estimate in Hz.
+        float:
+            The estimated frequency of the strongest peak in Hz.
     """
-    # --- 1. Boundary Checks for Interpolation ---
-    # For real signals, interpolation is only valid away from DC and Nyquist.
-    if is_real_signal and (k_c <= 0 or k_c >= (n_fft // 2) - 1):
-        # Fallback to the grid frequency without interpolation.
-        return float((k_c / n_fft) * fs)
-
-    # --- 2. Get DFT Samples for Interpolation ---
-    x_kc = dft_sig[k_c]
-    if abs(x_kc) < ZERO_LEVEL:
-        return float((k_c / n_fft) * fs)
-
-    # Use modulo arithmetic for robust indexing, especially for complex
-    # signals where the peak can be near the wrap-around point (e.g., k_c=N-1).
-    x_km1 = dft_sig[(k_c - 1 + n_fft) % n_fft]
-    x_kp1 = dft_sig[(k_c + 1) % n_fft]
-
-    # --- 3. Compute Candan's Correction Term (delta) ---
-    alpha = x_km1 / x_kc
-    beta = x_kp1 / x_kc
-
-    denominator = 2.0 - alpha - beta
-    if np.abs(denominator) < ZERO_LEVEL:
-        delta = 0.0
-    else:
-        delta = np.real((alpha - beta) / denominator)
-
-    # Clamp the offset for numerical stability.
-    delta = np.clip(delta, -0.5, 0.5)
-
-    # --- 4. Calculate Final Frequency ---
-    # The effective (fractional) index is k_eff = k_c + delta.
-    k_eff = k_c + delta
-
     if is_real_signal:
-        # For real signals, the index directly maps to a positive frequency.
-        freq_norm = k_eff / n_fft
-    elif k_eff >= n_fft / 2:
-        # For complex signals, map the index to the range [-0.5, 0.5).
-        freq_norm = (k_eff - n_fft) / n_fft  # Negative frequency
+        target_spectrum = spectrum[: n_fft // 2]
+        freq_grid = fftfreq(n_fft, d=1 / fs)[: n_fft // 2]
     else:
-        freq_norm = k_eff / n_fft  # Positive frequency
+        target_spectrum = fftshift(spectrum)
+        freq_grid = fftshift(fftfreq(n_fft, d=1 / fs))
 
-    return float(freq_norm * fs)
+    peak_idx = np.argmax(target_spectrum)
+    peak_freq = freq_grid[peak_idx]
+    if 0 < peak_idx < len(target_spectrum) - 1:
+        y_m1, y_0, y_p1 = target_spectrum[peak_idx - 1 : peak_idx + 2]
+        p = _compute_parabolic_offset(y_m1, y_0, y_p1)
+        if p > 0:
+            est_freq = (1 - p) * peak_freq + p * freq_grid[peak_idx + 1]
+        else:
+            est_freq = (1 + p) * peak_freq - p * freq_grid[peak_idx - 1]
+    else:
+        est_freq = peak_freq
+
+    return float(est_freq)
 
 
 def _estimate_and_subtract_component(
@@ -429,23 +400,16 @@ def estimate_freqs_iterative_fft(
         # 1. Calculate the FFT spectrum of the current signal
         spectrum = np.abs(scipy.fft.fft(residual_signal, n=n_fft))
 
-        # 2. Find the coarse integer index of the strongest peak
-        if is_real:
-            search_space = np.abs(spectrum[1 : n_fft // 2])
-            if search_space.size == 0:
-                break
-            k_c = int(np.argmax(search_space)) + 1
-        else:
-            # For complex signals, search the full spectrum
-            k_c = int(np.argmax(np.abs(spectrum)))
-
-        # 3. Refine the frequency using Candan's interpolation
-        est_freq = _refine_freq_candan(
-            spectrum, k_c, n_fft, fs, is_real_signal=is_real
+        # 2. Estimate the frequency of the strongest peak
+        est_freq = _find_and_refine_strongest_peak(
+            spectrum, fs, n_fft, is_real_signal=is_real
         )
+
+        if is_real and est_freq < 0:
+            continue
         estimated_freqs.append(est_freq)
 
-        # 4. Remove the estimated component from the residual signal
+        # 3. Remove the estimated component from the residual signal
         residual_signal = _estimate_and_subtract_component(
             residual_signal, est_freq, fs
         )
