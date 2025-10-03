@@ -32,6 +32,7 @@ import numpy as np
 from utils.data_models import ComplexArray, InterpolatorType
 
 from .._common import ZERO_LEVEL
+from ..models import AnalyzerParameters
 from .base import IterativeAnalyzerBase
 
 # Minimum number of samples required for 3-point interpolation.
@@ -192,3 +193,20 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         refined_freq_norm = (k_c + delta) / n
 
         return refined_freq_norm * self.fs
+
+    @override
+    def get_params(self) -> AnalyzerParameters:
+        """Return the analyzer's hyperparameters.
+
+        Extends the base implementation to include the interpolation
+        method.
+
+        Returns:
+            AnalyzerParameters:
+                A TypedDict containing both common and method-specific
+                hyperparameters.
+        """
+        params = super().get_params()
+        params.pop("subspace_ratio", None)
+        params["interpolator"] = self.interpolator
+        return params
