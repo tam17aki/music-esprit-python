@@ -26,10 +26,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import warnings
 from typing import final, override
 
 import numpy as np
-from scipy.linalg import pinv
+from scipy.linalg import LinAlgError, pinv
 
 from utils.data_models import (
     ComplexArray,
@@ -216,7 +217,14 @@ class NompAnalyzer(AnalyzerBase):
                     vandermonde = self._build_vandermonde_matrix(
                         other_freqs, n_samples, self.fs
                     )
-                    other_amps = pinv(vandermonde) @ original_signal
+                    try:
+                        other_amps = pinv(vandermonde) @ original_signal
+                    except LinAlgError:
+                        warnings.warn(
+                            "pinv failed in cyclic refinement. "
+                            + "Skipping update."
+                        )
+                        continue
                     other_components = vandermonde @ other_amps
                     temp_residual = original_signal - other_components
                 else:
@@ -254,7 +262,11 @@ class NompAnalyzer(AnalyzerBase):
         vandermonde_all = self._build_vandermonde_matrix(
             estimated_freqs, n_samples, self.fs
         )
-        all_amps = pinv(vandermonde_all) @ original_signal
+        try:
+            all_amps = pinv(vandermonde_all) @ original_signal
+        except LinAlgError:
+            warnings.warn("Final residual update failed due to LinAlgError.")
+            return original_signal
         all_components = vandermonde_all @ all_amps
         return original_signal - all_components
 
