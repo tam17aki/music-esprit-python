@@ -64,7 +64,7 @@ class CfhAnalyzer(IterativeAnalyzerBase):
                 The DFT interpolation method to use. Can be "candan" or
                 "haqse". Defaults to "haqse".
         """
-        super().__init__(fs, n_sinusoids, subspace_ratio=1 / 3)
+        super().__init__(fs, n_sinusoids)
         self.interpolator = interpolator
         self._single_freq_estimator = (
             self._estimate_single_freq_haqse
