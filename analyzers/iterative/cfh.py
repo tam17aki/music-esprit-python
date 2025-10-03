@@ -37,6 +37,7 @@ from .base import IterativeAnalyzerBase
 
 # Minimum number of samples required for 3-point interpolation.
 _MIN_SAMPLES_FOR_INTERPOLATION = 3
+_TAYLOR_APPROXIMATION_THRESHOLD = 1e-4
 
 
 @final
@@ -67,11 +68,10 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         """
         super().__init__(fs, n_sinusoids)
         self.interpolator: InterpolatorType = interpolator
-        self._single_freq_estimator = (
-            self._estimate_single_freq_haqse
-            if interpolator == "haqse"
-            else self._estimate_single_freq_candan
-        )
+        if interpolator == "haqse":
+            self._single_freq_estimator = self._estimate_single_freq_haqse
+        elif interpolator == "candan":
+            self._single_freq_estimator = self._estimate_single_freq_candan
 
     @override
     def _estimate_single_frequency(self, signal: ComplexArray) -> float | None:
@@ -81,12 +81,12 @@ class CfhAnalyzer(IterativeAnalyzerBase):
     def _estimate_single_freq_haqse(
         self, signal: ComplexArray
     ) -> float | None:
-        """Estimates a single frequency via a HAQSE-family interpolator.
+        """Estimates a frequency via the Hybrid A&M/QSE interpolator.
 
-        This method implements a non-iterative, high-accuracy frequency
-        interpolator based on the principles of HAQSE and Serbes. It
-        uses three DFT samples around the coarse peak to calculate a
-        refined frequency offset.
+        This method implements the two-stage HAQSE interpolator based
+        on the MATLAB implementation by A. Serbes. It first obtains a
+        coarse offset using the Aboutanios-Mulgrew (A&M) interpolator,
+        then refines it using a Q-Shift Estimator (QSE).
 
         Args:
             signal: The complex-valued input signal or residual.
@@ -98,50 +98,149 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         if n < _MIN_SAMPLES_FOR_INTERPOLATION:
             return None
 
-        # 1. Coarse search: Find the integer index of the DFT peak
+        # 1. Coarse search
         dft_sig = np.fft.fft(signal)
-
-        # Search in positive frequencies, excluding DC and Nyquist
-        # boundaries
         search_space = np.abs(dft_sig[1 : n // 2])
         if search_space.size == 0:
             return None
-        k_c = int(np.argmax(search_space)) + 1  # Coarse peak index
+        k_c = int(np.argmax(search_space)) + 1
 
-        # Interpolation is not possible at the spectrum boundaries
-        if k_c <= 0 or k_c >= (n // 2) - 1:
-            return (k_c / n) * self.fs
+        # 2. Stage 1: A&M Interpolation to get initial offset
+        dfa = self._compute_am_offset(signal, k_c)
 
-        # 2. Fine estimation using 3 complex DFT samples
-        x_km1 = dft_sig[k_c - 1]
-        x_k = dft_sig[k_c]
-        x_kp1 = dft_sig[k_c + 1]
+        # 3. Stage 2: QSE Refinement
+        dfh = self._compute_qse_refinement(signal, k_c, dfa)
 
-        # --- HAQSE/Serbes-style correction term calculation ---
-        # δ = Re{ (X_{k-1} - X_{k+1}) / (2*X_k + X_{k-1} + X_{k+1}) }
-
-        # Calculate numerator and denominator using complex arithmetic
-        # to reduce local variables.
-        term_a = x_km1 - x_kp1
-        term_b = 2 * x_k + x_km1 + x_kp1
-
-        if abs(term_b) < ZERO_LEVEL:
-            delta = 0.0
-        else:
-            # Re{ a / b } = (Re{a}Re{b} + Im{a}Im{b}) / |b|²
-            # This is equivalent to Re{ a * conj(b) } / |b|²
-            # np.real(term_a * np.conj(term_b)) is more direct
-            numerator = np.real(term_a * np.conj(term_b))
-            denominator = np.real(term_b * np.conj(term_b))  # |b|^2
-            delta = numerator / denominator
-
-        # The refined frequency is k_c + delta (in bins)
-        # Clamp the correction to be within [-0.5, 0.5] for stability
-        delta = np.clip(delta, -0.5, 0.5)
-
-        refined_freq_norm = (k_c + delta) / n
-
+        # 4. Final frequency calculation
+        refined_freq_norm = (k_c + dfh) / n
         return float(refined_freq_norm * self.fs)
+
+    def _compute_am_offset(self, signal: ComplexArray, k_c: int) -> float:
+        """Compute the initial frequency offset using A&M interpolator.
+
+        This method implements the first stage of the two-stage HAQSE
+        algorithm. It uses the Aboutanios-Mulgrew (A&M) interpolator,
+        which calculates a coarse frequency offset (`dfa`) from the DTFT
+        samples at `k_c ± 0.5` bins.
+
+        Args:
+            signal: The complex-valued signal to analyze.
+            k_c: The coarse integer index of the spectral peak.
+
+        Returns:
+            The coarse frequency offset (`dfa`) in bins.
+        """
+        n = signal.size
+        w_c = k_c / n
+
+        # DTFT at k_c ± 0.5
+        s_p05 = self._dtft_at(signal, w_c + 0.5 / n)
+        s_m05 = self._dtft_at(signal, w_c - 0.5 / n)
+
+        term_a = s_p05 + s_m05
+        term_b = s_p05 - s_m05
+        if abs(term_b) < ZERO_LEVEL:
+            return 0.0
+
+        num = np.real(term_a * np.conj(term_b))
+        den = np.real(term_b * np.conj(term_b))
+        return float(0.5 * (num / den))
+
+    def _compute_qse_refinement(
+        self, signal: ComplexArray, k_c: int, dfa: float
+    ) -> float:
+        """Compute the final frequency offset using QSE refinement.
+
+        This method implements the second stage of the two-stage HAQSE
+        algorithm. It takes the coarse offset from the A&M stage (`dfa`)
+        and applies a refinement based on the Q-Shift Estimator (QSE).
+        The final, refined offset is returned.
+
+        Args:
+            signal: The complex-valued signal to analyze.
+            k_c: The coarse integer index of the spectral peak.
+            dfa: The coarse offset from the A&M stage, in bins.
+
+        Returns:
+            The final, refined frequency offset (`dfh`) in bins,
+            clipped to the range [-0.5, 0.5].
+        """
+        n = signal.size
+        q = n ** (-1 / 3.0)
+
+        c_q = self._compute_bias_correction(q)
+
+        # DTFT for QSE refinement step
+        w_c = k_c / n
+        s_pq = self._dtft_at(signal, w_c + (dfa + q) / n)
+        s_mq = self._dtft_at(signal, w_c + (dfa - q) / n)
+
+        term_a = s_pq - s_mq
+        term_b = s_pq + s_mq
+        if abs(term_b) < ZERO_LEVEL or abs(c_q) < ZERO_LEVEL:
+            correction = 0.0
+        else:
+            correction = (
+                np.real(term_a * np.conj(term_b))
+                / np.real(term_b * np.conj(term_b))
+            ) / c_q
+
+        dfh = dfa + correction
+        return float(np.clip(dfh, -0.5, 0.5))
+
+    @staticmethod
+    def _compute_bias_correction(q: float) -> float:
+        """Calculate the c(q) bias correction term for the QSE stage.
+
+        This function computes the bias correction factor `c(q)`
+        required by the Q-Shift Estimator (QSE), as defined in the
+        HAQSE-family of algorithms.
+
+        For numerical stability, it uses a Taylor series approximation
+        for small values of `q`, where direct computation of `cot(pi*q)`
+        can suffer from catastrophic cancellation.
+
+        Args:
+            q (float): The q-shift parameter, typically `N^(-1/3)`.
+
+        Returns:
+            float: The calculated bias correction term `c(q)`.
+        """
+        pi_q = np.pi * q
+
+        if pi_q < _TAYLOR_APPROXIMATION_THRESHOLD:
+            return (np.pi**2 * q) / 3.0
+
+        with np.errstate(divide="ignore", invalid="ignore"):
+            cot_val = 1.0 / np.tan(pi_q)
+
+        if not np.isfinite(cot_val):
+            return 0.0
+
+        return float((1.0 - pi_q * cot_val) / (q * np.cos(pi_q) ** 2))
+
+    @staticmethod
+    def _dtft_at(signal: ComplexArray, freq_norm: float) -> ComplexArray:
+        """Calculate the DTFT of a signal at an arbitrary frequency.
+
+        This is a helper function that computes the Discrete-Time
+        Fourier Transform (DTFT) for a given signal at a single,
+        arbitrary normalized frequency point. This allows for spectral
+        evaluation at off-grid frequencies.
+
+        Args:
+            signal: The complex-valued input signal.
+            freq_norm: The normalized frequency (in cycles/sample) at
+                which to evaluate the DTFT.
+
+        Returns:
+            The complex-valued DTFT result at the specified frequency.
+        """
+        n = signal.size
+        t = np.arange(n)
+        basis = np.exp(-2j * np.pi * freq_norm * t)
+        dtft_val: ComplexArray = np.dot(signal, basis)
+        return dtft_val
 
     def _estimate_single_freq_candan(
         self, signal: ComplexArray
