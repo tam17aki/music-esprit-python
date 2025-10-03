@@ -370,6 +370,14 @@ def parse_args() -> argparse.Namespace:
         + "for Nyström-based ESPRIT method (default: 10).",
     )
     algo_group.add_argument(
+        "--n_fft_iip",
+        type=int,
+        default=None,
+        help="FFT length for iterative methods like RELAX and FFT-ESPRIT. "
+        + "If not specified, defaults to the signal length within the "
+        + "analyzer. (default: None)",
+    )
+    algo_group.add_argument(
         "--cfh_interpolator",
         type=str,
         default="haqse",
