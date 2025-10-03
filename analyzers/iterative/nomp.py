@@ -151,8 +151,8 @@ class NompAnalyzer(AnalyzerBase):
                 range.
 
         Returns:
-            The refined frequency of the newly identified component in
-            Hz, or None if no peak is found.
+            float | None: The refined frequency of the newly identified
+                component in Hz, or None if no peak is found.
         """
         n_samples = residual.size
         dft_residual = np.fft.fft(residual)
@@ -241,8 +241,8 @@ class NompAnalyzer(AnalyzerBase):
                 estimates.
 
         Returns:
-            The new residual signal after subtracting all optimally
-            fitted components.
+            ComplexArray: The new residual signal after subtracting all
+                optimally fitted components.
         """
         n_samples = original_signal.size
         vandermonde_all = self._build_vandermonde_matrix(
@@ -266,7 +266,7 @@ class NompAnalyzer(AnalyzerBase):
             current_freq: The current frequency estimate in Hz.
 
         Returns:
-            The refined frequency estimate in Hz.
+            float: The refined frequency estimate in Hz.
         """
         n = target_signal.size
         t = np.arange(n)
