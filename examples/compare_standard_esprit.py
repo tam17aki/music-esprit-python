@@ -68,6 +68,8 @@ def main() -> None:
         rank_factor=args.rank_factor,
         n_fft_iip=args.n_fft_iip,
         cfh_interpolator=args.cfh_interpolator,
+        n_newton_steps=args.n_newton_steps,
+        n_cyclic_rounds=args.n_cyclic_rounds,
     )
 
     # --- 2. Generate Test Signal ---
@@ -90,7 +92,7 @@ def main() -> None:
 
     print("\n--- Warming up CPU and caches... ---")
     warmup_analyzer = StandardEspritAnalyzer(
-        config.fs, config.n_sinusoids, solver=LSEspritSolver()
+        fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
     )
     warmup_analyzer.fit(noisy_signal)
 
