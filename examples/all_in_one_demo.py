@@ -63,6 +63,7 @@ def main() -> None:
         min_freq_period=args.min_freq_period,
         ar_order=args.ar_order,
         rank_factor=args.rank_factor,
+        n_fft_iip=args.n_fft_iip,
         cfh_interpolator=args.cfh_interpolator,
     )
 
