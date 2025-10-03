@@ -34,6 +34,7 @@ SOFTWARE.
 import numpy as np
 
 from analyzers.factory import get_music_analyzers
+from analyzers.music.spectral import SpectralMusicAnalyzer
 from cli import (
     parse_args,
     print_experiment_setup,
@@ -80,6 +81,12 @@ def main() -> None:
 
     # --- 4. Print Setup and Run Analyses ---
     print_experiment_setup(config, true_params)
+
+    print("\n--- Warming up CPU and caches... ---")
+    warmup_analyzer = SpectralMusicAnalyzer(
+        fs=config.fs, n_sinusoids=config.n_sinusoids
+    )
+    warmup_analyzer.fit(noisy_signal)
 
     results_summary: list[dict[str, str | float]] = []
     for name, analyzer in analyzers_to_test.items():
