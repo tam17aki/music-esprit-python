@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from typing import override
 
 import numpy as np
@@ -33,19 +32,11 @@ from utils.data_models import (
     FloatArray,
     NumpyComplex,
     SignalArray,
+    SingleSinusoidParameters,
 )
 
 from .._common import ZERO_LEVEL
 from ..base import AnalyzerBase
-
-
-@dataclass
-class SingleSinusoidParameters:
-    """Represents the parameters of a single sinusoid."""
-
-    frequency: float
-    amplitude: float
-    phase: float
 
 
 class IterativeAnalyzerBase(AnalyzerBase, ABC):
