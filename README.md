@@ -171,6 +171,7 @@ python examples/run_comparison.py --help
 | `--min_freq_period`| Minimum frequency for periodicity search for FAST MUSIC<br>method. | 20.0|
 | `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | 512|
 | `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | 10|
+| `--n_fft_iip`	| FFT length for iterative methods (RELAX, FFT-ESPRIT).<br>If not specified, defaults to the signal length.| None|
 | `--cfh_interpolator` | Interpolator method for the CFH analyzer. Can be<br>`candan` or `haqse`. | `haqse` |
 
 ## Project Structure
