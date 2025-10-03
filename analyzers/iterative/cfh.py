@@ -81,7 +81,7 @@ class CfhAnalyzer(IterativeAnalyzerBase):
     def _estimate_single_freq_haqse(
         self, signal: ComplexArray
     ) -> float | None:
-        """Estimates a frequency via the Hybrid A&M/QSE interpolator.
+        """Estimate a frequency via the Hybrid A&M/QSE interpolator.
 
         This method implements the two-stage HAQSE interpolator based
         on the MATLAB implementation by A. Serbes. It first obtains a
