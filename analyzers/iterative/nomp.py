@@ -317,7 +317,7 @@ class NompAnalyzer(AnalyzerBase):
         # Newton's method update rule
         w_new = w - s_dot / s_ddot
 
-        w_new = np.real(((w_new * self.fs) / (2 * np.pi)))
+        w_new = np.real((w_new * self.fs) / (2 * np.pi))
         return float(w_new)
 
     @override
