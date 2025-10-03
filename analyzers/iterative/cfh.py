@@ -88,10 +88,13 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         then refines it using a Q-Shift Estimator (QSE).
 
         Args:
-            signal: The complex-valued input signal or residual.
+            signal (ComplexArray):
+                The complex-valued input signal or residual.
 
         Returns:
-            The estimated frequency in Hz, or None if estimation fails.
+            float | None:
+                The estimated frequency in Hz, or None if estimation
+                fails.
         """
         n = signal.size
         if n < _MIN_SAMPLES_FOR_INTERPOLATION:
@@ -123,11 +126,11 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         samples at `k_c ± 0.5` bins.
 
         Args:
-            signal: The complex-valued signal to analyze.
-            k_c: The coarse integer index of the spectral peak.
+            signal (ComplexArray): The complex-valued signal to analyze.
+            k_c (int): The coarse integer index of the spectral peak.
 
         Returns:
-            The coarse frequency offset (`dfa`) in bins.
+            float: The coarse frequency offset (`dfa`) in bins.
         """
         n = signal.size
         w_c = k_c / n
@@ -156,13 +159,13 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         The final, refined offset is returned.
 
         Args:
-            signal: The complex-valued signal to analyze.
-            k_c: The coarse integer index of the spectral peak.
-            dfa: The coarse offset from the A&M stage, in bins.
+            signal (ComplexArray): The complex-valued signal to analyze.
+            k_c (int): The coarse integer index of the spectral peak.
+            dfa (float): The coarse offset from the A&M stage, in bins.
 
         Returns:
-            The final, refined frequency offset (`dfh`) in bins,
-            clipped to the range [-0.5, 0.5].
+            float: The final, refined frequency offset (`dfh`) in bins,
+                clipped to the range [-0.5, 0.5].
         """
         n = signal.size
         q = n ** (-1 / 3.0)
@@ -228,12 +231,16 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         evaluation at off-grid frequencies.
 
         Args:
-            signal: The complex-valued input signal.
-            freq_norm: The normalized frequency (in cycles/sample) at
-                which to evaluate the DTFT.
+            signal (ComplexArray):
+                The complex-valued input signal.
+            freq_norm (float):
+                The normalized frequency (in cycles/sample) at which to
+                evaluate the DTFT.
 
         Returns:
-            The complex-valued DTFT result at the specified frequency.
+            ComplexArray:
+                The complex-valued DTFT result at the specified
+                frequency.
         """
         n = signal.size
         t = np.arange(n)
@@ -250,10 +257,13 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         technique to achieve sub-bin frequency accuracy.
 
         Args:
-            signal: The complex-valued input signal or residual.
+            signal (ComplexArray):
+                The complex-valued input signal or residual.
 
         Returns:
-            The estimated frequency in Hz, or None if estimation fails.
+            float | None:
+                The estimated frequency in Hz, or None if estimation
+                fails.
         """
         n = signal.size
         if n < _MIN_SAMPLES_FOR_INTERPOLATION:
