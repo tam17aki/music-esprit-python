@@ -76,14 +76,14 @@ class NompAnalyzer(AnalyzerBase):
         """Initialize the NOMP analyzer.
 
         Args:
-            fs: Sampling frequency in Hz.
-            n_sinusoids: Number of sinusoids to estimate.
-            n_newton_steps: Number of Newton refinement steps to apply
-                for each new component (`R_s` in the paper).
+            fs (float): Sampling frequency in Hz.
+            n_sinusoids (int): Number of sinusoids to estimate.
+            n_newton_steps (int): Number of Newton refinement steps to
+                apply for each new component (`R_s` in the paper).
                 Defaults to 1.
-            n_cyclic_rounds: Number of full cyclic refinement rounds to
-                perform after each new component (`R_c` in the paper).
-                Defaults to 1.
+            n_cyclic_rounds (int): Number of full cyclic refinement
+                rounds to perform after each new component (`R_c` in the
+                paper). Defaults to 1.
         """
         super().__init__(fs, n_sinusoids)
         self.n_newton_steps: int = n_newton_steps
@@ -105,10 +105,11 @@ class NompAnalyzer(AnalyzerBase):
             iteration.
 
         Args:
-            signal: The input signal to be analyzed.
+            signal (SignalArray): The input signal to be analyzed.
 
         Returns:
-            A sorted array of the final estimated frequencies in Hz.
+            FloatArray: A sorted array of the final estimated
+                frequencies in Hz.
         """
         complex_signal = signal.astype(NumpyComplex)
 
@@ -145,14 +146,17 @@ class NompAnalyzer(AnalyzerBase):
         refines its frequency using Newton's method.
 
         Args:
-            residual: The current residual signal to search within.
-            is_real_signal: A flag indicating if the original signal
-                was real-valued, used to determine the spectral search
+            residual (ComplexArray):
+                The current residual signal to search within.
+            is_real_signal (bool):
+                A flag indicating if the original signal was
+                real-valued, used to determine the spectral search
                 range.
 
         Returns:
-            float | None: The refined frequency of the newly identified
-                component in Hz, or None if no peak is found.
+            float | None:
+                The refined frequency of the newly identified component
+                in Hz, or None if no peak is found.
         """
         n_samples = residual.size
         dft_residual = np.fft.fft(residual)
@@ -190,9 +194,9 @@ class NompAnalyzer(AnalyzerBase):
         of rounds (`n_cyclic_rounds`).
 
         Args:
-            original_signal:
+            original_signal (ComplexArray):
                 The original, unmodified input signal.
-            current_freqs:
+            current_freqs (FloatArray):
                 An array of all frequency estimates found so far.
 
         Returns:
@@ -236,9 +240,10 @@ class NompAnalyzer(AnalyzerBase):
         returns the final residual signal for the next iteration.
 
         Args:
-            original_signal: The original, unmodified input signal.
-            estimated_freqs: The latest array of refined frequency
-                estimates.
+            original_signal (ComplexArray):
+                The original, unmodified input signal.
+            estimated_freqs (FloatArray):
+                The latest array of refined frequency estimates.
 
         Returns:
             ComplexArray: The new residual signal after subtracting all
@@ -262,8 +267,10 @@ class NompAnalyzer(AnalyzerBase):
         Newton's method update `w_new = w - Ṡ / S̈`.
 
         Args:
-            target_signal: The signal (or residual) to fit against.
-            current_freq: The current frequency estimate in Hz.
+            target_signal (ComplexArray):
+                The signal (or residual) to fit against.
+            current_freq (float):
+                The current frequency estimate in Hz.
 
         Returns:
             float: The refined frequency estimate in Hz.
