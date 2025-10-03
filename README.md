@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This repository provides Python implementations of a comprehensive suite of modern, high-resolution parameter estimation algorithms for sinusoidal signals. It covers major algorithm families including **subspace-based methods (MUSIC, ESPRIT, Min-Norm), AR-modeling (HOYW), and fast iterative techniques (RELAX, CFH, FAST MUSIC, FFT-ESPRIT)**.
+This repository provides Python implementations of a comprehensive suite of modern, high-resolution parameter estimation algorithms for sinusoidal signals. It covers major algorithm families including **subspace-based methods (MUSIC, ESPRIT, Min-Norm), AR-modeling (HOYW), and fast iterative techniques (RELAX, CFH, NOMP, FAST MUSIC, FFT-ESPRIT)**.
 
 The project is architected with a clean, object-oriented design, emphasizing code clarity, reusability, and extensibility. It serves not only as a practical toolkit but also as an educational resource for understanding and comparing these powerful techniques. This work is inspired by the foundational papers in spectral estimation and aims to provide a robust and understandable guide.
 
@@ -125,8 +125,8 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
  ```
 - `examples/compare_iterative_methods.py`:<br>This script is dedicated to the fast iterative methods, allowing for a direct comparison of:
     - RELAX (using a dense zero-padded FFT search)
-    - CFH with the Candan interpolator
     - CFH with the HAQSE/Serbes interpolator
+    - CFH with the Candan interpolator
     - NOMP (Newtonized Orthogonal Matching Pursuit)
 ```bash
    examples/compare_iterative_methods.py
