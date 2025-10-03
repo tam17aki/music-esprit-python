@@ -102,6 +102,7 @@ def get_representative_analyzers(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=LSEspritSolver(),
+            n_fft_iip=algo_config.n_fft_iip,
         ),
         "HOYW": HoywAnalyzer(
             config.fs,
@@ -338,16 +339,19 @@ def get_fast_esprit_variants(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=LSEspritSolver(),
+            n_fft_iip=algo_config.n_fft_iip,
         ),
         "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=TLSEspritSolver(),
+            n_fft_iip=algo_config.n_fft_iip,
         ),
         "FFT-ESPRIT (Woodbury-LS)": FFTEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
             solver=WoodburyLSEspritSolver(),
+            n_fft_iip=algo_config.n_fft_iip,
         ),
     }
     return analyzers
@@ -381,7 +385,7 @@ def get_esprit_analyzers(
 
 
 def get_iterative_greedy_analyzers(
-    config: ExperimentConfig,
+    config: ExperimentConfig, algo_config: AlgorithmConfig
 ) -> dict[str, AnalyzerBase]:
     """Get a dictionary of iterative greedy analyzer instances.
 
@@ -389,13 +393,20 @@ def get_iterative_greedy_analyzers(
     of the CFH analyzer for direct comparison.
 
     Args:
-        config: The experimental configuration.
+        config (ExperimentConfig):
+            The main experiment configuration.
+        algo_config (AlgorithmConfig):
+            The algorithm hyperparameter configuration.
 
     Returns:
         A dictionary mapping method names to analyzer instances.
     """
     analyzers: dict[str, AnalyzerBase] = {
-        "RELAX": RelaxAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
+        "RELAX": RelaxAnalyzer(
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            n_fft_iip=algo_config.n_fft_iip,
+        ),
         "CFH (Candan)": CfhAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, interpolator="candan"
         ),
@@ -430,5 +441,5 @@ def get_all_analyzers(
         config.fs, config.n_sinusoids, ar_order=algo_config.ar_order
     )
     analyzers.update(get_esprit_analyzers(config, algo_config))
-    analyzers.update(get_iterative_greedy_analyzers(config))
+    analyzers.update(get_iterative_greedy_analyzers(config, algo_config))
     return analyzers
