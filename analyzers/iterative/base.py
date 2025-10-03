@@ -51,6 +51,16 @@ class SingleSinusoidParameters:
 class IterativeAnalyzerBase(AnalyzerBase, ABC):
     """Abstract base class for iterative greedy analyzers."""
 
+    def __init__(self, fs: float, n_sinusoids: int):
+        """Initialize the analyzer.
+
+        Args:
+            fs (float): Sampling frequency in Hz.
+            n_sinusoids (int): Number of sinusoids to estimate.
+        """
+        super().__init__(fs, n_sinusoids)
+        self._is_real_signal: bool = True
+
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
         """Estimate frequencies by iteratively applying interpolation.
@@ -65,7 +75,7 @@ class IterativeAnalyzerBase(AnalyzerBase, ABC):
         Returns:
             FloatArray: A sorted array of estimated frequencies in Hz.
         """
-        self._is_real_signal: bool = np.isrealobj(signal)
+        self._is_real_signal = np.isrealobj(signal)
         residual_signal = signal.copy().astype(NumpyComplex)
         estimated_freqs: list[float] = []
 
