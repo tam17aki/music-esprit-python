@@ -385,6 +385,20 @@ def parse_args() -> argparse.Namespace:
         choices=["candan", "haqse"],
         help="Interpolator method for the CFH analyzer " + "(default: haqse).",
     )
+    algo_group.add_argument(
+        "--n_newton_steps",
+        type=int,
+        default=1,
+        help="Number of Newton refinement steps per component for NOMP "
+        + "(default: 1).",
+    )
+    algo_group.add_argument(
+        "--n_cyclic_rounds",
+        type=int,
+        default=1,
+        help="Number of cyclic refinement rounds per iteration for NOMP "
+        + "(default: 1).",
+    )
 
     args = parser.parse_args()
     if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
