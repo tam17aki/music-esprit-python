@@ -3,7 +3,7 @@
 
 This script runs a comparative analysis of:
 - RELAX
-- CFH (with Candan and HAQSE interpolators)
+- CFH (with HAQSE and Candan interpolators)
 - NOMP (Newtonized Orthogonal Matching Pursuit)
 
 It evaluates their performance in terms of accuracy and speed for
