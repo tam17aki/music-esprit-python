@@ -29,6 +29,7 @@ SOFTWARE.
 from typing import final, override
 
 import numpy as np
+from scipy.linalg import pinv
 
 from utils.data_models import (
     ComplexArray,
@@ -215,7 +216,7 @@ class NompAnalyzer(AnalyzerBase):
                     vandermonde = self._build_vandermonde_matrix(
                         other_freqs, n_samples, self.fs
                     )
-                    other_amps = np.linalg.pinv(vandermonde) @ original_signal
+                    other_amps = pinv(vandermonde) @ original_signal
                     other_components = vandermonde @ other_amps
                     temp_residual = original_signal - other_components
                 else:
@@ -253,7 +254,7 @@ class NompAnalyzer(AnalyzerBase):
         vandermonde_all = self._build_vandermonde_matrix(
             estimated_freqs, n_samples, self.fs
         )
-        all_amps = np.linalg.pinv(vandermonde_all) @ original_signal
+        all_amps = pinv(vandermonde_all) @ original_signal
         all_components = vandermonde_all @ all_amps
         return original_signal - all_components
 
