@@ -78,12 +78,12 @@ class NompAnalyzer(AnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids to estimate.
-            n_newton_steps (int): Number of Newton refinement steps to
-                apply for each new component (`R_s` in the paper).
-                Defaults to 1.
-            n_cyclic_rounds (int): Number of full cyclic refinement
-                rounds to perform after each new component (`R_c` in the
+            n_newton_steps (int, optional): Number of Newton refinement
+                steps to apply for each new component (`R_s` in the
                 paper). Defaults to 1.
+            n_cyclic_rounds (int, optional): Number of full cyclic
+                refinement rounds to perform after each new component
+                (`R_c` in the paper). Defaults to 1.
         """
         super().__init__(fs, n_sinusoids)
         self.n_newton_steps: int = n_newton_steps
