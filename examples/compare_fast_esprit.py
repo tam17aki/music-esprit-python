@@ -32,7 +32,7 @@ SOFTWARE.
 
 import numpy as np
 
-from analyzers.esprit.fft import FFTEspritAnalyzer
+from analyzers.esprit.nystrom import NystromEspritAnalyzer
 from analyzers.esprit.solvers import LSEspritSolver
 from analyzers.factory import get_fast_esprit_variants
 from cli import (
@@ -83,7 +83,7 @@ def main() -> None:
     print_experiment_setup(config, true_params)
 
     print("\n--- Warming up CPU and caches... ---")
-    warmup_analyzer = FFTEspritAnalyzer(
+    warmup_analyzer = NystromEspritAnalyzer(
         fs=config.fs, n_sinusoids=config.n_sinusoids, solver=LSEspritSolver()
     )
     warmup_analyzer.fit(noisy_signal)
