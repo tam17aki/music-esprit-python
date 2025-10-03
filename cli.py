@@ -288,6 +288,7 @@ def parse_args() -> argparse.Namespace:
         description="Run a comparative demo of parameter estimation "
         + "algorithms."
     )
+
     sig_group = parser.add_argument_group("Signal Generation Parameters")
     algo_group = parser.add_argument_group("Algorithm Hyperparameters")
 
