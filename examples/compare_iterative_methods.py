@@ -39,7 +39,7 @@ from cli import (
     print_summary_table,
     run_and_evaluate_analyzer,
 )
-from utils.data_models import ExperimentConfig, NumpyFloat
+from utils.data_models import AlgorithmConfig, ExperimentConfig, NumpyFloat
 from utils.signal_generator import create_true_parameters, generate_test_signal
 
 
@@ -64,9 +64,18 @@ def main() -> None:
         true_params,
         is_complex=args.complex,
     )
+    algo_config = AlgorithmConfig(
+        subspace_ratio=args.subspace_ratio,
+        n_grids=args.n_grids,
+        min_freq_period=args.min_freq_period,
+        ar_order=args.ar_order,
+        rank_factor=args.rank_factor,
+        n_fft_iip=args.n_fft_iip,
+        cfh_interpolator=args.cfh_intepolator,
+    )
 
     # --- 3. Build Analyzer Dictionary ---
-    analyzers_to_test = get_iterative_greedy_analyzers(config)
+    analyzers_to_test = get_iterative_greedy_analyzers(config, algo_config)
 
     # --- 4. Print Setup and Run Analyses ---
     print_experiment_setup(config, true_params)
