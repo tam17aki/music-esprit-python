@@ -61,7 +61,7 @@ def main() -> None:
         ar_order=args.ar_order,
         rank_factor=args.rank_factor,
         n_fft_iip=args.n_fft_iip,
-        cfh_interpolator=args.cfh_intepolator,
+        cfh_interpolator=args.cfh_interpolator,
     )
 
     # --- 2. Generate Test Signal ---
