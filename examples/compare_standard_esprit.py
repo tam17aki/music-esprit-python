@@ -33,6 +33,8 @@ SOFTWARE.
 import numpy as np
 
 from analyzers.esprit.base import EspritAnalyzerBase
+from analyzers.esprit.solvers import LSEspritSolver
+from analyzers.esprit.standard import StandardEspritAnalyzer
 from analyzers.factory import (
     get_standard_esprit_variants,
     get_unitary_esprit_variants,
@@ -85,6 +87,12 @@ def main() -> None:
 
     # --- 4. Print Setup and Run Analyses ---
     print_experiment_setup(config, true_params)
+
+    print("\n--- Warming up CPU and caches... ---")
+    warmup_analyzer = StandardEspritAnalyzer(
+        config.fs, config.n_sinusoids, solver=LSEspritSolver()
+    )
+    warmup_analyzer.fit(noisy_signal)
 
     results_summary: list[dict[str, str | float]] = []
     for name, analyzer in analyzers_to_test.items():
