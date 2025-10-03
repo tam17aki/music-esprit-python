@@ -65,6 +65,10 @@ class RelaxAnalyzer(IterativeAnalyzerBase):
                 Returns None on failure.
         """
         est_freqs = estimate_freqs_iterative_fft(
-            signal, n_peaks=1, fs=self.fs, n_fft=self.n_fft_iip
+            signal,
+            n_peaks=1,
+            fs=self.fs,
+            n_fft=self.n_fft_iip,
+            is_complex=not self._is_real_signal,
         )
         return est_freqs[0] if len(est_freqs) > 0 else None
