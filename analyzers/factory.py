@@ -28,7 +28,6 @@ SOFTWARE.
 """
 
 from analyzers.base import AnalyzerBase
-from analyzers.cfh.cfh import CfhAnalyzer
 from analyzers.esprit.base import EspritAnalyzerBase
 from analyzers.esprit.fft import FFTEspritAnalyzer
 from analyzers.esprit.nystrom import NystromEspritAnalyzer
@@ -45,6 +44,8 @@ from analyzers.esprit.standard import (
 )
 from analyzers.esprit.unitary import UnitaryEspritAnalyzer
 from analyzers.hoyw.hoyw import HoywAnalyzer
+from analyzers.iterative.cfh import CfhAnalyzer
+from analyzers.iterative.relax import RelaxAnalyzer
 from analyzers.minnorm.base import MinNormAnalyzerBase
 from analyzers.minnorm.root import RootMinNormAnalyzer, RootMinNormAnalyzerFB
 from analyzers.minnorm.spectral import (
@@ -58,7 +59,6 @@ from analyzers.music.spectral import (
     SpectralMusicAnalyzer,
     SpectralMusicAnalyzerFB,
 )
-from analyzers.relax.relax import RelaxAnalyzer
 from utils.data_models import AlgorithmConfig, ExperimentConfig
 
 
