@@ -45,6 +45,7 @@ from analyzers.esprit.standard import (
 from analyzers.esprit.unitary import UnitaryEspritAnalyzer
 from analyzers.hoyw.hoyw import HoywAnalyzer
 from analyzers.iterative.cfh import CfhAnalyzer
+from analyzers.iterative.nomp import NompAnalyzer
 from analyzers.iterative.relax import RelaxAnalyzer
 from analyzers.minnorm.base import MinNormAnalyzerBase
 from analyzers.minnorm.root import RootMinNormAnalyzer, RootMinNormAnalyzerFB
@@ -412,6 +413,12 @@ def get_iterative_greedy_analyzers(
         ),
         "CFH (Candan)": CfhAnalyzer(
             fs=config.fs, n_sinusoids=config.n_sinusoids, interpolator="candan"
+        ),
+        "NOMP": NompAnalyzer(
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            n_newton_steps=algo_config.n_newton_steps,
+            n_cyclic_rounds=algo_config.n_cyclic_rounds,
         ),
     }
     return analyzers
