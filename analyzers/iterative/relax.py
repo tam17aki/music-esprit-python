@@ -27,6 +27,7 @@ from typing import final, override
 from utils.data_models import ComplexArray
 
 from .._common import estimate_freqs_iterative_fft
+from ..models import AnalyzerParameters
 from .base import IterativeAnalyzerBase
 
 
@@ -72,3 +73,20 @@ class RelaxAnalyzer(IterativeAnalyzerBase):
             is_complex=not self._is_real_signal,
         )
         return est_freqs[0] if len(est_freqs) > 0 else None
+
+    @override
+    def get_params(self) -> AnalyzerParameters:
+        """Return the analyzer's hyperparameters.
+
+        Extends the base implementation to include the length of
+        iterative interpolation FFT.
+
+        Returns:
+            AnalyzerParameters:
+                A TypedDict containing both common and method-specific
+                hyperparameters.
+        """
+        params = super().get_params()
+        params.pop("subspace_ratio", None)
+        params["n_fft_iip"] = self.n_fft_iip
+        return params
