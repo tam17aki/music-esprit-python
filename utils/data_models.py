@@ -85,4 +85,5 @@ class AlgorithmConfig:
     min_freq_period: float
     ar_order: int
     rank_factor: int
+    n_fft_iip: int | None
     cfh_interpolator: InterpolatorType
