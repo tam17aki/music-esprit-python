@@ -66,3 +66,9 @@ class AnalyzerParameters(TypedDict):
 
     interpolator: NotRequired[InterpolatorType]
     """Interpolator method for the CFH analyzer."""
+
+    n_newton_steps: NotRequired[int]
+    """Number of Newton refinement steps in the NOMP analyzer."""
+
+    n_cyclic_rounds: NotRequired[int]
+    """Number of cyclic refinement rounds in the NOMP analyzer."""
