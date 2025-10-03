@@ -35,7 +35,6 @@ from .._common import ZERO_LEVEL
 from ..models import AnalyzerParameters
 from .base import IterativeAnalyzerBase
 
-# Minimum number of samples required for 3-point interpolation.
 _MIN_SAMPLES_FOR_INTERPOLATION = 3
 _TAYLOR_APPROXIMATION_THRESHOLD = 1e-4
 
