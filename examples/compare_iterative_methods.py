@@ -3,8 +3,8 @@
 
 This script runs a comparative analysis of:
 - RELAX
-- CFH (with Candan interpolator)
-- CFH (with HAQSE interpolator)
+- CFH (with Candan and HAQSE interpolators)
+- NOMP (Newtonized Orthogonal Matching Pursuit)
 
 It evaluates their performance in terms of accuracy and speed for
 estimating sinusoidal parameters.
@@ -73,6 +73,8 @@ def main() -> None:
         rank_factor=args.rank_factor,
         n_fft_iip=args.n_fft_iip,
         cfh_interpolator=args.cfh_interpolator,
+        n_newton_steps=args.n_newton_steps,
+        n_cyclic_rounds=args.n_cyclic_rounds,
     )
 
     # --- 3. Build Analyzer Dictionary ---
