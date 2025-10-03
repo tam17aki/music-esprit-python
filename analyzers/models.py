@@ -28,6 +28,8 @@ SOFTWARE.
 
 from typing import NotRequired, TypedDict
 
+from utils.data_models import InterpolatorType
+
 
 class AnalyzerParameters(TypedDict):
     """Define the structure for analyzer hyperparameter dictionaries.
@@ -52,12 +54,15 @@ class AnalyzerParameters(TypedDict):
     ar_order: NotRequired[int]
     """Order of the AutoRegressive (AR) model for the HOYW method."""
 
-    n_fft_iip: NotRequired[int | None]
-    """FFT length for iterative interpolation in FFT-ESPRIT."""
-
     nystrom_rank_factor: NotRequired[float]
     """Factor to determine the sampling rank for Nyström-ESPRIT.
 
     This defines the number of rows to sample (K) for the
     approximation.
     """
+
+    n_fft_iip: NotRequired[int | None]
+    """FFT length for iterative methods (RELAX, FFT-ESPRIT's init)."""
+
+    interpolator: NotRequired[InterpolatorType]
+    """Interpolator method for the CFH analyzer."""
