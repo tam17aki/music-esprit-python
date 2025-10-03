@@ -404,7 +404,6 @@ def estimate_freqs_iterative_fft(
         est_freq = _find_and_refine_strongest_peak(
             spectrum, fs, n_fft, is_real_signal=is_real
         )
-
         if is_real and est_freq < 0:
             continue
         estimated_freqs.append(est_freq)
