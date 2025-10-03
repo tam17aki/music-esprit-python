@@ -289,7 +289,7 @@ def _find_and_refine_strongest_peak(
     """
     if is_real_signal:
         target_spectrum = spectrum[: n_fft // 2]
-        freq_grid = fftfreq(n_fft, d=1 / fs)
+        freq_grid = fftfreq(n_fft, d=1 / fs)[: n_fft // 2]
     else:
         target_spectrum = fftshift(spectrum)
         freq_grid = fftshift(fftfreq(n_fft, d=1 / fs))
@@ -299,6 +299,7 @@ def _find_and_refine_strongest_peak(
     if 0 < peak_idx < len(target_spectrum) - 1:
         y_m1, y_0, y_p1 = target_spectrum[peak_idx - 1 : peak_idx + 2]
         p = _compute_parabolic_offset(y_m1, y_0, y_p1)
+        peak_freq = freq_grid[peak_idx]
         if p > 0:
             est_freq = (1 - p) * peak_freq + p * freq_grid[peak_idx + 1]
         else:
@@ -352,7 +353,12 @@ def _estimate_and_subtract_component(
 
 
 def estimate_freqs_iterative_fft(
-    signal: SignalArray, n_peaks: int, fs: float, n_fft: int | None = None
+    signal: SignalArray,
+    n_peaks: int,
+    fs: float,
+    n_fft: int | None = None,
+    *,
+    is_complex: bool = False,
 ) -> FloatArray:
     """Estimate frequencies via an iterative interpolated FFT method.
 
@@ -361,12 +367,21 @@ def estimate_freqs_iterative_fft(
     and subtracts it from the signal to find subsequent components.
 
     Args:
-        signal (SignalArray): Input signal.
+        signal (SignalArray):
+            Input signal, which can be real or complex. The nature of
+            the original signal should be indicated by the `is_complex`
+            flag for correct spectral searching.
         n_peaks (int): Number of peaks to find and return.
         fs (float): Sampling frequency in Hz.
         n_fft (int, optional): Length of the FFT used for spectral peak
             finding. If None, it defaults to the length of the input
             signal. Defaults to None.
+        is_complex (bool, optional):
+            A flag indicating whether the original signal is complex-
+            valued. If False (default), the search for spectral peaks
+            is restricted to the positive frequency range (0 to fs/2),
+            assuming the input is a real-valued signal. If True, the
+            full frequency range (-fs/2 to fs/2) is searched.
 
     Returns:
         FloatArray: An array of estimated frequencies in Hz.
@@ -376,6 +391,7 @@ def estimate_freqs_iterative_fft(
 
     residual_signal = signal.copy().astype(NumpyComplex)
     estimated_freqs: list[float] = []
+    is_real = not is_complex
 
     for _ in range(n_peaks):
         if np.all(np.abs(residual_signal) < ZERO_LEVEL):
@@ -386,8 +402,10 @@ def estimate_freqs_iterative_fft(
 
         # 2. Estimate the frequency of the strongest peak
         est_freq = _find_and_refine_strongest_peak(
-            spectrum, fs, n_fft, np.isrealobj(signal)
+            spectrum, fs, n_fft, is_real_signal=is_real
         )
+        if is_real and est_freq < 0:
+            continue
         estimated_freqs.append(est_freq)
 
         # 3. Remove the estimated component from the residual signal
