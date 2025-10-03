@@ -22,7 +22,7 @@ The project is architected with a clean, object-oriented design, emphasizing cod
     This approach prioritizes computational speed, making it ideal for applications where frequencies are well-separated.
     - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
     - **CFH (Iterative DFT Interpolation)**: An extremely fast iterative method similar in structure to RELAX. Instead of a dense spectral search, it uses a high-accuracy, closed-form DFT interpolation method to pinpoint frequencies from just three DFT samples, offering one of the fastest estimation times.
-      - **Multiple Interpolators**: Supports multiple 3-point interpolation strategies, allowing a trade-off between computational simplicity (**Candan**) and numerical robustness (**HAQSE/Serbes**).
+      - **Multiple Interpolators**: Supports multiple 3-point interpolation strategies, allowing a trade-off between numerical robustness (**HAQSE/Serbes**) and computational simplicity (**Candan**).
     - **NOMP (Newtonized OMP)**: An advanced iterative method that enhances the greedy search with a feedback mechanism. After each new component is found, it refines all previously detected frequencies using Newton's method and updates all amplitudes via a least-squares fit, allowing it to correct earlier estimates.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
