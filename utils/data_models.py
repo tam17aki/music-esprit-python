@@ -87,3 +87,5 @@ class AlgorithmConfig:
     rank_factor: int
     n_fft_iip: int | None
     cfh_interpolator: InterpolatorType
+    n_newton_steps: int
+    n_cyclic_rounds: int
