@@ -65,6 +65,7 @@ class IterativeAnalyzerBase(AnalyzerBase, ABC):
         Returns:
             FloatArray: A sorted array of estimated frequencies in Hz.
         """
+        self._is_real_signal: bool = np.isrealobj(signal)
         residual_signal = signal.copy().astype(NumpyComplex)
         estimated_freqs: list[float] = []
 
