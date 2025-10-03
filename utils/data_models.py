@@ -42,15 +42,6 @@ IntArray: TypeAlias = npt.NDArray[np.int_]
 InterpolatorType: TypeAlias = Literal["candan", "haqse"]
 
 
-@dataclass
-class SingleSinusoidParameters:
-    """Represents the parameters of a single sinusoid."""
-
-    frequency: float
-    amplitude: float
-    phase: float
-
-
 @dataclass(frozen=True)
 class SinusoidParameters:
     """A class to store the parameters of multiple sinusoids."""
@@ -58,6 +49,15 @@ class SinusoidParameters:
     frequencies: FloatArray
     amplitudes: FloatArray
     phases: FloatArray
+
+
+@dataclass(frozen=True)
+class SingleSinusoidParameters:
+    """Represents the parameters of a single sinusoid."""
+
+    frequency: float
+    amplitude: float
+    phase: float
 
 
 @dataclass(frozen=True)
