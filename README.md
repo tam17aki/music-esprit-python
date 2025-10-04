@@ -291,7 +291,7 @@ For a deeper dive into the theory behind each algorithm, please refer to the fol
     -   Nyström-based ESPRIT: [9]
     -   FFT-ESPRIT: [10]
 -   **HOYW**: [11]
--   **RELAX / CFH**:
+-   **RELAX / CFH / NOMP**:
     -   RELAX: [12]
     -   DFT Interpolation (Candan): [13]
     -   DFT Interpolation (Serbes/HAQSE): [14]
