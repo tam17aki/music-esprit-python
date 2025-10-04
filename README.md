@@ -23,7 +23,7 @@ The project is architected with a clean, object-oriented design, emphasizing cod
     - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
     - **CFH (Iterative DFT Interpolation)**: An extremely fast iterative method similar in structure to RELAX. Instead of a dense spectral search, it uses a high-accuracy, closed-form DFT interpolation method to pinpoint frequencies from just three DFT samples, offering one of the fastest estimation times.
       - **Multiple Interpolators**: Supports multiple 3-point interpolation strategies, allowing a trade-off between numerical robustness (**HAQSE/Serbes**) and computational simplicity (**Candan**).
-    - **NOMP (Newtonized OMP)**: An advanced iterative method that enhances the greedy search with a feedback mechanism. After each new component is found, it refines all previously detected frequencies using Newton's method and updates all amplitudes via a least-squares fit, allowing it to correct earlier estimates.
+    - **NOMP (Newtonized OMP)**: An advanced iterative method that enhances the greedy search with a feedback mechanism. After each new component is found, it refines all previously detected frequencies using Newton's method and updates all amplitudes via a least-squares fit. This refinement process can be run for a fixed number of rounds or until convergence, allowing a trade-off between speed and accuracy.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
 - **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
@@ -162,21 +162,22 @@ python examples/run_comparison.py --help
 
 | Argument| Description | Default |
 | :-------- | :-------- | :-------- |
-|`--fs`| Sampling frequency in Hz.| 44100.0 |
-| `--duration` | Signal duration in seconds. | 0.1|
-|`--snr_db` | Signal-to-Noise Ratio in dB. | 30.0|
-| `--freqs_true`  | List of true frequencies in Hz (space separated). | 440.0 460.0 480.0|
-| `--amp_range` | Range for random generation of sinusoidal amplitudes. | 0.5 1.5|
-| `--subspace_ratio` | Ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| 1/3|
-| `--complex` | If specified, generate a complex-valued signal instead of<br>a real-valued one.| False (Flag)|
-| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral<br>Min-Norm method. | 16384|
-| `--min_freq_period`| Minimum frequency for periodicity search for FAST MUSIC<br>method. | 20.0|
-| `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | 512|
-| `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | 10|
-| `--n_fft_iip`	| FFT length for iterative methods (RELAX, FFT-ESPRIT).<br>If not specified, defaults to the signal length.| None|
+|`--fs`| Sampling frequency in Hz.| `44100.0` |
+| `--duration` | Signal duration in seconds. | `0.1`|
+|`--snr_db` | Signal-to-Noise Ratio in dB. | `30.0`|
+| `--freqs_true`  | List of true frequencies in Hz (space separated). | `440.0 460.0 480.0`|
+| `--amp_range` | Range for random generation of sinusoidal amplitudes. | `0.5 1.5`|
+| `--subspace_ratio` | Ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| `1/3`|
+| `--complex` | If specified, generate a complex-valued signal instead of<br>a real-valued one.| `False` (Flag)|
+| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral<br>Min-Norm method. | `16384`|
+| `--min_freq_period`| Minimum frequency for periodicity search for FAST MUSIC<br>method. | `20.0`|
+| `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | `512`|
+| `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | `10`|
+| `--n_fft_iip`	| FFT length for iterative methods (RELAX, FFT-ESPRIT).<br>If not specified, defaults to the signal length.| `None`|
 | `--cfh_interpolator` | Interpolator method for the CFH analyzer. Can be<br>`candan` or `haqse`. | `haqse` |
-| `--n_newton_steps` | Number of Newton refinement steps for NOMP. | 1 |
-| `--n_cyclic_rounds`| Number of cyclic refinement rounds for NOMP. | 1 |
+| `--n_newton_steps` | Number of Newton refinement steps for NOMP. | `1` |
+| `--n_cyclic_rounds`| Number of cyclic refinement rounds for NOMP. | `1` |
+| `--nomp_conv_thresh` | Convergence threshold for NOMP's cyclic refinement.<br>Set to 0 to disable and run for fixed rounds. | `1e-6` |
 
 ## Project Structure
 
