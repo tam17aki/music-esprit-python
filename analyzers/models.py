@@ -72,3 +72,10 @@ class AnalyzerParameters(TypedDict):
 
     n_cyclic_rounds: NotRequired[int]
     """Number of cyclic refinement rounds in the NOMP analyzer."""
+
+    convergence_threshold: NotRequired[float]
+    """Threshold to stop NOMP's cyclic refinement.
+
+    The loop terminates if the relative energy improvement drops below
+    this value.
+    """
