@@ -212,7 +212,6 @@ class NompAnalyzer(AnalyzerBase):
         for _ in range(self.n_cyclic_rounds):
             for i, freq_to_refine in enumerate(refined_freqs):
                 other_freqs = np.delete(refined_freqs, i)
-
                 if other_freqs.size > 0:
                     vandermonde = self._build_vandermonde_matrix(
                         other_freqs, n_samples, self.fs
@@ -229,7 +228,6 @@ class NompAnalyzer(AnalyzerBase):
                     temp_residual = original_signal - other_components
                 else:
                     temp_residual = original_signal
-
                 updated_freq = self._newton_refinement_step(
                     temp_residual, freq_to_refine
                 )
