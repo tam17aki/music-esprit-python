@@ -28,7 +28,12 @@ import time
 import numpy as np
 
 from analyzers.base import SUBSPACE_RATIO_UPPER_BOUND, AnalyzerBase
-from utils.data_models import ExperimentConfig, SignalArray, SinusoidParameters
+from utils.data_models import (
+    AlgorithmConfig,
+    ExperimentConfig,
+    SignalArray,
+    SinusoidParameters,
+)
 
 
 def print_experiment_setup(
@@ -399,6 +404,14 @@ def parse_args() -> argparse.Namespace:
         help="Number of cyclic refinement rounds per iteration for NOMP "
         + "(default: 1).",
     )
+    algo_group.add_argument(
+        "--nomp_conv_thresh",
+        type=float,
+        default=1e-6,
+        help="Convergence threshold for NOMP's cyclic refinement. "
+        + "Set to 0 to disable and always run for fixed rounds. "
+        + "(default: 1e-6)",
+    )
 
     args = parser.parse_args()
     if not 0 < args.subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
@@ -408,3 +421,30 @@ def parse_args() -> argparse.Namespace:
         )
 
     return args
+
+
+def create_algo_config_from_args(args: argparse.Namespace) -> AlgorithmConfig:
+    """Create AlgorithmConfig object from parsed command-line arguments.
+
+    This function acts as a factory, mapping the flat namespace of
+    parsed arguments to the structured AlgorithmConfig dataclass. This
+    centralizes the logic for constructing the algorithm configuration.
+
+    Args:
+        args: The namespace object returned by `parser.parse_args()`.
+
+    Returns:
+        An instance of the AlgorithmConfig dataclass.
+    """
+    return AlgorithmConfig(
+        subspace_ratio=args.subspace_ratio,
+        n_grids=args.n_grids,
+        min_freq_period=args.min_freq_period,
+        ar_order=args.ar_order,
+        rank_factor=args.rank_factor,
+        n_fft_iip=args.n_fft_iip,
+        cfh_interpolator=args.cfh_interpolator,
+        n_newton_steps=args.n_newton_steps,
+        n_cyclic_rounds=args.n_cyclic_rounds,
+        nomp_convergence_threshold=args.nomp_conv_thresh,
+    )
