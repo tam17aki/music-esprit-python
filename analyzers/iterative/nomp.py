@@ -64,7 +64,7 @@ class NompAnalyzer(AnalyzerBase):
     Reference:
         B. Mamandipoor, et al., "Newtonized Orthogonal Matching Pursuit:
         Frequency Estimation Over the Continuum," in IEEE Transactions
-        on Signal Processing, vol. 64, no. 19, pp. 5066-5081 2016.
+        on Signal Processing, vol. 64, no. 19, pp. 5066-5081, 2016.
     """
 
     def __init__(
