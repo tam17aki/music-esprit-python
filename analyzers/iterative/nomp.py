@@ -27,6 +27,7 @@ SOFTWARE.
 """
 
 import warnings
+from dataclasses import dataclass
 from typing import final, override
 
 import numpy as np
@@ -42,6 +43,15 @@ from utils.data_models import (
 from .._common import ZERO_LEVEL
 from ..base import AnalyzerBase
 from ..models import AnalyzerParameters
+
+
+@dataclass(frozen=True)
+class NompConfig:
+    """Configuration parameters for the NompAnalyzer."""
+
+    n_newton_steps: int = 1
+    n_cyclic_rounds: int = 1
+    convergence_threshold: float = 1e-6
 
 
 @final
@@ -72,24 +82,21 @@ class NompAnalyzer(AnalyzerBase):
         fs: float,
         n_sinusoids: int,
         *,
-        n_newton_steps: int = 1,
-        n_cyclic_rounds: int = 1,
+        config: NompConfig | None = None,
     ):
         """Initialize the NOMP analyzer.
 
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids to estimate.
-            n_newton_steps (int, optional): Number of Newton refinement
-                steps to apply for each new component (`R_s` in the
-                paper). Defaults to 1.
-            n_cyclic_rounds (int, optional): Number of full cyclic
-                refinement rounds to perform after each new component
-                (`R_c` in the paper). Defaults to 1.
+            config (NompConfig): Configuration parameters.
         """
         super().__init__(fs, n_sinusoids)
-        self.n_newton_steps: int = n_newton_steps
-        self.n_cyclic_rounds: int = n_cyclic_rounds
+        if config is None:
+            config = NompConfig()
+        self.n_newton_steps: int = config.n_newton_steps
+        self.n_cyclic_rounds: int = config.n_cyclic_rounds
+        self.convergence_threshold: float = config.convergence_threshold
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
@@ -137,7 +144,9 @@ class NompAnalyzer(AnalyzerBase):
 
             # Step 4 & 5 of NOMP: Update all amplitudes with a final LS
             # fit and compute the new residual for the next iteration.
-            residual = self._update_residual(complex_signal, estimated_freqs)
+            residual, _ = self._calculate_residual_and_energy(
+                estimated_freqs, complex_signal
+            )
 
         return np.sort(estimated_freqs)
 
@@ -216,35 +225,21 @@ class NompAnalyzer(AnalyzerBase):
                 An array of updated frequency estimates after cyclic
                 refinement.
         """
-        n_samples = original_signal.size
         refined_freqs = np.copy(current_freqs)
+        prev_residual_energy = np.inf
+        converged = False
 
-        # Repeat the entire cycle of refinements for n_cyclic_rounds.
-        for _ in range(self.n_cyclic_rounds):
+        # Iterate up to the maximum number of rounds specified.
+        for cycle in range(self.n_cyclic_rounds):
             # Iterate through each frequency in the current estimated
             # set.
-            for i, freq_to_refine in enumerate(refined_freqs):
-                # Form a temporary residual by subtracting all OTHER
-                # components from the ORIGINAL signal.
-                other_freqs = np.delete(refined_freqs, i)
-                if other_freqs.size > 0:
-                    vandermonde = self._build_vandermonde_matrix(
-                        other_freqs, n_samples, self.fs
-                    )
-                    try:
-                        other_amps = pinv(vandermonde) @ original_signal
-                    except LinAlgError:
-                        warnings.warn(
-                            "pinv failed in cyclic refinement. "
-                            + "Skipping update."
-                        )
-                        continue
-                    other_components = vandermonde @ other_amps
-                    temp_residual = original_signal - other_components
-                else:
-                    # If this is the only component, the residual is the
-                    # original signal itself.
-                    temp_residual = original_signal
+            freqs_before_update = np.copy(refined_freqs)
+            for i, freq_to_refine in enumerate(freqs_before_update):
+                # Form a temporary residual for the component to be
+                # refined.
+                temp_residual = self._get_residual_for_single_component(
+                    original_signal, freqs_before_update, i
+                )
 
                 # Refine the target frequency against this temporary
                 # residual.
@@ -253,50 +248,44 @@ class NompAnalyzer(AnalyzerBase):
                 )
                 refined_freqs[i] = updated_freq
 
+            # Check for convergence after the second cycle.
+            if self.convergence_threshold > 0 and cycle > 0:
+                _, prev_residual_energy = self._calculate_residual_and_energy(
+                    freqs_before_update, original_signal
+                )
+                _, current_residual_energy = (
+                    self._calculate_residual_and_energy(
+                        refined_freqs, original_signal
+                    )
+                )
+                if prev_residual_energy == np.inf:
+                    warnings.warn(
+                        "Cyclic refinement stopped due to energy calculation "
+                        + "failure."
+                    )
+                    break
+
+                # Calculate relative improvement in residual energy.
+                relative_improvement = abs(
+                    prev_residual_energy - current_residual_energy
+                ) / (prev_residual_energy + ZERO_LEVEL)
+
+                # Stop if improvement is below the threshold.
+                if relative_improvement < self.convergence_threshold:
+                    print(
+                        "  (Cyclic refinement converged after"
+                        + f" {cycle + 1} rounds)"
+                    )
+                    converged = True
+                    break
+
+        if not converged and self.convergence_threshold > 0:
+            print(
+                "  (Cyclic refinement stopped after reaching max "
+                + f"{self.n_cyclic_rounds} rounds)"
+            )
+
         return refined_freqs
-
-    def _update_residual(
-        self, original_signal: ComplexArray, estimated_freqs: FloatArray
-    ) -> ComplexArray:
-        """Update all amplitudes via LS and compute the final residual.
-
-        This method corresponds to the "UPDATE" step of the NOMP
-        algorithm. It performs a final least-squares (LS) fit of all
-        currently estimated frequency components against the original
-        signal to obtain optimal amplitudes. It then computes and
-        returns the final residual signal for the next iteration.
-
-        Args:
-            original_signal (ComplexArray):
-                The original, unmodified input signal.
-            estimated_freqs (FloatArray):
-                The latest array of refined frequency estimates.
-
-        Returns:
-            ComplexArray: The new residual signal after subtracting all
-                optimally fitted components.
-        """
-        n_samples = original_signal.size
-
-        # Construct the Vandermonde matrix from all current frequency
-        # estimates.
-        vandermonde_all = self._build_vandermonde_matrix(
-            estimated_freqs, n_samples, self.fs
-        )
-        try:
-            # Solve for all amplitudes simultaneously via a
-            # least-squares fit against the original signal.
-            all_amps = pinv(vandermonde_all) @ original_signal
-        except LinAlgError:
-            warnings.warn("Final residual update failed due to LinAlgError.")
-            return original_signal
-
-        # Reconstruct the signal model with the refined frequencies and
-        # amplitudes.
-        all_components = vandermonde_all @ all_amps
-
-        # Return the final residual for the next main loop iteration.
-        return original_signal - all_components
 
     def _newton_refinement_step(
         self, target_signal: ComplexArray, current_freq: float
@@ -351,6 +340,106 @@ class NompAnalyzer(AnalyzerBase):
         # Convert back to physical frequency in Hz
         return float(w_new * self.fs / (2 * np.pi))
 
+    def _get_residual_for_single_component(
+        self,
+        original_signal: ComplexArray,
+        all_freqs: FloatArray,
+        index_to_exclude: int,
+    ) -> ComplexArray:
+        """Compute the residual signal for refining a single component.
+
+        This helper function is used during the cyclic refinement phase.
+        It computes a temporary residual by performing a least-squares
+        fit of all components *except* for the one at the specified
+        index, and subtracting this model from the original signal.
+
+        Args:
+            original_signal (ComplexArray):
+                The original, unmodified input signal.
+            all_freqs (FloatArray):
+                An array of all current frequency estimates.
+            index_to_exclude (int):
+                The index of the frequency component to
+                exclude from the model.
+
+        Returns:
+            ComplexArray:
+                The temporary residual signal.
+        """
+        other_freqs = np.delete(all_freqs, index_to_exclude)
+
+        if other_freqs.size == 0:
+            return original_signal
+        residual, _ = self._compute_residual_and_amps(
+            other_freqs, original_signal
+        )
+        return residual
+
+    def _calculate_residual_and_energy(
+        self, freqs: FloatArray, signal: ComplexArray
+    ) -> tuple[ComplexArray, float]:
+        """Compute the residual and energy for a given frequency set.
+
+        This method uses the core LS fitting logic to compute the
+        residual signal for a given set of frequencies and then
+        calculates its squared L2-norm (energy).
+
+        Args:
+            freqs (FloatArray):
+                The set of frequencies to build the model from.
+            signal (ComplexArray):
+                The signal to fit against.
+
+        Returns:
+            tuple[ComplexArray, float]:
+            - The residual signal (ComplexArray).
+            - The energy of the residual signal (float).
+        """
+        residual, _ = self._compute_residual_and_amps(freqs, signal)
+
+        # If the residual calculation failed, return the original signal
+        # and infinite energy.
+        if residual is signal:
+            return signal, np.inf
+        energy = float(np.real(np.vdot(residual, residual)))
+        return residual, energy
+
+    def _compute_residual_and_amps(
+        self, freqs: FloatArray, signal: ComplexArray
+    ) -> tuple[ComplexArray, ComplexArray]:
+        """Compute residual and amplitudes from frequencies via LS fit.
+
+        This is the central least-squares (LS) fitting logic for NOMP.
+        Given a set of frequencies and a signal, it constructs a
+        Vandermonde matrix, solves for the optimal complex amplitudes,
+        and computes the corresponding residual signal.
+
+        Args:
+            freqs (FloatArray):
+                The set of frequencies to build the model from.
+            signal (ComplexArray):
+                The signal to fit against.
+
+        Returns:
+            tuple[ComplexArray, ComplexArray]:
+            - The residual signal after subtraction of the fitted model.
+            - An array of the estimated complex amplitudes.
+            On calculation failure, returns the original signal and an
+            empty array.
+        """
+        n_samples = signal.size
+        vandermonde = self._build_vandermonde_matrix(freqs, n_samples, self.fs)
+
+        empty_amps = np.array([], dtype=NumpyComplex)
+
+        try:
+            amps = pinv(vandermonde) @ signal
+            residual = signal - (vandermonde @ amps)
+            return residual, amps
+        except LinAlgError:
+            warnings.warn("LS fit failed in _compute_residual_and_amps.")
+            return signal, empty_amps
+
     @override
     def get_params(self) -> AnalyzerParameters:
         """Return the analyzer's hyperparameters.
@@ -363,4 +452,5 @@ class NompAnalyzer(AnalyzerBase):
         params.pop("subspace_ratio", None)
         params["n_newton_steps"] = self.n_newton_steps
         params["n_cyclic_rounds"] = self.n_cyclic_rounds
+        params["convergence_threshold"] = self.convergence_threshold
         return params
