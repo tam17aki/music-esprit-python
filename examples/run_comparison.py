@@ -38,12 +38,13 @@ import numpy as np
 
 from analyzers.factory import get_representative_analyzers
 from cli import (
+    create_algo_config_from_args,
     parse_args,
     print_experiment_setup,
     print_summary_table,
     run_and_evaluate_analyzer,
 )
-from utils.data_models import AlgorithmConfig, ExperimentConfig, NumpyFloat
+from utils.data_models import ExperimentConfig, NumpyFloat
 from utils.signal_generator import create_true_parameters, generate_test_signal
 
 
@@ -58,17 +59,7 @@ def main() -> None:
         freqs_true=np.array(args.freqs_true, dtype=NumpyFloat),
         amp_range=tuple(args.amp_range),
     )
-    algo_config = AlgorithmConfig(
-        subspace_ratio=args.subspace_ratio,
-        n_grids=args.n_grids,
-        min_freq_period=args.min_freq_period,
-        ar_order=args.ar_order,
-        rank_factor=args.rank_factor,
-        n_fft_iip=args.n_fft_iip,
-        cfh_interpolator=args.cfh_interpolator,
-        n_newton_steps=args.n_newton_steps,
-        n_cyclic_rounds=args.n_cyclic_rounds,
-    )
+    algo_config = create_algo_config_from_args(args)
 
     # --- 2. Generate Test Signal ---
     true_params = create_true_parameters(config)
