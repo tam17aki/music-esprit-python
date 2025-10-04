@@ -20,8 +20,8 @@ The project is architected with a clean, object-oriented design, emphasizing cod
     - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
   - **Fast Iterative Methods**:
     This approach prioritizes computational speed, making it ideal for applications where frequencies are well-separated.
-    - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
-    - **CFH (Iterative DFT Interpolation)**: An extremely fast iterative method similar in structure to RELAX. Instead of a dense spectral search, it uses a high-accuracy, closed-form DFT interpolation method to pinpoint frequencies from just three DFT samples, offering one of the fastest estimation times.
+    - **RELAX**: A classic greedy algorithm that identifies components by performing a high-density spectral search at each iteration. It uses a zero-padded FFT to achieve high accuracy, balancing speed and precision.
+    - **CFH (Iterative DFT Interpolation)**: An extremely fast iterative method that replaces RELAX's dense search with a closed-form DFT interpolation. By using just three DFT samples, it offers one of the fastest estimation times and supports multiple interpolators (Candan, HAQSE) to trade speed for robustness.
       - **Multiple Interpolators**: Supports multiple 3-point interpolation strategies, allowing a trade-off between numerical robustness (**HAQSE/Serbes**) and computational simplicity (**Candan**).
     - **NOMP (Newtonized OMP)**: An advanced iterative method that incorporates a feedback mechanism. By cyclically re-refining all parameters, it can correct earlier estimates to achieve higher accuracy than forward-greedy methods.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
