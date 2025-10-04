@@ -89,3 +89,4 @@ class AlgorithmConfig:
     cfh_interpolator: InterpolatorType
     n_newton_steps: int
     n_cyclic_rounds: int
+    nomp_convergence_threshold: float
