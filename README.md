@@ -11,7 +11,7 @@ The project is architected with a clean, object-oriented design, emphasizing cod
   A comprehensive suite of advanced parameter estimation algorithms is provided, grouped by their core approach:
   - **High-Resolution Subspace and AR-Modeling Methods**: These techniques surpass the resolution limits of the classical FFT by exploiting the algebraic structure of the signal model.
     - **MUSIC (Spectral, Root, & FAST)**: A family of high-resolution methods based on the orthogonality of signal and noise subspaces.
-       - The **Spectral** and **Root** MUSIC variants are classic implementations that offer true super-resolution capabilities.
+       - The **Spectral** and **Root** **MUSIC** variants are classic implementations that offer true super-resolution capabilities.
        - The **FAST MUSIC** variant is a modern, computationally efficient implementation for (quasi-)periodic signals that replaces the expensive EVD with an FFT, prioritizing speed over ultimate resolution.
     - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
     - **ESPRIT (Standard, Unitary, FFT-based, & Nyström-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
@@ -23,7 +23,7 @@ The project is architected with a clean, object-oriented design, emphasizing cod
     - **RELAX**: A greedy algorithm that estimates parameters sequentially. It iteratively finds the strongest signal component, subtracts it, and repeats the process on the residual signal, offering exceptional speed for well-separated sinusoids.
     - **CFH (Iterative DFT Interpolation)**: An extremely fast iterative method similar in structure to RELAX. Instead of a dense spectral search, it uses a high-accuracy, closed-form DFT interpolation method to pinpoint frequencies from just three DFT samples, offering one of the fastest estimation times.
       - **Multiple Interpolators**: Supports multiple 3-point interpolation strategies, allowing a trade-off between numerical robustness (**HAQSE/Serbes**) and computational simplicity (**Candan**).
-    - **NOMP (Newtonized OMP)**: An advanced iterative method that enhances the greedy search with a feedback mechanism. After each new component is found, it refines all previously detected frequencies using Newton's method and updates all amplitudes via a least-squares fit. This refinement process can be run for a fixed number of rounds or until convergence, allowing a trade-off between speed and accuracy.
+    - **NOMP (Newtonized OMP)**: An advanced iterative method that incorporates a feedback mechanism. By cyclically re-refining all parameters, it can correct earlier estimates to achieve higher accuracy than forward-greedy methods.
 - **Full Parameter Estimation**: Not just frequencies, but also amplitudes and phases are estimated using a subsequent least-squares fit.
 - **Object-Oriented Design**: Algorithms are encapsulated in clear, reusable classes with a consistent API, promoting clean code and extensibility.
 - **Enhanced Accuracy Options**: Includes advanced techniques like **Forward-Backward Averaging** (via Mixins) and **Total Least Squares (TLS)** versions for most algorithms to improve performance in noisy conditions.
