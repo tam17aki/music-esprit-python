@@ -118,8 +118,10 @@ class NompAnalyzer(AnalyzerBase):
         estimated_freqs = np.array([], dtype=np.float64)
         residual = np.copy(complex_signal)
 
+        # Iterate to find n_sinusoids components
         for _ in range(self.n_sinusoids):
-            # Step 1 & 2: Identify a new component and refine it
+            # Step 1 & 2 of NOMP: Find a new component on the current
+            # residual and refine it with Newton's method.
             new_freq = self._identify_and_refine_new_component(
                 residual, is_real_signal=np.isrealobj(signal)
             )
@@ -127,12 +129,14 @@ class NompAnalyzer(AnalyzerBase):
                 break
             estimated_freqs = np.append(estimated_freqs, new_freq)
 
-            # Step 3: Refine all existing components cyclically
+            # Step 3 of NOMP: With the new component added, re-refine
+            # all previously found frequencies in a cyclic manner.
             estimated_freqs = self._perform_cyclic_refinement(
                 complex_signal, estimated_freqs
             )
 
-            # Step 4 & 5: Update all amplitudes and the residual signal
+            # Step 4 & 5 of NOMP: Update all amplitudes with a final LS
+            # fit and compute the new residual for the next iteration.
             residual = self._update_residual(complex_signal, estimated_freqs)
 
         return np.sort(estimated_freqs)
@@ -163,13 +167,17 @@ class NompAnalyzer(AnalyzerBase):
         n_samples = residual.size
         dft_residual = np.fft.fft(residual)
 
+        # Coarsely identify the strongest frequency component by finding
+        # the peak of the DFT spectrum (the "IDENTIFY" step).
         if is_real_signal:
+            # For real signals, search only positive frequencies.
             search_space = np.abs(dft_residual[1 : n_samples // 2])
             if search_space.size == 0:
                 return None
             k_c = int(np.argmax(search_space)) + 1
             coarse_freq = (k_c / n_samples) * self.fs
         else:
+            # For complex signals, search the full frequency range.
             shifted_spectrum = np.abs(np.fft.fftshift(dft_residual))
             peak_idx_shifted = int(np.argmax(shifted_spectrum))
             shifted_freq_grid = np.fft.fftshift(
@@ -177,6 +185,8 @@ class NompAnalyzer(AnalyzerBase):
             )
             coarse_freq = shifted_freq_grid[peak_idx_shifted]
 
+        # Refine the coarse estimate using Newton's method for a
+        # specified number of steps (the "SINGLE REFINEMENT" step).
         refined_freq = coarse_freq
         for _ in range(self.n_newton_steps):
             refined_freq = self._newton_refinement_step(residual, refined_freq)
@@ -209,10 +219,14 @@ class NompAnalyzer(AnalyzerBase):
         n_samples = original_signal.size
         refined_freqs = np.copy(current_freqs)
 
+        # Repeat the entire cycle of refinements for n_cyclic_rounds.
         for _ in range(self.n_cyclic_rounds):
+            # Iterate through each frequency in the current estimated
+            # set.
             for i, freq_to_refine in enumerate(refined_freqs):
+                # Form a temporary residual by subtracting all OTHER
+                # components from the ORIGINAL signal.
                 other_freqs = np.delete(refined_freqs, i)
-
                 if other_freqs.size > 0:
                     vandermonde = self._build_vandermonde_matrix(
                         other_freqs, n_samples, self.fs
@@ -228,8 +242,12 @@ class NompAnalyzer(AnalyzerBase):
                     other_components = vandermonde @ other_amps
                     temp_residual = original_signal - other_components
                 else:
+                    # If this is the only component, the residual is the
+                    # original signal itself.
                     temp_residual = original_signal
 
+                # Refine the target frequency against this temporary
+                # residual.
                 updated_freq = self._newton_refinement_step(
                     temp_residual, freq_to_refine
                 )
@@ -259,15 +277,25 @@ class NompAnalyzer(AnalyzerBase):
                 optimally fitted components.
         """
         n_samples = original_signal.size
+
+        # Construct the Vandermonde matrix from all current frequency
+        # estimates.
         vandermonde_all = self._build_vandermonde_matrix(
             estimated_freqs, n_samples, self.fs
         )
         try:
+            # Solve for all amplitudes simultaneously via a
+            # least-squares fit against the original signal.
             all_amps = pinv(vandermonde_all) @ original_signal
         except LinAlgError:
             warnings.warn("Final residual update failed due to LinAlgError.")
             return original_signal
+
+        # Reconstruct the signal model with the refined frequencies and
+        # amplitudes.
         all_components = vandermonde_all @ all_amps
+
+        # Return the final residual for the next main loop iteration.
         return original_signal - all_components
 
     def _newton_refinement_step(
@@ -292,33 +320,35 @@ class NompAnalyzer(AnalyzerBase):
         t = np.arange(n)
         w = (2 * np.pi * current_freq) / self.fs  # Normalized angular freq
 
-        # Steering vector and its first two derivatives w.r.t. w
+        # --- Calculate steering vector and its two derivatives ---
         a = np.exp(1j * w * t)
         a_dot = 1j * t * a
         a_ddot = -(t**2) * a
 
-        # Estimate complex amplitude `g` for the current frequency
+        # --- Calculate intermediate values for the derivatives ---
+        # Complex amplitude `g` for the current frequency component
         g = np.vdot(a, target_signal) / n
         r = target_signal - g * a  # Residual w.r.t. current estimate
 
-        # First derivative of the cost function (Ṡ from Eq. 7)
+        # --- Compute derivatives of the cost function (Eqs. 7 & 8) ---
+        # First derivative Ṡ
         s_dot = np.real(np.vdot(r, g * a_dot))
-
-        # Second derivative of the cost function (S̈ from Eq. 8)
-        s_ddot = np.real(np.vdot(r, g * a_ddot)) - (np.abs(g) ** 2) * np.vdot(
-            a_dot, a_dot
+        # Second derivative S̈
+        s_ddot = np.real(np.vdot(r, g * a_ddot)) - (np.abs(g) ** 2) * np.real(
+            np.vdot(a_dot, a_dot)
         )
 
-        # Refinement Acceptance Condition: update only if locally
-        # concave
+        # --- Apply Newton's update rule ---
+        # Refinement Acceptance Condition (RAC): update only if the cost
+        # function is locally concave (i.e., we are near a maximum).
         if s_ddot >= 0 or abs(s_ddot) < ZERO_LEVEL:
             return current_freq  # No update
 
-        # Newton's method update rule
+        # Newton's method update rule for the angular frequency
         w_new = w - s_dot / s_ddot
 
-        w_new = np.real((w_new * self.fs) / (2 * np.pi))
-        return float(w_new)
+        # Convert back to physical frequency in Hz
+        return float(w_new * self.fs / (2 * np.pi))
 
     @override
     def get_params(self) -> AnalyzerParameters:
