@@ -277,6 +277,7 @@ Three main families of models are explored in this project:
 3.  **Iterative Greedy Methods (RELAX, CFH, NOMP):** This approach estimates parameters sequentially, one component at a time. It "greedily" finds the strongest sinusoidal component in the signal, subtracts it to form a residual signal, and then repeats the process on the residual. This method can be exceptionally fast for well-separated sinusoids.
     *   The **RELAX** and **CFH** algorithms are forward-greedy methods, where estimates from previous iterations are fixed. They differ in their strategy for finding the next component (dense zero-padded FFT search vs. DFT interpolation). In this library, they are implemented as subclasses of a common iterative framework.
     *   The **NOMP** algorithm builds upon this greedy framework by incorporating a **feedback mechanism**. Through cyclic Newton-based refinements and least-squares updates, it re-evaluates all prior estimates after each new component is detected, allowing it to correct for inter-component interference and achieve higher accuracy.
+
 For a deeper dive into the theory behind each algorithm, please refer to the following key papers:
 
 -   **MUSIC Variants**:
