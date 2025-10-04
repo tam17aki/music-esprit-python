@@ -314,7 +314,8 @@ class NompAnalyzer(AnalyzerBase):
                 The current frequency estimate in Hz.
 
         Returns:
-            float: The refined frequency estimate in Hz.
+            float:
+                The refined frequency estimate in Hz.
         """
         n = target_signal.size
         t = np.arange(n)
