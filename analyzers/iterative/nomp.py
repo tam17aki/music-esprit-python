@@ -27,7 +27,6 @@ SOFTWARE.
 """
 
 import warnings
-from dataclasses import dataclass
 from typing import final, override
 
 import numpy as np
@@ -43,24 +42,6 @@ from utils.data_models import (
 from .._common import ZERO_LEVEL
 from ..base import AnalyzerBase
 from ..models import AnalyzerParameters
-
-
-@dataclass(frozen=True)
-class NompConfig:
-    """Configuration parameters for the NompAnalyzer."""
-
-    # Number of Newton refinement steps to apply for each new
-    # component (`R_s` in the paper).
-    n_newton_steps: int = 1
-
-    # Maximum number of full cyclic refinement rounds to perform after
-    # each new component (`R_c` in the paper).
-    n_cyclic_rounds: int = 1
-
-    # Threshold for stopping the cyclic refinement. If the relative
-    # energy improvement drops below this value, the loop terminates.
-    # Set to 0 to disable and always run for `n_cyclic_rounds`.
-    convergence_threshold: float = 1e-6
 
 
 @final
@@ -86,28 +67,36 @@ class NompAnalyzer(AnalyzerBase):
         on Signal Processing, vol. 64, no. 19, pp. 5066-5081, 2016.
     """
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         fs: float,
         n_sinusoids: int,
         *,
-        config: NompConfig | None = None,
+        n_newton_steps: int = 1,
+        n_cyclic_rounds: int = 1,
+        convergence_threshold: float = 1e-6,
     ):
         """Initialize the NOMP analyzer.
 
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids to estimate.
-            config (NompConfig | None, optional): A NompConfig object
-                containing hyperparameters for the algorithm. If None,
-                default parameters will be used. Defaults to None.
+            n_newton_steps (int, optional): Number of Newton refinement
+                steps for each new component (`R_s` in the paper).
+                Defaults to 1.
+            n_cyclic_rounds (int, optional): Maximum number of full
+                cyclic refinement rounds after each new component (`R_c`
+                in the paper). Defaults to 1.
+            convergence_threshold (float, optional): Threshold for
+                stopping the cyclic refinement. If the relative energy
+                improvement drops below this value, the loop terminates.
+                Set to 0 to disable. Defaults to 1e-6.
         """
         super().__init__(fs, n_sinusoids)
-        if config is None:
-            config = NompConfig()
-        self.n_newton_steps: int = config.n_newton_steps
-        self.n_cyclic_rounds: int = config.n_cyclic_rounds
-        self.convergence_threshold: float = config.convergence_threshold
+        self.n_newton_steps: int = n_newton_steps
+        self.n_cyclic_rounds: int = n_cyclic_rounds
+        self.convergence_threshold: float = convergence_threshold
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
