@@ -392,8 +392,8 @@ class NompAnalyzer(AnalyzerBase):
 
         Returns:
             tuple[ComplexArray, float]:
-            - The residual signal (ComplexArray).
-            - The energy of the residual signal (float).
+                - The residual signal (ComplexArray).
+                - The energy of the residual signal (float).
         """
         residual, _ = self._compute_residual_and_amps(freqs, signal)
 
@@ -422,8 +422,9 @@ class NompAnalyzer(AnalyzerBase):
 
         Returns:
             tuple[ComplexArray, ComplexArray]:
-            - The residual signal after subtraction of the fitted model.
-            - An array of the estimated complex amplitudes.
+                - The residual signal after subtraction of the fitted
+                  model.
+                - An array of the estimated complex amplitudes.
             On calculation failure, returns the original signal and an
             empty array.
         """
