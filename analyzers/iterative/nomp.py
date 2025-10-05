@@ -49,8 +49,17 @@ from ..models import AnalyzerParameters
 class NompConfig:
     """Configuration parameters for the NompAnalyzer."""
 
+    # Number of Newton refinement steps to apply for each new
+    # component (`R_s` in the paper).
     n_newton_steps: int = 1
+
+    # Maximum number of full cyclic refinement rounds to perform after
+    # each new component (`R_c` in the paper).
     n_cyclic_rounds: int = 1
+
+    # Threshold for stopping the cyclic refinement. If the relative
+    # energy improvement drops below this value, the loop terminates.
+    # Set to 0 to disable and always run for `n_cyclic_rounds`.
     convergence_threshold: float = 1e-6
 
 
@@ -89,7 +98,9 @@ class NompAnalyzer(AnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids to estimate.
-            config (NompConfig): Configuration parameters.
+            config (NompConfig | None, optional): A NompConfig object
+                containing hyperparameters for the algorithm. If None,
+                default parameters will be used. Defaults to None.
         """
         super().__init__(fs, n_sinusoids)
         if config is None:
