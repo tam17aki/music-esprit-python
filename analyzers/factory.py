@@ -45,7 +45,7 @@ from analyzers.esprit.standard import (
 from analyzers.esprit.unitary import UnitaryEspritAnalyzer
 from analyzers.hoyw.hoyw import HoywAnalyzer
 from analyzers.iterative.cfh import CfhAnalyzer
-from analyzers.iterative.nomp import NompAnalyzer, NompConfig
+from analyzers.iterative.nomp import NompAnalyzer
 from analyzers.iterative.relax import RelaxAnalyzer
 from analyzers.minnorm.base import MinNormAnalyzerBase
 from analyzers.minnorm.root import RootMinNormAnalyzer, RootMinNormAnalyzerFB
@@ -390,8 +390,9 @@ def get_iterative_greedy_analyzers(
 ) -> dict[str, AnalyzerBase]:
     """Get a dictionary of iterative greedy analyzer instances.
 
-    This factory function instantiates RELAX and the different variants
-    of the CFH analyzer for direct comparison.
+    This factory function instantiates the RELAX analyzer, the different
+    variants of the CFH analyzer, and the NOMP analyzer for direct
+    comparison.
 
     Args:
         config (ExperimentConfig):
@@ -402,11 +403,6 @@ def get_iterative_greedy_analyzers(
     Returns:
         A dictionary mapping method names to analyzer instances.
     """
-    nomp_config = NompConfig(
-        n_newton_steps=algo_config.n_newton_steps,
-        n_cyclic_rounds=algo_config.n_cyclic_rounds,
-        convergence_threshold=algo_config.nomp_convergence_threshold,
-    )
     analyzers: dict[str, AnalyzerBase] = {
         "RELAX": RelaxAnalyzer(
             fs=config.fs,
@@ -420,7 +416,11 @@ def get_iterative_greedy_analyzers(
             fs=config.fs, n_sinusoids=config.n_sinusoids, interpolator="candan"
         ),
         "NOMP": NompAnalyzer(
-            fs=config.fs, n_sinusoids=config.n_sinusoids, config=nomp_config
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            n_newton_steps=algo_config.n_newton_steps,
+            n_cyclic_rounds=algo_config.n_cyclic_rounds,
+            convergence_threshold=algo_config.nomp_convergence_threshold,
         ),
     }
     return analyzers
