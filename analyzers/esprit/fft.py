@@ -40,11 +40,9 @@ from .._common import estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
 from .base import EspritAnalyzerBase
 from .solvers import (
-    FastEspritSolver,
+    FastEspritSolveFunction,
     FastEspritSolverType,
-    LSEspritSolver,
-    TLSEspritSolver,
-    WoodburyLSEspritSolver,
+    fast_esprit_solvers,
 )
 
 
@@ -80,7 +78,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         2023. (Specifically, Algorithm 4)
     """
 
-    solver: FastEspritSolver
+    solver: FastEspritSolveFunction
 
     def __init__(
         self,
@@ -109,12 +107,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
             raise ValueError(
                 f"Invalid solver '{solver}'. Choose from {valid_solvers}."
             )
-        if solver == "ls":
-            self.solver = LSEspritSolver()
-        elif solver == "tls":
-            self.solver = TLSEspritSolver()
-        elif solver == "woodbury":
-            self.solver = WoodburyLSEspritSolver()
+        self.solver = fast_esprit_solvers[solver]
         self.n_fft_iip = n_fft_iip
 
     @override
@@ -173,7 +166,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
 
         # 5. Apply a standard ESPRIT solver to the approximated subspace
         #    Q. (Corresponds to Alg. 4, Steps 5-9)
-        omegas = self.solver.solve(q_matrix)
+        omegas = self.solver(q_matrix)
 
         # 6. Post-process the results to get final frequencies in Hz.
         est_freqs = self._postprocess_omegas(omegas)
