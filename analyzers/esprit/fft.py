@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import warnings
-from typing import TypeAlias, final, override
+from typing import final, override
 
 import numpy as np
 from scipy.linalg import qr
@@ -39,10 +39,12 @@ from utils.data_models import (
 from .._common import estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
 from .base import EspritAnalyzerBase
-from .solvers import LSEspritSolver, TLSEspritSolver, WoodburyLSEspritSolver
-
-StandardEspritSolver: TypeAlias = (
-    LSEspritSolver | TLSEspritSolver | WoodburyLSEspritSolver
+from .solvers import (
+    FastEspritSolver,
+    FastEspritSolverType,
+    LSEspritSolver,
+    TLSEspritSolver,
+    WoodburyLSEspritSolver,
 )
 
 
@@ -78,11 +80,13 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         2023. (Specifically, Algorithm 4)
     """
 
+    solver: FastEspritSolver
+
     def __init__(
         self,
         fs: float,
         n_sinusoids: int,
-        solver: StandardEspritSolver,
+        solver: FastEspritSolverType = "woodbury",
         *,
         n_fft_iip: int | None = None,
     ):
@@ -91,14 +95,21 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            solver (StandardEspritSolver):
-                An ESPRIT solver for the final estimation step.
+            solver (FastEspritSolverType, optional): The numerical
+                solver to use. Can be "ls", "tls", or "woodbury" (a
+                faster LS variant for orthonormal subspaces).
+                Defaults to "woodbury".
             n_fft_iip (int, optional):
                 The length of iterative interpolation FFT.
                 Defaults to None.
         """
         super().__init__(fs, n_sinusoids)
-        self.solver = solver
+        if solver == "ls":
+            self.solver = LSEspritSolver()
+        elif solver == "tls":
+            self.solver = TLSEspritSolver()
+        elif solver == "woodbury":
+            self.solver = WoodburyLSEspritSolver()
         self.n_fft_iip = n_fft_iip
 
     @override
