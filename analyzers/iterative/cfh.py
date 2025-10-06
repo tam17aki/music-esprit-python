@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import final, override
+from typing import final, get_args, override
 
 import numpy as np
 
@@ -67,6 +67,12 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         """
         super().__init__(fs, n_sinusoids)
         self.interpolator: InterpolatorType = interpolator
+        valid_interpolator = get_args(InterpolatorType)
+        if interpolator not in valid_interpolator:
+            raise ValueError(
+                f"Invalid interpolator '{interpolator}'. "
+                + f"Choose from {valid_interpolator}."
+            )
         if interpolator == "haqse":
             self._single_freq_estimator = self._estimate_single_freq_haqse
         elif interpolator == "candan":
