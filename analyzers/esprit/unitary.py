@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import warnings
-from typing import final, override
+from typing import final, get_args, override
 
 import numpy as np
 from scipy.linalg import LinAlgError, eigh
@@ -74,6 +74,11 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
                 0.5. Defaults to 1/3.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio)
+        valid_solvers = get_args(EspritSolverType)
+        if solver not in valid_solvers:
+            raise ValueError(
+                f"Invalid solver '{solver}'. Choose from {valid_solvers}."
+            )
         if solver == "ls":
             self.solver = LSUnitaryEspritSolver()
         elif solver == "tls":
