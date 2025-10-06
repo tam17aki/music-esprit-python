@@ -39,7 +39,12 @@ from utils.data_models import (
 from .._common import ZERO_LEVEL
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
-from .solvers import LSEspritSolver, TLSEspritSolver
+from .solvers import (
+    EspritSolver,
+    EspritSolverType,
+    LSEspritSolver,
+    TLSEspritSolver,
+)
 
 
 @final
@@ -56,11 +61,13 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         based on Nyström method," Signal Processing, 2014.
     """
 
+    solver: EspritSolver
+
     def __init__(
         self,
         fs: float,
         n_sinusoids: int,
-        solver: LSEspritSolver | TLSEspritSolver,
+        solver: EspritSolverType,
         *,
         nystrom_rank_factor: int = 10,
     ) -> None:
@@ -69,15 +76,20 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            solver (LSEspritSolver | TLSEspritSolver):
-                Solver to solve frequencies with the rotation operator.
+            solver (EspritSolverType, optional): The numerical solver to
+                use for the core rotational invariance equation. Can be
+                "ls" (Least Squares) or "tls" (Total Least Squares).
+                Defaults to "ls".
             nystrom_rank_factor (int, optional): A factor to determine
                 the number of rows to sample for the Nyström
                 approximation (K = factor * 2M). A larger value improves
                 robustness at the cost of computation. Defaults to 10.
         """
         super().__init__(fs, n_sinusoids)
-        self.solver: LSEspritSolver | TLSEspritSolver = solver
+        if solver == "ls":
+            self.solver = LSEspritSolver()
+        elif solver == "tls":
+            self.solver = TLSEspritSolver()
         self.nystrom_rank_factor = nystrom_rank_factor
 
     @override
