@@ -42,31 +42,34 @@ EspritSolverType: TypeAlias = Literal["ls", "tls"]
 FastEspritSolverType: TypeAlias = Literal["ls", "tls", "woodbury"]
 
 
+# pylint: disable=too-few-public-methods
 @runtime_checkable
 class EspritSolver(Protocol):
     """Protocol for standard (complex or real) ESPRIT solvers."""
 
     def solve(self, signal_subspace: FloatArray | ComplexArray) -> FloatArray:
         """Estimate angular frequencies from a signal subspace."""
-        ...
+        ...  # pylint: disable=unnecessary-ellipsis
 
 
+# pylint: disable=too-few-public-methods
 @runtime_checkable
 class UnitaryEspritSolver(Protocol):
     """Protocol for Unitary (strictly real-valued) ESPRIT solvers."""
 
     def solve(self, signal_subspace: FloatArray) -> FloatArray:
         """Estimate angular frequencies from a signal subspace."""
-        ...
+        ...  # pylint: disable=unnecessary-ellipsis
 
 
+# pylint: disable=too-few-public-methods
 @runtime_checkable
 class FastEspritSolver(Protocol):
     """Protocol for solvers compatible with fast ESPRIT variants."""
 
     def solve(self, signal_subspace: ComplexArray) -> FloatArray:
         """Estimate angular frequencies from a signal subspace."""
-        ...
+        ...  # pylint: disable=unnecessary-ellipsis
 
 
 # pylint: disable=too-few-public-methods
