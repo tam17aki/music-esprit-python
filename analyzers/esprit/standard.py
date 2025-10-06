@@ -119,8 +119,8 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
             signal (SignalArray): Input signal.
 
         Returns:
-            FloatArray | ComplexArray | None: The signal subspace matrix.
-                Returns None on failure.
+            FloatArray | ComplexArray | None: The signal subspace
+                matrix. Returns None on failure.
         """
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
         try:
