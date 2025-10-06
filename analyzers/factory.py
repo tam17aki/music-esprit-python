@@ -31,13 +31,6 @@ from analyzers.base import AnalyzerBase
 from analyzers.esprit.base import EspritAnalyzerBase
 from analyzers.esprit.fft import FFTEspritAnalyzer
 from analyzers.esprit.nystrom import NystromEspritAnalyzer
-from analyzers.esprit.solvers import (
-    LSEspritSolver,
-    LSUnitaryEspritSolver,
-    TLSEspritSolver,
-    TLSUnitaryEspritSolver,
-    WoodburyLSEspritSolver,
-)
 from analyzers.esprit.standard import (
     StandardEspritAnalyzer,
     StandardEspritAnalyzerFB,
@@ -97,12 +90,12 @@ def get_representative_analyzers(
         "ESPRIT (LS)": StandardEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
+            solver="ls",
         ),
         "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
+            solver="ls",
             n_fft_iip=algo_config.n_fft_iip,
         ),
         "HOYW": HoywAnalyzer(
@@ -241,25 +234,25 @@ def get_standard_esprit_variants(
         "ESPRIT (LS)": StandardEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
+            solver="ls",
             subspace_ratio=algo_config.subspace_ratio,
         ),
         "ESPRIT (TLS)": StandardEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=TLSEspritSolver(),
+            solver="tls",
             subspace_ratio=algo_config.subspace_ratio,
         ),
         "ESPRIT FB (LS)": StandardEspritAnalyzerFB(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
+            solver="ls",
             subspace_ratio=algo_config.subspace_ratio,
         ),
         "ESPRIT FB (TLS)": StandardEspritAnalyzerFB(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=TLSEspritSolver(),
+            solver="ls",
             subspace_ratio=algo_config.subspace_ratio,
         ),
     }
@@ -290,13 +283,13 @@ def get_unitary_esprit_variants(
         "Unitary ESPRIT (LS)": UnitaryEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=LSUnitaryEspritSolver(),
+            solver="ls",
             subspace_ratio=algo_config.subspace_ratio,
         ),
         "Unitary ESPRIT (TLS)": UnitaryEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=TLSUnitaryEspritSolver(),
+            solver="tls",
             subspace_ratio=algo_config.subspace_ratio,
         ),
     }
@@ -327,31 +320,31 @@ def get_fast_esprit_variants(
         "Nyström-ESPRIT (LS)": NystromEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
+            solver="ls",
             nystrom_rank_factor=algo_config.rank_factor,
         ),
         "Nyström-ESPRIT (TLS)": NystromEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=TLSEspritSolver(),
+            solver="tls",
             nystrom_rank_factor=algo_config.rank_factor,
         ),
         "FFT-ESPRIT (LS)": FFTEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=LSEspritSolver(),
+            solver="tls",
             n_fft_iip=algo_config.n_fft_iip,
         ),
         "FFT-ESPRIT (TLS)": FFTEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=TLSEspritSolver(),
+            solver="tls",
             n_fft_iip=algo_config.n_fft_iip,
         ),
         "FFT-ESPRIT (Woodbury-LS)": FFTEspritAnalyzer(
             fs=config.fs,
             n_sinusoids=config.n_sinusoids,
-            solver=WoodburyLSEspritSolver(),
+            solver="woodbury",
             n_fft_iip=algo_config.n_fft_iip,
         ),
     }
