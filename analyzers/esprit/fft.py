@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import warnings
-from typing import final, override
+from typing import final, get_args, override
 
 import numpy as np
 from scipy.linalg import qr
@@ -104,6 +104,11 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
                 Defaults to None.
         """
         super().__init__(fs, n_sinusoids)
+        valid_solvers = get_args(FastEspritSolverType)
+        if solver not in valid_solvers:
+            raise ValueError(
+                f"Invalid solver '{solver}'. Choose from {valid_solvers}."
+            )
         if solver == "ls":
             self.solver = LSEspritSolver()
         elif solver == "tls":
