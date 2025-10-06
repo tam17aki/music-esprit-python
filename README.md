@@ -162,21 +162,21 @@ python examples/run_comparison.py --help
 
 | Argument| Description | Default |
 | :-------- | :-------- | :-------- |
-|`--fs`| Sampling frequency in Hz.| `44100.0` |
-| `--duration` | Signal duration in seconds. | `0.1`|
-|`--snr_db` | Signal-to-Noise Ratio in dB. | `30.0`|
-| `--freqs_true`  | List of true frequencies in Hz (space separated). | `440.0 460.0 480.0`|
-| `--amp_range` | Range for random generation of sinusoidal amplitudes. | `0.5 1.5`|
-| `--subspace_ratio` | Ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| `1/3`|
-| `--complex` | If specified, generate a complex-valued signal instead <br>of a real-valued one.| `False` (Flag)|
-| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral<br>Min-Norm method. | `16384`|
-| `--min_freq_period`| Minimum frequency for periodicity search for FAST <br>MUSIC method. | `20.0`|
-| `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | `512`|
-| `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | `10`|
-| `--n_fft_iip`	| FFT length for iterative methods (RELAX, FFT-ESPRIT).<br>If not specified, defaults to the signal length.| `None`|
-| `--cfh_interpolator` | Interpolator method for the CFH analyzer. Can be<br>`candan` or `haqse`. | `haqse` |
-| `--n_newton_steps` | Number of Newton refinement steps for NOMP. | `1` |
-| `--n_cyclic_rounds`| Number of cyclic refinement rounds for NOMP. | `1` |
+|`--fs`| Sampling frequency in Hz.| 44100.0 |
+| `--duration` | Signal duration in seconds. | 0.1|
+|`--snr_db` | Signal-to-Noise Ratio in dB. | 30.0|
+| `--freqs_true`  | List of true frequencies in Hz (space separated). | 440.0 460.0 480.0|
+| `--amp_range` | Range for random generation of sinusoidal amplitudes. | 0.5 1.5|
+| `--subspace_ratio` | Ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| 1/3|
+| `--complex` | If specified, generate a complex-valued signal instead <br>of a real-valued one.| False (Flag)|
+| `--n_grids` | Number of grid points for Spectral MUSIC and Spectral<br>Min-Norm method. | 16384|
+| `--min_freq_period`| Minimum frequency for periodicity search for FAST <br>MUSIC method. | 20.0|
+| `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | 512|
+| `--rank_factor` | Factor to determine the number of rows to sample for<br>Nyström-based ESPRIT method. | 10|
+| `--n_fft_iip`	| FFT length for iterative methods (RELAX, FFT-ESPRIT).<br>If not specified, defaults to the signal length.| None|
+| `--cfh_interpolator` | Interpolator method for the CFH analyzer. Can be<br>`candan` or `haqse`. | haqse |
+| `--n_newton_steps` | Number of Newton refinement steps for NOMP. | 1 |
+| `--n_cyclic_rounds`| Number of cyclic refinement rounds for NOMP. | 1 |
 | `--nomp_conv_thresh` | Convergence threshold for NOMP's cyclic refinement.<br>Set to 0 to disable and run for fixed rounds. | `1e-6` |
 
 ## Project Structure
