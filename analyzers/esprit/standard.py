@@ -39,17 +39,24 @@ from utils.data_models import (
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
-from .solvers import LSEspritSolver, TLSEspritSolver
+from .solvers import (
+    EspritSolver,
+    EspritSolverType,
+    LSEspritSolver,
+    TLSEspritSolver,
+)
 
 
 class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
     """Implements the standard (classical) ESPRIT method."""
 
+    solver: EspritSolver
+
     def __init__(
         self,
         fs: float,
         n_sinusoids: int,
-        solver: LSEspritSolver | TLSEspritSolver,
+        solver: EspritSolverType,
         *,
         subspace_ratio: float = 1 / 3,
     ) -> None:
@@ -58,14 +65,20 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
         Args:
             fs (float): Sampling frequency in Hz.
             n_sinusoids (int): Number of sinusoids.
-            solver (LSEspritSolver | TLSEspritSolver):
-                Solver to solve frequencies with the rotation operator.
+            solver (EspritSolverType, optional): The numerical solver to
+                use for the core rotational invariance equation. Can be
+                "ls" (Least Squares) or "tls" (Total Least Squares).
+                Defaults to "ls".
             subspace_ratio (float, optional): The ratio of the subspace
                 dimension to the signal length. Must be between 0 and
                 0.5. Defaults to 1/3.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio)
-        self.solver: LSEspritSolver | TLSEspritSolver = solver
+
+        if solver == "ls":
+            self.solver = LSEspritSolver()
+        elif solver == "tls":
+            self.solver = TLSEspritSolver()
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
