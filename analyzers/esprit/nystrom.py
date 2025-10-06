@@ -40,10 +40,9 @@ from .._common import ZERO_LEVEL
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
 from .solvers import (
-    EspritSolver,
+    EspritSolveFunction,
     EspritSolverType,
-    LSEspritSolver,
-    TLSEspritSolver,
+    esprit_solvers,
 )
 
 
@@ -61,7 +60,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         based on Nyström method," Signal Processing, 2014.
     """
 
-    solver: EspritSolver
+    solver: EspritSolveFunction
 
     def __init__(
         self,
@@ -91,10 +90,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
             raise ValueError(
                 f"Invalid solver '{solver}'. Choose from {valid_solvers}."
             )
-        if solver == "ls":
-            self.solver = LSEspritSolver()
-        elif solver == "tls":
-            self.solver = TLSEspritSolver()
+        self.solver = esprit_solvers[solver]
         self.nystrom_rank_factor = nystrom_rank_factor
 
     @override
@@ -114,7 +110,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
             return np.array([])
 
         # 2. Solve frequencies with the stored solver
-        omegas = self.solver.solve(signal_subspace)
+        omegas = self.solver(signal_subspace)
 
         # 3. Post-processes raw angular frequencies to final frequency
         #    estimates
@@ -223,8 +219,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         r21_complex: ComplexArray = r21.astype(NumpyComplex)
         return r11_complex, r21_complex
 
+    @staticmethod
     def _build_g_matrix(
-        self, r11: FloatArray | ComplexArray, r21: FloatArray | ComplexArray
+        r11: FloatArray | ComplexArray, r21: FloatArray | ComplexArray
     ) -> FloatArray | ComplexArray:
         """Build the intermediate matrix G based on the Nyström method.
 
@@ -257,8 +254,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         g_matrix_complex: ComplexArray = _g_matrix.astype(NumpyComplex)
         return g_matrix_complex
 
+    @staticmethod
     def _compute_subspace_from_g(
-        self, matrix_g: FloatArray | ComplexArray, n_components: int
+        matrix_g: FloatArray | ComplexArray, n_components: int
     ) -> FloatArray | ComplexArray:
         """Compute the signal subspace from the G matrix.
 
