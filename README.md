@@ -14,7 +14,7 @@ The project is architected with a clean, object-oriented design, emphasizing cod
        - The **Spectral** and **Root** **MUSIC** variants are classic implementations that offer true super-resolution capabilities.
        - The **FAST MUSIC** variant is a modern, computationally efficient implementation for (quasi-)periodic signals that replaces the expensive EVD with an FFT, prioritizing speed over ultimate resolution.
     - **Min-Norm (Spectral & Root)**: A variant of MUSIC that can reduce computational cost by using a single, optimized vector from the noise subspace.
-    - **ESPRIT (Standard, Unitary, FFT-based, & Nyström-based)**: A computationally efficient method that estimates parameters directly without spectral search by exploiting rotational invariance.
+    - **ESPRIT (Standard, Unitary, FFT-based, & Nyström-based)**: A computationally efficient method that estimates parameters directly without spectral search. It supports multiple numerical solvers configurable via a simple string argument (`solver="ls"` or `solver="tls"`).
       - The **Standard** and **Unitary** variants provide high accuracy by computing the signal subspace via EVD/SVD.
       - The **FFT-based** and **Nyström-based** variants offer significant speed-ups by approximating the signal subspace using different techniques (FFT kernels and matrix sampling, respectively).
     - **HOYW**: A robust method based on the autocorrelation function and an AR model of the signal, enhanced with SVD-based rank truncation.
@@ -104,7 +104,7 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
  ```
 - `examples/compare_standard_esprit.py`:<br>This script is dedicated to the high-accuracy variants of ESPRIT family, comparing the trade-offs between:
     -   Standard ESPRIT vs. Unitary ESPRIT vs. Forward-Backward enhanced versions (for Standard)
-    -   Least Squares (LS) vs. Total Least Squares (TLS) solvers
+    -   Least Squares (`solver="ls"`) vs. Total Least Squares (`solver="tls"`) solvers
  ```bash
     python examples/compare_standard_esprit.py
  ```
@@ -112,8 +112,8 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
     -   Subspace Approximation Methods:
         -   Nyström-based ESPRIT vs. FFT-based ESPRIT
     -   Numerical Solvers:
-        -   Least Squares (LS) vs. Total Least Squares (TLS) solvers for both methods.
-        -   For FFT-ESPRIT, an even faster Woodbury-based LS solver is also available for comparison.
+        -   Least Squares (`solver="ls"`) vs. Total Least Squares (`solver="tls"`) solvers for both methods.
+        -   For FFT-ESPRIT, an even faster Woodbury-based LS (`solver="woodbury"`) is also available for comparison.
     ```bash
     python examples/compare_fast_esprit.py
     ```
@@ -247,7 +247,7 @@ As shown, all analyzers inherit from a common `AnalyzerBase`, ensuring a consist
 
 Beyond this basic inheritance, the architecture leverages several key design patterns to add features and flexibility in a modular way.
 
--   **Strategy Pattern for Decoupling**: The ESPRIT algorithm's core numerical procedure is decoupled from the main analyzer class. The analyzers delegate this task to separate **`Solver`** objects (`LSEspritSolver`, `TLSUnitaryEspritSolver`, etc.), allowing different numerical solution strategies to be flexibly "plugged in."
+-   **Strategy Pattern with First-Class Functions**: The core numerical procedure of the ESPRIT algorithm is decoupled into a set of separate **solver functions** (`solve_esprit_ls`, `solve_unitary_esprit_tls`, etc.). The main analyzer classes (`StandardEspritAnalyzer`, etc.) act as the "Context" that holds a reference to one of these functions. **Based on a simple string argument provided at initialization, the analyzer selects the appropriate solver function to use**, demonstrating a Pythonic implementation of the Strategy pattern that leverages functions as first-class objects. This allows different numerical strategies to be flexibly chosen without exposing implementation details to the user.
 
 -   **Mixin Classes for Feature Enhancement**: Optional features, such as Forward-Backward averaging, are added to concrete analyzers using **Mixin classes** (e.g., `ForwardBackwardMixin`). This allows for functionality to be added via composition, avoiding a rigid and deep inheritance tree.
 
