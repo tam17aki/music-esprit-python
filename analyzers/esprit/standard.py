@@ -39,18 +39,13 @@ from utils.data_models import (
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
-from .solvers import (
-    EspritSolver,
-    EspritSolverType,
-    LSEspritSolver,
-    TLSEspritSolver,
-)
+from .solvers import EspritSolveFunction, EspritSolverType, esprit_solvers
 
 
 class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
     """Implements the standard (classical) ESPRIT method."""
 
-    solver: EspritSolver
+    solver: EspritSolveFunction
 
     def __init__(
         self,
@@ -79,10 +74,7 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
             raise ValueError(
                 f"Invalid solver '{solver}'. Choose from {valid_solvers}."
             )
-        if solver == "ls":
-            self.solver = LSEspritSolver()
-        elif solver == "tls":
-            self.solver = TLSEspritSolver()
+        self.solver = esprit_solvers[solver]
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
@@ -101,7 +93,7 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
             return np.array([])
 
         # 2. Solve frequencies with the stored solver
-        omegas = self.solver.solve(signal_subspace)
+        omegas = self.solver(signal_subspace)
 
         # 3. Post-processes raw angular frequencies to final frequency
         #    estimates
