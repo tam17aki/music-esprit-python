@@ -168,7 +168,7 @@ python examples/run_comparison.py --help
 | `--freqs_true`  | List of true frequencies in Hz (space separated). | `440.0 460.0 480.0`|
 | `--amp_range` | Range for random generation of sinusoidal amplitudes. | `0.5 1.5`|
 | `--subspace_ratio` | Ratio of the subspace dimension to the signal length.<br>Must be in (0, 0.5].| `1/3`|
-| `--complex` | If specified, generate a complex-valued signal instead of<br>a real-valued one.| `False` (Flag)|
+| `--complex` | If specified, generate a complex-valued signal instead <br>of a real-valued one.| `False` (Flag)|
 | `--n_grids` | Number of grid points for Spectral MUSIC and Spectral<br>Min-Norm method. | `16384`|
 | `--min_freq_period`| Minimum frequency for periodicity search for FAST <br>MUSIC method. | `20.0`|
 | `--ar_order` | Order of the AutoRegressive (AR) model for HOYW method. | `512`|
