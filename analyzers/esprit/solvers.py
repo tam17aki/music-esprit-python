@@ -44,7 +44,7 @@ FastEspritSolverType: TypeAlias = Literal["ls", "tls", "woodbury"]
 
 @runtime_checkable
 class EspritSolver(Protocol):
-    """Protocol defining the interface for Standard ESPRIT solvers."""
+    """Protocol for standard (complex or real) ESPRIT solvers."""
 
     def solve(self, signal_subspace: FloatArray | ComplexArray) -> FloatArray:
         """Estimate angular frequencies from a signal subspace."""
@@ -53,7 +53,7 @@ class EspritSolver(Protocol):
 
 @runtime_checkable
 class UnitaryEspritSolver(Protocol):
-    """Protocol defining the interface for Unitary ESPRIT solvers."""
+    """Protocol for Unitary (strictly real-valued) ESPRIT solvers."""
 
     def solve(self, signal_subspace: FloatArray) -> FloatArray:
         """Estimate angular frequencies from a signal subspace."""
@@ -62,7 +62,7 @@ class UnitaryEspritSolver(Protocol):
 
 @runtime_checkable
 class FastEspritSolver(Protocol):
-    """Protocol defining the interface for FFT-ESPRIT solvers."""
+    """Protocol for solvers compatible with fast ESPRIT variants."""
 
     def solve(self, signal_subspace: ComplexArray) -> FloatArray:
         """Estimate angular frequencies from a signal subspace."""
