@@ -339,9 +339,9 @@ def solve_esprit_woodbury_ls(signal_subspace: ComplexArray) -> FloatArray:
     """Solve the LS problem for an orthonormal subspace efficiently.
 
     This function implements a fast version of the LS solver by applying
-    the Sherman-Morrison formula (a rank-1 update) to avoid a direct
-    pseudo-inverse calculation. It is tailored for cases where the input
-    signal subspace is orthonormal.
+    the Sherman-Morrison-Woodbury formula (a rank-1 update) to avoid a
+    direct pseudo-inverse calculation. It is tailored for cases where
+    the input signal subspace is orthonormal.
 
     Args:
         signal_subspace (ComplexArray):
