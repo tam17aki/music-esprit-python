@@ -40,9 +40,8 @@ from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
 from .solvers import (
     EspritSolverType,
-    LSUnitaryEspritSolver,
-    TLSUnitaryEspritSolver,
-    UnitaryEspritSolver,
+    UnitaryEspritSolveFunction,
+    unitary_esprit_solvers,
 )
 
 
@@ -50,7 +49,7 @@ from .solvers import (
 class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
     """Implements the Unitary ESPRIT method."""
 
-    solver: UnitaryEspritSolver
+    solver: UnitaryEspritSolveFunction
 
     def __init__(
         self,
@@ -79,10 +78,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
             raise ValueError(
                 f"Invalid solver '{solver}'. Choose from {valid_solvers}."
             )
-        if solver == "ls":
-            self.solver = LSUnitaryEspritSolver()
-        elif solver == "tls":
-            self.solver = TLSUnitaryEspritSolver()
+        self.solver = unitary_esprit_solvers[solver]
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
@@ -101,7 +97,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
             return np.array([])
 
         # 2. Solve frequencies with the stored solver
-        omegas = self.solver.solve(signal_subspace)
+        omegas = self.solver(signal_subspace)
 
         # 3. Post-processes raw angular frequencies to final frequency
         #    estimates
