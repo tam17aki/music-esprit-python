@@ -137,8 +137,8 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
 
         Returns:
             FloatArray | ComplexArray | None: An orthonormal basis for
-                the approximated signal subspace.
-                Returns None on failure.
+                the approximated signal subspace. Returns None on
+                failure.
         """
         # --- Step 1: Prepare the parameters ---
         # The number of complex exponential components
