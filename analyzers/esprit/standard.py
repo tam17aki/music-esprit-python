@@ -56,7 +56,7 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
         self,
         fs: float,
         n_sinusoids: int,
-        solver: EspritSolverType,
+        solver: EspritSolverType = "ls",
         *,
         subspace_ratio: float = 1 / 3,
     ) -> None:
