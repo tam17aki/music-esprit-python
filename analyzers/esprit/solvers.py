@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import warnings
+from typing import Literal, Protocol, TypeAlias, runtime_checkable
 
 import numpy as np
 from scipy.linalg import LinAlgError, eigvals, pinv, svd
@@ -36,6 +37,36 @@ from utils.data_models import (
 )
 
 from .._common import ZERO_LEVEL
+
+EspritSolverType: TypeAlias = Literal["ls", "tls"]
+FastEspritSolverType: TypeAlias = Literal["ls", "tls", "woodbury"]
+
+
+@runtime_checkable
+class EspritSolver(Protocol):
+    """Protocol defining the interface for Standard ESPRIT solvers."""
+
+    def solve(self, signal_subspace: FloatArray | ComplexArray) -> FloatArray:
+        """Estimate angular frequencies from a signal subspace."""
+        ...
+
+
+@runtime_checkable
+class UnitaryEspritSolver(Protocol):
+    """Protocol defining the interface for Unitary ESPRIT solvers."""
+
+    def solve(self, signal_subspace: FloatArray) -> FloatArray:
+        """Estimate angular frequencies from a signal subspace."""
+        ...
+
+
+@runtime_checkable
+class FFTEspritSolver(Protocol):
+    """Protocol defining the interface for FFT-ESPRIT solvers."""
+
+    def solve(self, signal_subspace: ComplexArray) -> FloatArray:
+        """Estimate angular frequencies from a signal subspace."""
+        ...
 
 
 # pylint: disable=too-few-public-methods
