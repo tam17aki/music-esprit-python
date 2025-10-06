@@ -67,7 +67,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         self,
         fs: float,
         n_sinusoids: int,
-        solver: EspritSolverType,
+        solver: EspritSolverType = "ls",
         *,
         nystrom_rank_factor: int = 10,
     ) -> None:
