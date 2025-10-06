@@ -61,7 +61,7 @@ class UnitaryEspritSolver(Protocol):
 
 
 @runtime_checkable
-class FFTEspritSolver(Protocol):
+class FastEspritSolver(Protocol):
     """Protocol defining the interface for FFT-ESPRIT solvers."""
 
     def solve(self, signal_subspace: ComplexArray) -> FloatArray:
