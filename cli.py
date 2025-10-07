@@ -31,6 +31,7 @@ from analyzers.base import SUBSPACE_RATIO_UPPER_BOUND, AnalyzerBase
 from utils.data_models import (
     AlgorithmConfig,
     ExperimentConfig,
+    FloatArray,
     SignalArray,
     SinusoidParameters,
 )
@@ -90,6 +91,38 @@ def print_analyzer_info(analyzer: AnalyzerBase) -> None:
         print(f"  {formatted_key}: {formatted_value}")
 
 
+def compute_errors(
+    true_params: SinusoidParameters, est_params: SinusoidParameters
+) -> tuple[FloatArray, FloatArray, FloatArray]:
+    """Compute the error vectors between true and estimated parameters.
+
+    Args:
+        true_params: The ground truth parameters.
+        est_params: The estimated parameters from an analyzer.
+
+    Returns:
+        A tuple containing the error vectors for (frequencies,
+        amplitudes, phases).
+    """
+    # Ensure parameters are sorted by frequency for correct comparison
+    sort_indices_true = np.argsort(true_params.frequencies)
+    sort_indices_est = np.argsort(est_params.frequencies)
+
+    freq_errors = (
+        est_params.frequencies[sort_indices_est]
+        - true_params.frequencies[sort_indices_true]
+    )
+    amp_errors = (
+        est_params.amplitudes[sort_indices_est]
+        - true_params.amplitudes[sort_indices_true]
+    )
+    phase_errors = (
+        est_params.phases[sort_indices_est]
+        - true_params.phases[sort_indices_true]
+    )
+    return freq_errors, amp_errors, phase_errors
+
+
 def print_results(
     analyzer: AnalyzerBase, true_params: SinusoidParameters
 ) -> None:
@@ -125,10 +158,10 @@ def print_results(
     print(f"Est Amplitudes:  {analyzer.amplitudes}")
     print(f"Est Phases:      {analyzer.phases} rad")
 
-    sort_indices = np.argsort(true_params.frequencies)
-    freq_errors = analyzer.frequencies - true_params.frequencies[sort_indices]
-    amp_errors = analyzer.amplitudes - true_params.amplitudes[sort_indices]
-    phase_errors = analyzer.phases - true_params.phases[sort_indices]
+    freq_errors, amp_errors, phase_errors = compute_errors(
+        true_params, analyzer.est_params
+    )
+
     print("\n--- Estimation Errors ---")
     print(f"Freq Errors:  {freq_errors} Hz")
     print(f"Amp Errors:   {amp_errors}")
@@ -163,18 +196,12 @@ def compute_summary_row(
     ):
         return None
 
-    sort_indices = np.argsort(true_params.frequencies)
+    freq_errors, amp_errors, phase_errors = compute_errors(
+        true_params, analyzer.est_params
+    )
 
-    # frequency error
-    freq_errors = analyzer.frequencies - true_params.frequencies[sort_indices]
     freq_rmse = np.sqrt(np.mean(freq_errors**2))
-
-    # amplitude error
-    amp_errors = analyzer.amplitudes - true_params.amplitudes[sort_indices]
     amp_rmse = np.sqrt(np.mean(amp_errors**2))
-
-    # phase error
-    phase_errors = analyzer.phases - true_params.phases[sort_indices]
     phase_rmse = np.sqrt(np.mean(phase_errors**2))
 
     return {
