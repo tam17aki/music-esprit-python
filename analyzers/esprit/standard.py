@@ -46,6 +46,7 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
     """Implements the standard (classical) ESPRIT method."""
 
     solver: EspritSolveFunction
+    solver_name: str
 
     def __init__(
         self,
@@ -75,6 +76,7 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
                 f"Invalid solver '{solver}'. Choose from {valid_solvers}."
             )
         self.solver = esprit_solvers[solver]
+        self.solver_name = solver
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
@@ -151,7 +153,7 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
                 hyperparameters.
         """
         params = super().get_params()
-        params["solver"] = self.solver.__class__.__name__
+        params["solver"] = self.solver_name
         return params
 
 
