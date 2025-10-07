@@ -43,7 +43,7 @@ class AnalyzerParameters(TypedDict):
     """Ratio of the subspace dimension to signal length (L/N)."""
 
     solver: NotRequired[str]
-    """Name of the solver class used (e.g., `LSEspritSolver`)."""
+    """The solver strategy to use ('ls', 'tls', 'woodbury')."""
 
     n_grids: NotRequired[int]
     """Number of grid points for spectral search methods."""
