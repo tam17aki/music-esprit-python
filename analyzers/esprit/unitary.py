@@ -50,6 +50,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
     """Implements the Unitary ESPRIT method."""
 
     solver: UnitaryEspritSolveFunction
+    solver_name: str
 
     def __init__(
         self,
@@ -79,6 +80,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
                 f"Invalid solver '{solver}'. Choose from {valid_solvers}."
             )
         self.solver = unitary_esprit_solvers[solver]
+        self.solver_name = solver
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
@@ -211,5 +213,5 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
                 hyperparameters.
         """
         params = super().get_params()
-        params["solver"] = self.solver.__class__.__name__
+        params["solver"] = self.solver_name
         return params
