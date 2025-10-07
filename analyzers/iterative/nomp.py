@@ -121,7 +121,6 @@ class NompAnalyzer(AnalyzerBase):
                 frequencies in Hz.
         """
         complex_signal = signal.astype(NumpyComplex)
-
         estimated_freqs = np.array([], dtype=np.float64)
         residual = np.copy(complex_signal)
 
@@ -430,7 +429,6 @@ class NompAnalyzer(AnalyzerBase):
         """
         n_samples = signal.size
         vandermonde = self._build_vandermonde_matrix(freqs, n_samples, self.fs)
-
         empty_amps = np.array([], dtype=NumpyComplex)
 
         try:
