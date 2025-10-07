@@ -38,12 +38,18 @@ from utils.data_models import (
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
-from .solvers import EspritSolverType, unitary_esprit_solvers
+from .solvers import (
+    EspritSolverType,
+    UnitaryEspritSolveFunction,
+    unitary_esprit_solvers,
+)
 
 
 @final
 class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
     """Implements the Unitary ESPRIT method."""
+
+    solver: UnitaryEspritSolveFunction
 
     def __init__(
         self,
