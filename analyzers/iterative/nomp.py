@@ -386,12 +386,13 @@ class NompAnalyzer(AnalyzerBase):
 
         Returns:
             float:
-                The energy of the residual signal.
+                The energy of the residual signal. On the residual
+                calculation failulre, returns an infinite energy
+                (np.inf).
         """
         residual = self._compute_residual_signal(freqs, signal)
 
-        # If the residual calculation failed, return the original signal
-        # and infinite energy.
+        # If the residual calculation failed, return an infinite energy.
         if residual is signal:
             return np.inf
         energy = float(np.real(np.vdot(residual, residual)))
