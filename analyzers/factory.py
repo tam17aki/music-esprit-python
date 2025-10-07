@@ -103,7 +103,11 @@ def get_representative_analyzers(
             n_sinusoids=config.n_sinusoids,
             ar_order=algo_config.ar_order,
         ),
-        "RELAX": RelaxAnalyzer(fs=config.fs, n_sinusoids=config.n_sinusoids),
+        "RELAX": RelaxAnalyzer(
+            fs=config.fs,
+            n_sinusoids=config.n_sinusoids,
+            n_fft_iip=algo_config.n_fft_iip,
+        ),
     }
     return analyzers
 
