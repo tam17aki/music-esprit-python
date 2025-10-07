@@ -143,7 +143,7 @@ class NompAnalyzer(AnalyzerBase):
 
             # Step 4 & 5 of NOMP: Update all amplitudes with a final LS
             # fit and compute the new residual for the next iteration.
-            residual, _ = self._calculate_residual_and_energy(
+            residual = self._compute_residual_signal(
                 estimated_freqs, complex_signal
             )
 
@@ -249,13 +249,11 @@ class NompAnalyzer(AnalyzerBase):
 
             # Check for convergence after the second cycle.
             if self.convergence_threshold > 0 and cycle > 0:
-                _, prev_residual_energy = self._calculate_residual_and_energy(
+                prev_residual_energy = self._compute_energy(
                     freqs_before_update, original_signal
                 )
-                _, current_residual_energy = (
-                    self._calculate_residual_and_energy(
-                        refined_freqs, original_signal
-                    )
+                current_residual_energy = self._compute_energy(
+                    refined_freqs, original_signal
                 )
                 if prev_residual_energy == np.inf:
                     warnings.warn(
@@ -366,18 +364,15 @@ class NompAnalyzer(AnalyzerBase):
                 The temporary residual signal.
         """
         other_freqs = np.delete(all_freqs, index_to_exclude)
-
         if other_freqs.size == 0:
             return original_signal
-        residual, _ = self._compute_residual_and_amps(
-            other_freqs, original_signal
-        )
+        residual = self._compute_residual_signal(other_freqs, original_signal)
         return residual
 
-    def _calculate_residual_and_energy(
+    def _compute_energy(
         self, freqs: FloatArray, signal: ComplexArray
-    ) -> tuple[ComplexArray, float]:
-        """Compute the residual and energy for a given frequency set.
+    ) -> float:
+        """Compute the energy for a given frequency set.
 
         This method uses the core LS fitting logic to compute the
         residual signal for a given set of frequencies and then
@@ -390,23 +385,22 @@ class NompAnalyzer(AnalyzerBase):
                 The signal to fit against.
 
         Returns:
-            tuple[ComplexArray, float]:
-                - The residual signal (ComplexArray).
-                - The energy of the residual signal (float).
+            float:
+                The energy of the residual signal.
         """
-        residual, _ = self._compute_residual_and_amps(freqs, signal)
+        residual = self._compute_residual_signal(freqs, signal)
 
         # If the residual calculation failed, return the original signal
         # and infinite energy.
         if residual is signal:
-            return signal, np.inf
+            return np.inf
         energy = float(np.real(np.vdot(residual, residual)))
-        return residual, energy
+        return energy
 
-    def _compute_residual_and_amps(
+    def _compute_residual_signal(
         self, freqs: FloatArray, signal: ComplexArray
-    ) -> tuple[ComplexArray, ComplexArray]:
-        """Compute residual and amplitudes from frequencies via LS fit.
+    ) -> ComplexArray:
+        """Compute the residual signal from frequencies via LS fit.
 
         This is the central least-squares (LS) fitting logic for NOMP.
         Given a set of frequencies and a signal, it constructs a
@@ -420,24 +414,21 @@ class NompAnalyzer(AnalyzerBase):
                 The signal to fit against.
 
         Returns:
-            tuple[ComplexArray, ComplexArray]:
-                - The residual signal after subtraction of the fitted
-                  model.
-                - An array of the estimated complex amplitudes.
-            On calculation failure, returns the original signal and an
-            empty array.
+            ComplexArray:
+                The residual signal after subtraction of the fitted
+                model. On calculation failure, returns the original
+                signal.
         """
         n_samples = signal.size
         vandermonde = self._build_vandermonde_matrix(freqs, n_samples, self.fs)
-        empty_amps = np.array([], dtype=NumpyComplex)
 
         try:
             amps = pinv(vandermonde) @ signal
             residual = signal - (vandermonde @ amps)
-            return residual, amps
+            return residual
         except LinAlgError:
-            warnings.warn("LS fit failed in _compute_residual_and_amps.")
-            return signal, empty_amps
+            warnings.warn("LS fit failed in _compute_residual_signal.")
+            return signal
 
     @override
     def get_params(self) -> AnalyzerParameters:
