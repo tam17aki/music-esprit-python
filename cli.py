@@ -84,7 +84,7 @@ def print_analyzer_info(analyzer: AnalyzerBase) -> None:
     for key, value in params.items():
         formatted_key = key.replace("_", " ").title()
         if isinstance(value, float):
-            formatted_value = f"{value:.4f}"
+            formatted_value = f"{value:.6f}"
         else:
             formatted_value = str(value)
         print(f"  {formatted_key}: {formatted_value}")
