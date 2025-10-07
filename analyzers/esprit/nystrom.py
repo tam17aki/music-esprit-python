@@ -39,7 +39,7 @@ from utils.data_models import (
 from .._common import ZERO_LEVEL
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
-from .solvers import EspritSolveFunction, EspritSolverType, esprit_solvers
+from .solvers import EspritSolverType, esprit_solvers
 
 
 @final
@@ -55,9 +55,6 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
         C. Qian, et al., "Computationally efficient ESPRIT algorithm...
         based on Nyström method," Signal Processing, 2014.
     """
-
-    solver: EspritSolveFunction
-    solver_name: str
 
     def __init__(
         self,
