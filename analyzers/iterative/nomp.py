@@ -94,9 +94,9 @@ class NompAnalyzer(AnalyzerBase):
                 Set to 0 to disable. Defaults to 1e-6.
         """
         super().__init__(fs, n_sinusoids)
-        self.n_newton_steps: int = n_newton_steps
-        self.n_cyclic_rounds: int = n_cyclic_rounds
-        self.convergence_threshold: float = convergence_threshold
+        self.n_newton_steps = n_newton_steps
+        self.n_cyclic_rounds = n_cyclic_rounds
+        self.convergence_threshold = convergence_threshold
 
     @override
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
