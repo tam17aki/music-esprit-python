@@ -300,14 +300,8 @@ def solve_unitary_esprit_tls(signal_subspace: FloatArray) -> FloatArray:
     t1 = k1 @ signal_subspace
     t2 = k2 @ signal_subspace
 
-    _t = np.concatenate((t1, t2), axis=1)
-    if np.isrealobj(_t):
-        t = _t.astype(NumpyFloat)
-    else:
-        t = _t.astype(NumpyComplex)
-
     try:
-        _, _, vh = svd(t, full_matrices=False)
+        _, _, vh = svd(np.concatenate((t1, t2), axis=1), full_matrices=False)
     except LinAlgError:
         warnings.warn("SVD on augmented_subspace did not converge.")
         return np.array([])
