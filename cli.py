@@ -110,7 +110,7 @@ def print_results(
             calculating the estimation errors.
     """
     if analyzer.est_params is None:
-        print("MusicAnalyzer is not fitted.")
+        print("Analyzer is not fitted.")
         return
     if analyzer.frequencies.size != true_params.frequencies.size:
         print(
@@ -165,7 +165,7 @@ def compute_summary_row(
 
     sort_indices = np.argsort(true_params.frequencies)
 
-    # Frequency Error
+    # frequency error
     freq_errors = analyzer.frequencies - true_params.frequencies[sort_indices]
     freq_rmse = np.sqrt(np.mean(freq_errors**2))
 
