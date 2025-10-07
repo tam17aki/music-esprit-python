@@ -39,11 +39,7 @@ from utils.data_models import (
 from .._common import estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
 from .base import EspritAnalyzerBase
-from .solvers import (
-    FastEspritSolveFunction,
-    FastEspritSolverType,
-    fast_esprit_solvers,
-)
+from .solvers import FastEspritSolverType, fast_esprit_solvers
 
 
 @final
@@ -77,9 +73,6 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         Estimates for Line Spectral Estimation," PREPRINT,
         2023. (Specifically, Algorithm 4)
     """
-
-    solver: FastEspritSolveFunction
-    solver_name: str
 
     def __init__(
         self,
