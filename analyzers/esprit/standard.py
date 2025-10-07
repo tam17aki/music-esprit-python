@@ -39,11 +39,13 @@ from utils.data_models import (
 
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
-from .solvers import EspritSolverType, esprit_solvers
+from .solvers import EspritSolveFunction, EspritSolverType, esprit_solvers
 
 
 class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
     """Implements the standard (classical) ESPRIT method."""
+
+    solver: EspritSolveFunction
 
     def __init__(
         self,
