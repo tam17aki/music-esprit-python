@@ -79,6 +79,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
     """
 
     solver: FastEspritSolveFunction
+    solver_name: str
 
     def __init__(
         self,
@@ -108,6 +109,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
                 f"Invalid solver '{solver}'. Choose from {valid_solvers}."
             )
         self.solver = fast_esprit_solvers[solver]
+        self.solver_name = solver
         self.n_fft_iip = n_fft_iip
 
     @override
@@ -221,6 +223,6 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         """
         params = super().get_params()
         params.pop("subspace_ratio", None)
-        params["solver"] = self.solver.__class__.__name__
+        params["solver"] = self.solver_name
         params["n_fft_iip"] = self.n_fft_iip
         return params
