@@ -65,6 +65,9 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
             subspace_ratio (float, optional): The ratio of the subspace
                 dimension to the signal length. Must be between 0 and
                 0.5. Defaults to 1/3.
+
+        Raises:
+            ValueError: If an unsupported solver type is specified.
         """
         super().__init__(fs, n_sinusoids, subspace_ratio)
         valid_solvers = get_args(EspritSolverType)
