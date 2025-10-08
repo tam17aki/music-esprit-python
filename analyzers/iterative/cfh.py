@@ -64,6 +64,10 @@ class CfhAnalyzer(IterativeAnalyzerBase):
             interpolator (InterpolatorType, optional):
                 The DFT interpolation method to use. Can be "candan" or
                 "haqse". Defaults to "haqse".
+
+        Raises:
+            ValueError:
+                If an unsupported interpolator type is specified.
         """
         super().__init__(fs, n_sinusoids)
         valid_interpolator = get_args(InterpolatorType)
@@ -80,7 +84,21 @@ class CfhAnalyzer(IterativeAnalyzerBase):
 
     @override
     def _estimate_single_frequency(self, signal: ComplexArray) -> float | None:
-        """Delegate to the selected interpolator method."""
+        """Estimate a single frequency via the configured interpolator.
+
+        This method implements the abstract frequency estimation step
+        required by the `IterativeAnalyzerBase`. It delegates the actual
+        computation to the specific interpolation function (`candan` or
+        `haqse`) that was selected during the analyzer's
+        initialization.
+
+        Args:
+            signal: The complex-valued signal (or residual) from which
+                to estimate the strongest frequency component.
+
+        Returns:
+            The estimated frequency in Hz, or None if estimation fails.
+        """
         return self._single_freq_estimator(signal)
 
     def _estimate_single_freq_haqse(
