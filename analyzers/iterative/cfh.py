@@ -112,13 +112,12 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         then refines it using a Q-Shift Estimator (QSE).
 
         Args:
-            signal (ComplexArray):
-                The complex-valued input signal or residual.
+            signal (ComplexArray): The complex-valued input signal or
+            residual.
 
         Returns:
-            float | None:
-                The estimated frequency in Hz, or None if estimation
-                fails.
+            float | None: The estimated frequency in Hz, or None if
+                estimation fails.
         """
         n = signal.size
         if n < _MIN_SAMPLES_FOR_INTERPOLATION:
@@ -255,16 +254,13 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         evaluation at off-grid frequencies.
 
         Args:
-            signal (ComplexArray):
-                The complex-valued input signal.
-            freq_norm (float):
-                The normalized frequency (in cycles/sample) at which to
-                evaluate the DTFT.
+            signal (ComplexArray): The complex-valued input signal.
+            freq_norm (float): The normalized frequency (in
+                cycles/sample) at which to evaluate the DTFT.
 
         Returns:
-            ComplexArray:
-                The complex-valued DTFT result at the specified
-                frequency.
+            ComplexArray: The complex-valued DTFT result at the
+                specified frequency.
         """
         n = signal.size
         t = np.arange(n)
@@ -281,13 +277,12 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         technique to achieve sub-bin frequency accuracy.
 
         Args:
-            signal (ComplexArray):
-                The complex-valued input signal or residual.
+            signal (ComplexArray): The complex-valued input signal or
+            residual.
 
         Returns:
-            float | None:
-                The estimated frequency in Hz, or None if estimation
-                fails.
+            float | None: The estimated frequency in Hz, or None if
+                estimation fails.
         """
         n = signal.size
         if n < _MIN_SAMPLES_FOR_INTERPOLATION:
