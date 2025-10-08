@@ -99,15 +99,15 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
 - `examples/compare_music_variants.py`:<br>This script focuses exclusively on the MUSIC family. It allows you to directly compare the performance and runtime of:
     -   Spectral MUSIC vs. Root-MUSIC vs. FAST MUSIC
     -   Standard vs. Forward-Backward enhanced versions (for Spectral/Root)
- ```bash
-    python examples/compare_music_variants.py
- ```
+    ```bash
+       python examples/compare_music_variants.py
+    ```
 - `examples/compare_standard_esprit.py`:<br>This script is dedicated to the high-accuracy variants of ESPRIT family, comparing the trade-offs between:
     -   Standard ESPRIT vs. Unitary ESPRIT vs. Forward-Backward enhanced versions (for Standard)
     -   Least Squares (`solver="ls"`) vs. Total Least Squares (`solver="tls"`) solvers
- ```bash
-    python examples/compare_standard_esprit.py
- ```
+    ```bash
+       python examples/compare_standard_esprit.py
+    ```
 - `examples/compare_fast_esprit.py`:<br>This script focuses on the computationally efficient, approximation-based variants of the ESPRIT family. It allows you to compare the trade-offs between:
     -   Subspace Approximation Methods:
         -   Nyström-based ESPRIT vs. FFT-based ESPRIT
@@ -120,17 +120,17 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
 - `examples/compare_minnorm_variants.py`:<br>This script explores the Min-Norm family, comparing:
     -   Spectral Min-Norm vs. Root Min-Norm
     -   Standard vs. Forward-Backward enhanced versions
- ```bash
-    python examples/compare_minnorm_variants.py
- ```
+    ```bash
+       python examples/compare_minnorm_variants.py
+    ```
 - `examples/compare_iterative_methods.py`:<br>This script is dedicated to the fast iterative methods, allowing for a direct comparison of:
     - RELAX (using a dense zero-padded FFT search)
     - CFH with the HAQSE/Serbes interpolator
     - CFH with the Candan interpolator
     - NOMP (Newtonized Orthogonal Matching Pursuit)
-```bash
-   python examples/compare_iterative_methods.py
-```
+    ```bash
+       python examples/compare_iterative_methods.py
+    ```
 
 These scripts are the best place to understand the subtle but important differences between the various implementations provided in this library.
 
