@@ -77,6 +77,9 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
                 the number of rows to sample for the Nyström
                 approximation (K = factor * 2M). A larger value improves
                 robustness at the cost of computation. Defaults to 10.
+
+        Raises:
+            ValueError: If an unsupported solver type is specified.
         """
         super().__init__(fs, n_sinusoids)
         valid_solvers = get_args(EspritSolverType)
