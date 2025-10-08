@@ -129,7 +129,7 @@ While `run_comparison.py` provides a great overview of the main algorithm famili
     - CFH with the Candan interpolator
     - NOMP (Newtonized Orthogonal Matching Pursuit)
 ```bash
-   examples/compare_iterative_methods.py
+   python examples/compare_iterative_methods.py
 ```
 
 These scripts are the best place to understand the subtle but important differences between the various implementations provided in this library.
