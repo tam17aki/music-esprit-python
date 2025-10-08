@@ -57,6 +57,10 @@ class AnalyzerBase(ABC):
             subspace_ratio (float, optional):
                 The ratio of the subspace dimension to the signal
                 length. Must be between 0 and 0.5. Defaults to 1/3.
+
+        Raises:
+            ValueError: If `subspace_ratio` is not in the valid
+                range (0, 0.5].
         """
         if not 0 < subspace_ratio <= SUBSPACE_RATIO_UPPER_BOUND:
             raise ValueError(
@@ -111,7 +115,19 @@ class AnalyzerBase(ABC):
 
     @abstractmethod
     def _estimate_frequencies(self, signal: SignalArray) -> FloatArray:
-        """Estimate frequencies of multi-sinusoids."""
+        """Estimate sinusoidal frequencies using a specific algorithm.
+
+        This is an abstract method that must be implemented by all
+        concrete analyzer subclasses. It should contain the core logic
+        for the frequency estimation algorithm.
+
+        Args:
+            signal (SignalArray): The input signal to be analyzed.
+
+        Returns:
+            FloatArray: A sorted array of the estimated frequencies in
+                Hz. Should return an empty array on estimation failure.
+        """
         raise NotImplementedError
 
     @staticmethod
@@ -248,7 +264,12 @@ class AnalyzerBase(ABC):
 
     @property
     def frequencies(self) -> FloatArray:
-        """Return the estimated frequencies in Hz after fitting."""
+        """Return the estimated frequencies in Hz after fitting.
+
+        Raises:
+            AttributeError: If accessed before the `fit()` method has
+                been successfully called.
+        """
         if self.est_params is None:
             raise AttributeError(
                 "Cannot access 'frequencies' before running fit()."
@@ -257,18 +278,30 @@ class AnalyzerBase(ABC):
 
     @property
     def amplitudes(self) -> FloatArray:
-        """Return the estimated amplitudes after fitting."""
+        """Return the estimated amplitudes after fitting.
+
+        Raises:
+            AttributeError: If accessed before the `fit()` method has
+                been successfully called, or if the estimation did not
+                yield any amplitude results.
+        """
         if self.est_params is None or self.est_params.amplitudes.size == 0:
             raise AttributeError(
-                "Cannot access 'amplitudes' before fitting is complete."
+                "Cannot access 'amplitudes' before running fit()."
             )
         return self.est_params.amplitudes
 
     @property
     def phases(self) -> FloatArray:
-        """Return the estimated phases in radians after fitting."""
+        """Return the estimated phases in radians after fitting.
+
+        Raises:
+            AttributeError: If accessed before the `fit()` method has
+                been successfully called, or if the estimation did not
+                yield any amplitude results.
+        """
         if self.est_params is None or self.est_params.phases.size == 0:
             raise AttributeError(
-                "Cannot access 'phases' before fitting is complete."
+                "Cannot access 'phases' before running fit()."
             )
         return self.est_params.phases
