@@ -94,6 +94,9 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
             n_fft_iip (int, optional):
                 The length of iterative interpolation FFT.
                 Defaults to None.
+
+        Raises:
+            ValueError: If an unsupported solver type is specified.
         """
         super().__init__(fs, n_sinusoids)
         valid_solvers = get_args(FastEspritSolverType)
