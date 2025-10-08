@@ -66,8 +66,8 @@ class CfhAnalyzer(IterativeAnalyzerBase):
                 "haqse". Defaults to "haqse".
 
         Raises:
-            ValueError:
-                If an unsupported interpolator type is specified.
+            ValueError: If an unsupported interpolator type is
+                specified.
         """
         super().__init__(fs, n_sinusoids)
         valid_interpolator = get_args(InterpolatorType)
