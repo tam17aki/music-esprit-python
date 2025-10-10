@@ -415,7 +415,7 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default="haqse",
         choices=["candan", "haqse"],
-        help="Interpolator method for the CFH analyzer " + "(default: haqse).",
+        help="Interpolator method for the CFH analyzer (default: haqse).",
     )
     algo_group.add_argument(
         "--n_newton_steps",
@@ -458,10 +458,12 @@ def create_algo_config_from_args(args: argparse.Namespace) -> AlgorithmConfig:
     centralizes the logic for constructing the algorithm configuration.
 
     Args:
-        args: The namespace object returned by `parser.parse_args()`.
+        args (argparse.Namespace):
+            The namespace object returned by `parser.parse_args()`.
 
     Returns:
-        An instance of the AlgorithmConfig dataclass.
+        AlgorithmConfig:
+            An instance of the AlgorithmConfig dataclass.
     """
     return AlgorithmConfig(
         subspace_ratio=args.subspace_ratio,
