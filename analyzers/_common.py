@@ -83,7 +83,7 @@ def _parabolic_interpolation(
     refined_mags = np.zeros_like(peak_indices, dtype=NumpyFloat)
 
     for i, idx in enumerate(peak_indices):
-        if idx in (0, len(spectrum) - 1):
+        if idx in {0, len(spectrum) - 1}:
             refined_indices[i] = idx
             refined_mags[i] = spectrum[idx]
             continue
