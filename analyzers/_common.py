@@ -186,11 +186,14 @@ def filter_unique_freqs(raw_freqs: FloatArray, n_sinusoids: int) -> FloatArray:
     `TOLERANCE_LEVEL`) and truncates the result to `n_sinusoids`.
 
     Args:
-        raw_freqs (FloatArray): The estimated raw frequencies.
-        n_sinusoids (int): Number of sinusoids.
+        raw_freqs (FloatArray):
+            The estimated raw frequencies.
+        n_sinusoids (int):
+            Number of sinusoids.
 
     Returns:
-        FloatArray: A sorted array of filtered unique frequencies.
+        FloatArray:
+            A sorted array of filtered unique frequencies.
     """
     if raw_freqs.size == 0:
         warnings.warn("No raw frequencies were estimated to be filtered.")
