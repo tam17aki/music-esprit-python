@@ -110,13 +110,15 @@ class IterativeAnalyzerBase(AnalyzerBase, ABC):
         of a single sinusoid at the given frequency to the signal.
 
         Args:
-            signal (SignalArray): The input signal.
+            signal (SignalArray):
+                The input signal.
             freq (float):
                 The frequency of the component to estimate, in Hz.
 
         Returns:
-            tuple[float, float]: A tuple containing the estimated
-                                 (amplitude, phase in radians).
+            tuple[float, float]:
+                A tuple containing the estimated (amplitude, phase in
+                radians).
         """
         n_samples = signal.size
         t_vector = np.arange(n_samples) / self.fs
@@ -133,7 +135,26 @@ class IterativeAnalyzerBase(AnalyzerBase, ABC):
     def _synthesize_single_sinusoid(
         self, params: SingleSinusoidParameters, n_samples: int
     ) -> ComplexArray:
-        """Synthesize a single complex sinusoid from its parameters."""
+        """Synthesize a single complex sinusoid from its parameters.
+
+        This helper method generates a pure, noiseless complex-valued
+        sinusoidal signal based on a given set of frequency, amplitude,
+        and phase parameters. The resulting signal is used to subtract
+        the estimated component from the residual in the iterative
+        cancellation process.
+
+        Args:
+            params (SingleSinusoidParameters):
+                A dataclass object containing the frequency, amplitude,
+                and phase of the sinusoid to be synthesized.
+            n_samples (int):
+                The number of samples (length) of the synthesized
+                signal.
+
+        Returns:
+            ComplexArray:
+                The synthesized complex-`valued sinusoidal signal.
+        """
         t = np.arange(n_samples) / self.fs
         argument = 2 * np.pi * params.frequency * t + params.phase
         complex_sinusoid: ComplexArray = (
