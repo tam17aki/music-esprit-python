@@ -371,11 +371,14 @@ def estimate_freqs_iterative_fft(
             Input signal, which can be real or complex. The nature of
             the original signal should be indicated by the `is_complex`
             flag for correct spectral searching.
-        n_peaks (int): Number of peaks to find and return.
-        fs (float): Sampling frequency in Hz.
-        n_fft (int, optional): Length of the FFT used for spectral peak
-            finding. If None, it defaults to the length of the input
-            signal. Defaults to None.
+        n_peaks (int):
+            Number of peaks to find and return.
+        fs (float):
+            Sampling frequency in Hz.
+        n_fft (int, optional):
+            Length of the FFT used for spectral peak finding. If None,
+            it defaults to the length of the input signal. Defaults to
+            None.
         is_complex (bool, optional):
             A flag indicating whether the original signal is complex-
             valued. If False (default), the search for spectral peaks
