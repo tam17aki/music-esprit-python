@@ -93,11 +93,13 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         initialization.
 
         Args:
-            signal: The complex-valued signal (or residual) from which
-                to estimate the strongest frequency component.
+            signal (ComplexArray): The complex-valued signal (or
+                residual) from which to estimate the strongest frequency
+                component.
 
         Returns:
-            The estimated frequency in Hz, or None if estimation fails.
+            float | None: The estimated frequency in Hz, or None if
+                estimation fails.
         """
         return self._single_freq_estimator(signal)
 
