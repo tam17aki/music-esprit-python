@@ -26,8 +26,7 @@ import warnings
 
 import numpy as np
 import numpy.polynomial.polynomial as poly
-import scipy.fft
-from numpy.fft import fftfreq, fftshift
+from numpy.fft import fft, fftfreq, fftshift
 from numpy.linalg import LinAlgError, pinv
 from scipy.signal import find_peaks
 
@@ -401,7 +400,7 @@ def estimate_freqs_iterative_fft(
             break
 
         # 1. Calculate the FFT spectrum of the current signal
-        spectrum = np.abs(scipy.fft.fft(residual_signal, n=n_fft))
+        spectrum = np.abs(fft(residual_signal, n=n_fft))
 
         # 2. Estimate the frequency of the strongest peak
         est_freq = _find_and_refine_strongest_peak(
