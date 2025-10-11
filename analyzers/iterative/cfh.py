@@ -79,7 +79,7 @@ class CfhAnalyzer(IterativeAnalyzerBase):
         self.interpolator: InterpolatorType = interpolator
         if interpolator == "haqse":
             self._single_freq_estimator = self._estimate_single_freq_haqse
-        elif interpolator == "candan":
+        else:
             self._single_freq_estimator = self._estimate_single_freq_candan
 
     @override
