@@ -115,7 +115,7 @@ class CfhAnalyzer(IterativeAnalyzerBase):
 
         Args:
             signal (ComplexArray): The complex-valued input signal or
-            residual.
+                residual.
 
         Returns:
             float | None: The estimated frequency in Hz, or None if
