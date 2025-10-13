@@ -36,7 +36,7 @@ from utils.data_models import (
     SignalArray,
 )
 
-from .._common import estimate_freqs_iterative_fft
+from .._common import build_vandermonde_matrix, estimate_freqs_iterative_fft
 from ..models import AnalyzerParameters
 from .base import EspritAnalyzerBase
 from .solvers import FastEspritSolverType, fast_esprit_solvers
@@ -140,7 +140,7 @@ class FFTEspritAnalyzer(EspritAnalyzerBase):
         # 2. Build a truncated DFT kernel from the coarse frequency
         #    estimate. (Corresponds to Alg. 4, Step 2)
         n_snapshots = signal.size - self.subspace_dim + 1
-        kernel_matrix = self._build_vandermonde_matrix(
+        kernel_matrix = build_vandermonde_matrix(
             kernel_freqs, n_snapshots, self.fs
         )
 
