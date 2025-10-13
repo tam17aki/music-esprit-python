@@ -27,7 +27,7 @@ from abc import ABC, abstractmethod
 from typing import Self
 
 import numpy as np
-from scipy.linalg import LinAlgError, hankel, pinv
+from scipy.linalg import LinAlgError, pinv
 
 from utils.data_models import (
     ComplexArray,
@@ -38,6 +38,7 @@ from utils.data_models import (
     SinusoidParameters,
 )
 
+from ._common import build_hankel_matrix, build_vandermonde_matrix
 from .models import AnalyzerParameters
 
 SUBSPACE_RATIO_UPPER_BOUND = 0.5
@@ -131,26 +132,6 @@ class AnalyzerBase(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def _build_hankel_matrix(
-        signal: SignalArray, subspace_dim: int
-    ) -> FloatArray | ComplexArray:
-        """Build the Hankel data matrix.
-
-        Args:
-            signal (SignalArray): Input signal.
-            subspace_dim (int): The dimension of subspace.
-
-        Returns:
-            FloatArray | ComplexArray: The Hankel matrix.
-        """
-        hankel_matrix = hankel(
-            signal[:subspace_dim], signal[subspace_dim - 1 :]
-        )
-        if np.isrealobj(signal):
-            return hankel_matrix.astype(NumpyFloat)
-        return hankel_matrix.astype(NumpyComplex)
-
-    @staticmethod
     def _build_covariance_matrix(
         signal: SignalArray, subspace_dim: int
     ) -> FloatArray | ComplexArray:
@@ -165,43 +146,11 @@ class AnalyzerBase(ABC):
         """
         n_samples = signal.size
         n_snapshots = n_samples - subspace_dim + 1
-        hankel_matrix = hankel(
-            signal[:subspace_dim], signal[subspace_dim - 1 :]
-        )
+        hankel_matrix = build_hankel_matrix(signal, subspace_dim)
         cov_matrix = (hankel_matrix @ hankel_matrix.conj().T) / n_snapshots
         if np.isrealobj(signal):
             return cov_matrix.astype(NumpyFloat)
         return cov_matrix.astype(NumpyComplex)
-
-    @staticmethod
-    def _build_vandermonde_matrix(
-        freqs: FloatArray, n_rows: int, fs: float
-    ) -> ComplexArray:
-        """Build a Vandermonde matrix from a set of frequencies.
-
-        Args:
-            freqs (FloatArray):
-                An array of frequencies in Hz used to generate the
-                columns. Shape: (P,).
-            n_rows (int):
-                The number of rows in the matrix, corresponding to the
-                number of time samples (L).
-            fs (float):
-                The sampling frequency in Hz.
-
-        Returns:
-            ComplexArray:
-                The resulting complex-valued Vandermonde matrix.
-                Shape: (L, P).
-        """
-        # Create the time vector t as a column vector
-        t_vector = np.arange(n_rows).reshape(-1, 1) / fs
-
-        # Create the frequency vector freqs as a row vector
-        freq_vector = freqs.reshape(1, -1)
-
-        vandermonde_matrix = np.exp(2j * np.pi * t_vector @ freq_vector)
-        return vandermonde_matrix.astype(NumpyComplex)
 
     def _estimate_amplitudes_phases(
         self, signal: SignalArray, estimated_freqs: FloatArray
@@ -219,7 +168,7 @@ class AnalyzerBase(ABC):
                 - estimated_phases: Estimated phases in rad.
         """
         # 1. Build the Vandermonde matrix V
-        vandermonde_matrix = self._build_vandermonde_matrix(
+        vandermonde_matrix = build_vandermonde_matrix(
             estimated_freqs, signal.size, self.fs
         )
 
