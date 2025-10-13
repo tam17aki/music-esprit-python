@@ -59,7 +59,7 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
 
         # 2. Eigenvalue decomposition
         try:
-            _, eigenvectors = eigh(cov_matrix)
+            _, eigenvectors = eigh(cov_matrix, driver="evd")
         except LinAlgError:
             warnings.warn("EVD on covariance matrix failed.")
             return None
