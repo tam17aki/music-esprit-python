@@ -39,7 +39,7 @@ from utils.data_models import (
     SignalArray,
 )
 
-from .._common import ZERO_LEVEL
+from .._common import ZERO_LEVEL, build_vandermonde_matrix
 from ..base import AnalyzerBase
 from ..models import AnalyzerParameters
 
@@ -421,7 +421,7 @@ class NompAnalyzer(AnalyzerBase):
                 signal.
         """
         n_samples = signal.size
-        vandermonde = self._build_vandermonde_matrix(freqs, n_samples, self.fs)
+        vandermonde = build_vandermonde_matrix(freqs, n_samples, self.fs)
 
         try:
             amps = pinv(vandermonde) @ signal
