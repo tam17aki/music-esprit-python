@@ -26,16 +26,10 @@ import warnings
 from abc import ABC
 
 import numpy as np
-from scipy.linalg import LinAlgError, eigh
 
-from utils.data_models import (
-    ComplexArray,
-    FloatArray,
-    NumpyComplex,
-    NumpyFloat,
-    SignalArray,
-)
+from utils.data_models import ComplexArray, FloatArray, SignalArray
 
+from .._common import compute_subspace_from_cov
 from ..base import AnalyzerBase
 
 
@@ -51,18 +45,11 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
             signal (SignalArray): Input signal.
 
         Returns:
-            FloatArray | ComplexArray: Estimated noise subspace.
-                Returns an empty array on failure.
+            FloatArray | ComplexArray | None: The noise subspace matrix.
+                Returns None on failure.
         """
-        # 1. Build the covariance matrix
+        # Build the covariance matrix
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
-
-        # 2. Eigenvalue decomposition
-        try:
-            _, eigenvectors = eigh(cov_matrix, driver="evd")
-        except LinAlgError:
-            warnings.warn("EVD on covariance matrix failed.")
-            return None
 
         # The noise subspace is the set of vectors corresponding to the
         # smaller eigenvalues.  Since it is in ascending order, select
@@ -76,8 +63,10 @@ class MusicAnalyzerBase(AnalyzerBase, ABC):
         else:
             # For complex signals, the number of signals themselves
             model_order = self.n_sinusoids
-        n_noise_vectors = self.subspace_dim - model_order
-        noise_subspace = eigenvectors[:, :n_noise_vectors]
-        if np.isrealobj(noise_subspace):
-            return noise_subspace.astype(NumpyFloat)
-        return noise_subspace.astype(NumpyComplex)
+
+        # Estimate the noise subspace using eigenvalue decomposition
+        _, noise_subspace = compute_subspace_from_cov(cov_matrix, model_order)
+        if noise_subspace is None:
+            warnings.warn("EVD on covariance matrix failed in Spectral MUSIC.")
+            return None
+        return noise_subspace
