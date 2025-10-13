@@ -91,6 +91,37 @@ def build_vandermonde_matrix(
     return vandermonde_matrix.astype(NumpyComplex)
 
 
+def compute_subspace_from_cov(
+    cov_matrix: FloatArray | ComplexArray, model_order: int
+) -> tuple[FloatArray | ComplexArray | None, FloatArray | ComplexArray | None]:
+    """Compute the signal and noise subspaces from a covariance matrix.
+
+    Args:
+        cov_matrix: The covariance matrix to be decomposed.
+        model_order: The dimension of the signal subspace to be
+            extracted (e.g., 2 * n_sinusoids for real signals).
+
+    Returns:
+        tuple[FloatArray | ComplexArray, FloatArray | ComplexArray]:
+            - signal_subspace: The signal subspace matrix.
+            - noise_subspace: The noise subspace matrix.
+        Returns a tuple of (None, None) if the EVD fails.
+    """
+    try:
+        _, _eigenvectors = eigh(cov_matrix, driver="evd")
+        if np.isrealobj(_eigenvectors):
+            eigenvectors = _eigenvectors.astype(NumpyFloat)
+        else:
+            eigenvectors = _eigenvectors.astype(NumpyComplex)
+    except LinAlgError:
+        warnings.warn("EVD on covariance matrix failed.")
+        return None, None
+
+    signal_subspace = eigenvectors[:, -model_order:]
+    noise_subspace = eigenvectors[:, :-model_order]
+    return signal_subspace, noise_subspace
+
+
 def solve_ls(
     matrix_a: FloatArray | ComplexArray,
     matrix_b: FloatArray | ComplexArray,
@@ -138,37 +169,6 @@ def safe_eigvals(
         return eivenvalues.astype(NumpyComplex)
     except LinAlgError:
         return None
-
-
-def compute_subspace_from_cov(
-    cov_matrix: FloatArray | ComplexArray, model_order: int
-) -> tuple[FloatArray | ComplexArray | None, FloatArray | ComplexArray | None]:
-    """Compute the signal and noise subspaces from a covariance matrix.
-
-    Args:
-        cov_matrix: The covariance matrix to be decomposed.
-        model_order: The dimension of the signal subspace to be
-            extracted (e.g., 2 * n_sinusoids for real signals).
-
-    Returns:
-        tuple[FloatArray | ComplexArray, FloatArray | ComplexArray]:
-            - signal_subspace: The signal subspace matrix.
-            - noise_subspace: The noise subspace matrix.
-        Returns a tuple of (None, None) if the EVD fails.
-    """
-    try:
-        _, _eigenvectors = eigh(cov_matrix, driver="evd")
-        if np.isrealobj(_eigenvectors):
-            eigenvectors = _eigenvectors.astype(NumpyFloat)
-        else:
-            eigenvectors = _eigenvectors.astype(NumpyComplex)
-    except LinAlgError:
-        warnings.warn("EVD on covariance matrix failed.")
-        return None, None
-
-    signal_subspace = eigenvectors[:, -model_order:]
-    noise_subspace = eigenvectors[:, :-model_order]
-    return signal_subspace, noise_subspace
 
 
 def _compute_parabolic_offset(
