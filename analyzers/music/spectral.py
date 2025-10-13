@@ -26,7 +26,7 @@ import warnings
 from typing import final, override
 
 import numpy as np
-from numpy.fft import fft, fftfreq
+from scipy.fft import fft, fftfreq
 
 from mixins.covariance import ForwardBackwardMixin
 from utils.data_models import ComplexArray, FloatArray, NumpyFloat, SignalArray
