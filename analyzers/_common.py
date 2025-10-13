@@ -27,7 +27,7 @@ import warnings
 import numpy as np
 import numpy.polynomial.polynomial as poly
 from scipy.fft import fft, fftfreq, fftshift
-from scipy.linalg import LinAlgError, hankel, pinv
+from scipy.linalg import LinAlgError, eigvals, hankel, pinv
 from scipy.signal import find_peaks
 
 from utils.data_models import (
@@ -89,6 +89,55 @@ def build_vandermonde_matrix(
 
     vandermonde_matrix = np.exp(2j * np.pi * t_vector @ freq_vector)
     return vandermonde_matrix.astype(NumpyComplex)
+
+
+def solve_ls(
+    matrix_a: FloatArray | ComplexArray,
+    matrix_b: FloatArray | ComplexArray,
+) -> FloatArray | ComplexArray | None:
+    """Safely solve the least-squares problem Ax = b.
+
+    This function computes `x = pinv(A) @ b`, which is the least-
+    squares solution to the linear system of equations Ax = b. It wraps
+    the computation in a try-except block to handle potential
+    `LinAlgError`.
+
+    Args:
+        matrix_a (FloatArray | ComplexArray): The matrix 'A'.
+        matrix_b (FloatArray | ComplexArray): The matrix or vector 'b'.
+
+    Returns:
+        The least-squares solution 'x', or None if the computation
+        fails.
+    """
+    try:
+        ls_solution = pinv(matrix_a) @ matrix_b
+        if np.isrealobj(ls_solution):
+            return ls_solution.astype(NumpyFloat)
+        return ls_solution.astype(NumpyComplex)
+    except LinAlgError:
+        return None
+
+
+def safe_eigvals(
+    matrix: FloatArray | ComplexArray,
+) -> ComplexArray | None:
+    """Safely compute the eigenvalues of a matrix.
+
+    This function wraps `scipy.linalg.eigvals` in a try-except block to
+    handle potential `LinAlgError`.
+
+    Args:
+        matrix: The matrix whose eigenvalues are to be computed.
+
+    Returns:
+        An array of the eigenvalues, or None if the computation fails.
+    """
+    try:
+        eivenvalues = eigvals(matrix)
+        return eivenvalues.astype(NumpyComplex)
+    except LinAlgError:
+        return None
 
 
 def _compute_parabolic_offset(
@@ -390,14 +439,14 @@ def _estimate_and_subtract_component(
     t = np.arange(signal.size) / fs
     steering_vector = np.exp(2j * np.pi * freq * t).reshape(-1, 1)
 
-    try:
-        complex_amp = pinv(steering_vector) @ signal
-    except LinAlgError:
+    _complex_amp = solve_ls(steering_vector, signal)
+    if _complex_amp is None:
         warnings.warn(
             f"Least squares fit failed for frequency {freq:.2f} Hz. "
             + "Subtraction skipped."
         )
         return signal
+    complex_amp = _complex_amp.astype(NumpyComplex)
 
     estimated_component: ComplexArray = (
         complex_amp * steering_vector
