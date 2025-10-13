@@ -365,7 +365,7 @@ def solve_esprit_woodbury_ls(signal_subspace: ComplexArray) -> FloatArray:
         rotation_operator = solve_ls(q_upper, q_lower)
         if rotation_operator is None:
             warnings.warn(
-                "Least-squares problem failed in Woodbury-LS ESPRIT solver."
+                "Least-squares problem failed in Woodbury-LS solver."
             )
             return np.array([])
     else:
@@ -383,7 +383,7 @@ def solve_esprit_woodbury_ls(signal_subspace: ComplexArray) -> FloatArray:
     # Calculates eigenvalues and returns frequencies
     eigenvalues = safe_eigvals(rotation_operator)
     if eigenvalues is None:
-        warnings.warn("EVD failed in Woodbury solver.")
+        warnings.warn("EVD failed in Woodbury-LS solver.")
         return np.array([])
 
     # Recover normalized angular frequencies from eigenvalues
