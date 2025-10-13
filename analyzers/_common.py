@@ -27,7 +27,7 @@ import warnings
 import numpy as np
 import numpy.polynomial.polynomial as poly
 from numpy.fft import fft, fftfreq, fftshift
-from numpy.linalg import LinAlgError, pinv
+from scipy.linalg import LinAlgError, hankel, pinv
 from scipy.signal import find_peaks
 
 from utils.data_models import (
@@ -41,6 +41,54 @@ from utils.data_models import (
 
 TOLERANCE_LEVEL = 1e-4
 ZERO_LEVEL = 1e-9
+
+
+def build_hankel_matrix(
+    signal: SignalArray, subspace_dim: int
+) -> FloatArray | ComplexArray:
+    """Build the Hankel data matrix.
+
+    Args:
+        signal (SignalArray): Input signal.
+        subspace_dim (int): The dimension of subspace.
+
+    Returns:
+        FloatArray | ComplexArray: The Hankel matrix.
+    """
+    hankel_matrix = hankel(signal[:subspace_dim], signal[subspace_dim - 1 :])
+    if np.isrealobj(signal):
+        return hankel_matrix.astype(NumpyFloat)
+    return hankel_matrix.astype(NumpyComplex)
+
+
+def build_vandermonde_matrix(
+    freqs: FloatArray, n_rows: int, fs: float
+) -> ComplexArray:
+    """Build a Vandermonde matrix from a set of frequencies.
+
+    Args:
+        freqs (FloatArray):
+            An array of frequencies in Hz used to generate the
+            columns. Shape: (P,).
+        n_rows (int):
+            The number of rows in the matrix, corresponding to the
+            number of time samples (L).
+        fs (float):
+            The sampling frequency in Hz.
+
+    Returns:
+        ComplexArray:
+            The resulting complex-valued Vandermonde matrix.
+            Shape: (L, P).
+    """
+    # Create the time vector t as a column vector
+    t_vector = np.arange(n_rows).reshape(-1, 1) / fs
+
+    # Create the frequency vector freqs as a row vector
+    freq_vector = freqs.reshape(1, -1)
+
+    vandermonde_matrix = np.exp(2j * np.pi * t_vector @ freq_vector)
+    return vandermonde_matrix.astype(NumpyComplex)
 
 
 def _compute_parabolic_offset(
