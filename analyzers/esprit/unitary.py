@@ -26,7 +26,6 @@ import warnings
 from typing import final, get_args, override
 
 import numpy as np
-from scipy.linalg import LinAlgError, eigh
 
 from utils.data_models import (
     ComplexArray,
@@ -36,7 +35,7 @@ from utils.data_models import (
     SignalArray,
 )
 
-from .._common import build_hankel_matrix
+from .._common import build_hankel_matrix, compute_subspace_from_cov
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
 from .solvers import EspritSolverType, unitary_esprit_solvers
@@ -135,14 +134,8 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
             )
             return None
 
-        # 3. Perform eigenvalue decomposion the Hermetial matrix in
-        #    Eq. (29)
+        # 3. Build the covariance (Hermetial) matrix in Eq. (29)
         cov_matrix = transformed_matrix @ transformed_matrix.conj().T
-        try:
-            _, eigenvectors = eigh(cov_matrix, driver="evd")
-        except LinAlgError:
-            warnings.warn("EVD on covariance matrix failed.")
-            return None
 
         # 4. Estimated signal subspace is the (model_order) principal
         # eigenvectors, where model_order = 2 * n_sinusoids if signal is
@@ -155,9 +148,16 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
         else:
             # For complex signals, the number of signals themselves
             model_order = self.n_sinusoids
-        signal_subspace = eigenvectors[:, -model_order:]
 
-        return signal_subspace
+        # 5. Estimate the signal subspace using eigenvalue decomposion
+        signal_subspace, _ = compute_subspace_from_cov(cov_matrix, model_order)
+        if signal_subspace is None:
+            warnings.warn(
+                "EVD on covariance matrix failed in Standard ESPRIT."
+            )
+            return None
+
+        return signal_subspace.astype(NumpyFloat)
 
     @staticmethod
     def _transform_complex_to_real(g_matrix: ComplexArray) -> FloatArray:
