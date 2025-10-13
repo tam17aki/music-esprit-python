@@ -26,7 +26,7 @@ import warnings
 
 import numpy as np
 import numpy.polynomial.polynomial as poly
-from numpy.fft import fft, fftfreq, fftshift
+from scipy.fft import fft, fftfreq, fftshift
 from scipy.linalg import LinAlgError, hankel, pinv
 from scipy.signal import find_peaks
 
