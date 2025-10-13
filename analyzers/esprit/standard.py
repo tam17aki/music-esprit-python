@@ -121,7 +121,7 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
         """
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
         try:
-            _, eigenvectors = eigh(cov_matrix)
+            _, eigenvectors = eigh(cov_matrix, driver="evd")
         except LinAlgError:
             warnings.warn("EVD on covariance matrix failed.")
             return None
