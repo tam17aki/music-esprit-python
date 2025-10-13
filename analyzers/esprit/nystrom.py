@@ -36,7 +36,7 @@ from utils.data_models import (
     SignalArray,
 )
 
-from .._common import ZERO_LEVEL
+from .._common import ZERO_LEVEL, build_hankel_matrix
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
 from .solvers import EspritSolverType, esprit_solvers
@@ -154,7 +154,7 @@ class NystromEspritAnalyzer(EVDBasedEspritAnalyzer):
             k_nystrom = int((n_complex_sinusoids + self.subspace_dim) / 2)
 
         # Calculate the data matrix
-        data_matrix = self._build_hankel_matrix(signal, self.subspace_dim)
+        data_matrix = build_hankel_matrix(signal, self.subspace_dim)
 
         # --- Step 2: Calculate R11 and R21 ---
         r11, r21 = self._compute_sub_covariance_matrices(
