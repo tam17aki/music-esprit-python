@@ -26,7 +26,7 @@ import warnings
 from typing import Callable, Literal, TypeAlias, TypedDict
 
 import numpy as np
-from scipy.linalg import LinAlgError, eigvals, pinv, svd
+from scipy.linalg import LinAlgError, svd
 from scipy.sparse import csc_array, csr_array
 
 from utils.data_models import (
@@ -36,7 +36,7 @@ from utils.data_models import (
     NumpyFloat,
 )
 
-from .._common import ZERO_LEVEL
+from .._common import ZERO_LEVEL, safe_eigvals, solve_ls
 
 EspritSolverType: TypeAlias = Literal["ls", "tls"]
 FastEspritSolverType: TypeAlias = Literal["ls", "tls", "woodbury"]
@@ -90,14 +90,13 @@ def solve_esprit_ls(signal_subspace: FloatArray | ComplexArray) -> FloatArray:
     subspace_lower = signal_subspace[1:, :]
 
     # Solve the rotation operator
-    try:
-        rotation_operator = pinv(subspace_upper) @ subspace_lower
-    except LinAlgError:
-        warnings.warn("Matrix inversion failed in parameter solving.")
+    rotation_operator = solve_ls(subspace_upper, subspace_lower)
+    if rotation_operator is None:
+        warnings.warn("Least-squares problem failed in LS ESPRIT solver.")
         return np.array([])
-    try:
-        eigenvalues = eigvals(rotation_operator)
-    except LinAlgError:
+
+    eigenvalues = safe_eigvals(rotation_operator)
+    if eigenvalues is None:
         warnings.warn("EVD failed while solving rotation operator.")
         return np.array([])
 
@@ -148,17 +147,15 @@ def solve_esprit_tls(signal_subspace: FloatArray | ComplexArray) -> FloatArray:
     v12 = vh[:model_order, model_order:]
 
     # Solve the rotation operator
-    try:
-        rotation_operator = pinv(v11) @ v12
-    except LinAlgError:
+    rotation_operator = solve_ls(v11, v12)
+    if rotation_operator is None:
         warnings.warn(
-            "TLS matrix inversion failed while computing rotation "
-            + "operator."
+            "TLS matrix inversion failed while computing rotation operator."
         )
         return np.array([])
-    try:
-        eigenvalues = eigvals(rotation_operator)
-    except LinAlgError:
+
+    eigenvalues = safe_eigvals(rotation_operator)
+    if eigenvalues is None:
         warnings.warn("EVD failed while solving rotation operator.")
         return np.array([])
 
@@ -259,14 +256,13 @@ def solve_unitary_esprit_ls(signal_subspace: FloatArray) -> FloatArray:
     t2 = k2 @ signal_subspace
 
     # Solve the rotation operator
-    try:
-        rotation_operator = pinv(t1) @ t2
-    except LinAlgError:
+    rotation_operator = solve_ls(t1, t2)
+    if rotation_operator is None:
         warnings.warn("Least Squares problem in Unitary ESPRIT failed.")
         return np.array([])
-    try:
-        eigenvalues = eigvals(rotation_operator)
-    except LinAlgError:
+
+    eigenvalues = safe_eigvals(rotation_operator)
+    if eigenvalues is None:
         warnings.warn("EVD of Y_LS failed.")
         return np.array([])
 
@@ -311,17 +307,15 @@ def solve_unitary_esprit_tls(signal_subspace: FloatArray) -> FloatArray:
     v12 = vh[:model_order, model_order:]
 
     # Solve the rotation operator
-    try:
-        rotation_operator = pinv(v11) @ v12
-    except LinAlgError:
+    rotation_operator = solve_ls(v11, v12)
+    if rotation_operator is None:
         warnings.warn(
-            "TLS matrix inversion failed while computing rotation "
-            + "operator."
+            "TLS matrix inversion failed while computing rotation operator."
         )
         return np.array([])
-    try:
-        eigenvalues = eigvals(rotation_operator)
-    except LinAlgError:
+
+    eigenvalues = safe_eigvals(rotation_operator)
+    if eigenvalues is None:
         warnings.warn("EVD of Y_TLS failed.")
         return np.array([])
 
@@ -367,7 +361,13 @@ def solve_esprit_woodbury_ls(signal_subspace: ComplexArray) -> FloatArray:
         warnings.warn("Denominator in Woodbury formula is close to zero.")
         # In this case, (I - q^H*q) is a nearly singular matrix.
         # It is safe to fall back to the LS solution using pinv.
-        rotation_operator = pinv(q_upper) @ q_lower
+        # rotation_operator = pinv(q_upper) @ q_lower
+        rotation_operator = solve_ls(q_upper, q_lower)
+        if rotation_operator is None:
+            warnings.warn(
+                "Least-squares problem failed in Woodbury-LS ESPRIT solver."
+            )
+            return np.array([])
     else:
         # 4. Calculate (Q↑^H*Q↑)^-1
         #    inv_matrix = I + q^H*q / (1 - q*q^H)
@@ -381,9 +381,8 @@ def solve_esprit_woodbury_ls(signal_subspace: ComplexArray) -> FloatArray:
         rotation_operator = inv_matrix @ q_upper_h_q_lower
 
     # Calculates eigenvalues and returns frequencies
-    try:
-        eigenvalues = eigvals(rotation_operator)
-    except LinAlgError:
+    eigenvalues = safe_eigvals(rotation_operator)
+    if eigenvalues is None:
         warnings.warn("EVD failed in Woodbury solver.")
         return np.array([])
 
