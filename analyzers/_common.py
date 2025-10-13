@@ -393,6 +393,10 @@ def _estimate_and_subtract_component(
     try:
         complex_amp = pinv(steering_vector) @ signal
     except LinAlgError:
+        warnings.warn(
+            f"Least squares fit failed for frequency {freq:.2f} Hz. "
+            + "Subtraction skipped."
+        )
         return signal
 
     estimated_component: ComplexArray = (
