@@ -27,7 +27,7 @@ import warnings
 import numpy as np
 import numpy.polynomial.polynomial as poly
 from scipy.fft import fft, fftfreq, fftshift
-from scipy.linalg import LinAlgError, eigvals, hankel, pinv
+from scipy.linalg import LinAlgError, eigh, eigvals, hankel, pinv
 from scipy.signal import find_peaks
 
 from utils.data_models import (
@@ -140,6 +140,37 @@ def safe_eigvals(
         return None
 
 
+def compute_subspace_from_cov(
+    cov_matrix: FloatArray | ComplexArray, model_order: int
+) -> tuple[FloatArray | ComplexArray | None, FloatArray | ComplexArray | None]:
+    """Compute the signal and noise subspaces from a covariance matrix.
+
+    Args:
+        cov_matrix: The covariance matrix to be decomposed.
+        model_order: The dimension of the signal subspace to be
+            extracted (e.g., 2 * n_sinusoids for real signals).
+
+    Returns:
+        tuple[FloatArray | ComplexArray, FloatArray | ComplexArray]:
+            - signal_subspace: The signal subspace matrix.
+            - noise_subspace: The noise subspace matrix.
+        Returns a tuple of (None, None) if the EVD fails.
+    """
+    try:
+        _, _eigenvectors = eigh(cov_matrix, driver="evd")
+        if np.isrealobj(_eigenvectors):
+            eigenvectors = _eigenvectors.astype(NumpyFloat)
+        else:
+            eigenvectors = _eigenvectors.astype(NumpyComplex)
+    except LinAlgError:
+        warnings.warn("EVD on covariance matrix failed.")
+        return None, None
+
+    signal_subspace = eigenvectors[:, -model_order:]
+    noise_subspace = eigenvectors[:, :-model_order]
+    return signal_subspace, noise_subspace
+
+
 def _compute_parabolic_offset(
     y_minus_1: float, y_0: float, y_plus_1: float
 ) -> float:
@@ -172,7 +203,7 @@ def _parabolic_interpolation(
             Integer indecies of peaks in the spectrum.
 
     Returns:
-        tuple[FloatArray, FloatArray]
+        tuple[FloatArray, FloatArray]:
             - refined_indices: The refined peak locations.
             - refined_mags: The refined magnitudes.
     """
