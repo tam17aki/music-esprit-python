@@ -36,6 +36,7 @@ from utils.data_models import (
     SignalArray,
 )
 
+from .._common import build_hankel_matrix
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
 from .solvers import EspritSolverType, unitary_esprit_solvers
@@ -121,7 +122,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
         """
         # 1. Construct the data matrix X (Hankel matrix)
         #    size: (L, N) = (subspace_dim, n_snapshots)
-        _data_matrix = self._build_hankel_matrix(signal, self.subspace_dim)
+        _data_matrix = build_hankel_matrix(signal, self.subspace_dim)
         data_matrix = _data_matrix.astype(NumpyComplex)
 
         # 2. Convert complex matrix X to real matrix T(X)
@@ -138,7 +139,7 @@ class UnitaryEspritAnalyzer(EVDBasedEspritAnalyzer):
         #    Eq. (29)
         cov_matrix = transformed_matrix @ transformed_matrix.conj().T
         try:
-            _, eigenvectors = eigh(cov_matrix)
+            _, eigenvectors = eigh(cov_matrix, driver="evd")
         except LinAlgError:
             warnings.warn("EVD on covariance matrix failed.")
             return None
