@@ -26,17 +26,11 @@ import warnings
 from typing import final, get_args, override
 
 import numpy as np
-from scipy.linalg import LinAlgError, eigh
 
 from mixins.covariance import ForwardBackwardMixin
-from utils.data_models import (
-    ComplexArray,
-    FloatArray,
-    NumpyComplex,
-    NumpyFloat,
-    SignalArray,
-)
+from utils.data_models import ComplexArray, FloatArray, SignalArray
 
+from .._common import compute_subspace_from_cov
 from ..models import AnalyzerParameters
 from .base import EVDBasedEspritAnalyzer
 from .solvers import EspritSolveFunction, EspritSolverType, esprit_solvers
@@ -119,12 +113,8 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
             FloatArray | ComplexArray | None: The signal subspace
                 matrix. Returns None on failure.
         """
+        # Build the covariance matrix
         cov_matrix = self._build_covariance_matrix(signal, self.subspace_dim)
-        try:
-            _, eigenvectors = eigh(cov_matrix, driver="evd")
-        except LinAlgError:
-            warnings.warn("EVD on covariance matrix failed.")
-            return None
 
         # Estimated signal subspace is the (model_order) principal
         # eigenvectors, where model_order = 2 * n_sinusoids if signal is
@@ -137,10 +127,15 @@ class StandardEspritAnalyzer(EVDBasedEspritAnalyzer):
         else:
             # For complex signals, the number of signals themselves
             model_order = self.n_sinusoids
-        signal_subspace = eigenvectors[:, -model_order:]
-        if np.isrealobj(signal_subspace):
-            return signal_subspace.astype(NumpyFloat)
-        return signal_subspace.astype(NumpyComplex)
+
+        # Estimate the signal subspace using eigenvalue decomposition
+        signal_subspace, _ = compute_subspace_from_cov(cov_matrix, model_order)
+        if signal_subspace is None:
+            warnings.warn(
+                "EVD on covariance matrix failed in Standard ESPRIT."
+            )
+            return None
+        return signal_subspace
 
     @override
     def get_params(self) -> AnalyzerParameters:
