@@ -30,7 +30,6 @@ import warnings
 from typing import final, override
 
 import numpy as np
-from scipy.linalg import LinAlgError, pinv
 
 from utils.data_models import (
     ComplexArray,
@@ -39,7 +38,7 @@ from utils.data_models import (
     SignalArray,
 )
 
-from .._common import ZERO_LEVEL, build_vandermonde_matrix
+from .._common import ZERO_LEVEL, build_vandermonde_matrix, solve_ls
 from ..base import AnalyzerBase
 from ..models import AnalyzerParameters
 
@@ -423,13 +422,12 @@ class NompAnalyzer(AnalyzerBase):
         n_samples = signal.size
         vandermonde = build_vandermonde_matrix(freqs, n_samples, self.fs)
 
-        try:
-            amps = pinv(vandermonde) @ signal
-            residual = signal - (vandermonde @ amps)
-            return residual
-        except LinAlgError:
+        amps = solve_ls(vandermonde, signal)
+        if amps is None:
             warnings.warn("LS fit failed in _compute_residual_signal.")
             return signal
+        residual = signal - (vandermonde @ amps)
+        return residual
 
     @override
     def get_params(self) -> AnalyzerParameters:
