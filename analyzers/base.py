@@ -27,7 +27,6 @@ from abc import ABC, abstractmethod
 from typing import Self
 
 import numpy as np
-from scipy.linalg import LinAlgError, pinv
 
 from utils.data_models import (
     ComplexArray,
@@ -38,7 +37,7 @@ from utils.data_models import (
     SinusoidParameters,
 )
 
-from ._common import build_hankel_matrix, build_vandermonde_matrix
+from ._common import build_hankel_matrix, build_vandermonde_matrix, solve_ls
 from .models import AnalyzerParameters
 
 SUBSPACE_RATIO_UPPER_BOUND = 0.5
@@ -174,13 +173,13 @@ class AnalyzerBase(ABC):
 
         # 2. Solve for complex amplitudes c using pseudo-inverse
         # y = V @ c  =>  c = pinv(V) @ y
-        try:
-            complex_amps = pinv(vandermonde_matrix) @ signal
-        except LinAlgError:
+        _complex_amps = solve_ls(vandermonde_matrix, signal)
+        if _complex_amps is None:
             warnings.warn(
                 "Least squares estimation for amplitudes/phases failed."
             )
             return np.array([]), np.array([])
+        complex_amps = _complex_amps.astype(NumpyComplex)
 
         # 3. Extract amplitudes and phases
         estimated_amps = np.abs(complex_amps).astype(NumpyFloat)
